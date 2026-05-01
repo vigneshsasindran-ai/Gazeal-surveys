@@ -48,7 +48,7 @@ const SurveysHero = () => {
       />
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-12 pt-36 pb-24 md:pt-40 md:pb-28 lg:pt-44 lg:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center">
           {/* Copy */}
           <div
             className="lg:col-span-7 text-white"
@@ -66,7 +66,7 @@ const SurveysHero = () => {
             </h1>
 
             <p
-              className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[520px]"
+              className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[620px]"
               data-testid="surveys-hero-subcopy"
             >
               Gazeal has introduced upfront surveys inspired by the Scottish
