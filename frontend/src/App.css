@@ -4,3 +4,24 @@
   min-height: 100vh;
   background-color: #025eba;
 }
+
+/* Gentle floating motion for the hero illustration */
+@keyframes surveys-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.surveys-hero-float {
+  animation: surveys-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surveys-hero-float {
+    animation: none;
+  }
+}

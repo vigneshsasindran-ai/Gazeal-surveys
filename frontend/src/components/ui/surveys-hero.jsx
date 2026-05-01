@@ -66,7 +66,7 @@ const SurveysHero = () => {
             </h1>
 
             <p
-              className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[620px]"
+              className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[440px]"
               data-testid="surveys-hero-subcopy"
             >
               Gazeal has introduced upfront surveys inspired by the Scottish
@@ -107,7 +107,7 @@ const SurveysHero = () => {
             <img
               src={HERO_IMAGE}
               alt="A traditional Scottish stone cottage wearing a tartan kilt and sash, with bagpipes resting alongside"
-              className="w-[64%] sm:w-[52%] md:w-[44%] lg:w-[88%] max-w-[420px] h-auto select-none"
+              className="surveys-hero-float w-[64%] sm:w-[52%] md:w-[44%] lg:w-[88%] max-w-[420px] h-auto select-none"
               draggable={false}
               data-testid="surveys-hero-image"
             />
