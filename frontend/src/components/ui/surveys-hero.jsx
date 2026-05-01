@@ -101,7 +101,7 @@ const SurveysHero = () => {
 
           {/* Illustration */}
           <div
-            className="lg:col-span-5 flex justify-center lg:justify-end"
+            className="lg:col-span-5 flex justify-center lg:justify-end lg:pr-16 xl:pr-24"
             data-testid="surveys-hero-image-wrap"
           >
             <img
