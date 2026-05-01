@@ -1,13 +1,13 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, BadgeCheck } from "lucide-react";
 
 /*
  * Gazeal Surveys Hero (Section 1)
  * - Solid primary blue (#025eba) background
  * - Left: Archivo headline (3 lines), Outfit sub-copy, dual CTAs
- * - Right: Scottish kilted-cottage illustration (compact, plenty of whitespace)
- * - Styled to echo advance.gazeal.co.uk — generous negative space and a
- *   primary / secondary CTA pairing
+ * - Right: Scottish kilted-cottage illustration with 4 floating "CHECKED"
+ *   survey badges (roof, structural, damp, electrical) positioned around the
+ *   house so they read as parts of one composition.
  */
 
 const HERO_IMAGE =
@@ -22,6 +22,29 @@ const scrollToId = (id) => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }
 };
+
+const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
+  <div
+    className={`pointer-events-none select-none absolute hidden lg:flex items-center gap-2.5 rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-1 ring-black/5 px-3.5 py-2.5 ${floatClass} ${className}`}
+    data-testid={testid}
+  >
+    <BadgeCheck
+      className="w-7 h-7 shrink-0"
+      strokeWidth={2.4}
+      style={{ color: "#025eba" }}
+      fill="#025eba"
+      stroke="#ffffff"
+    />
+    <div className="flex flex-col leading-tight">
+      <span className="font-outfit font-semibold text-[13px] text-slate-900 whitespace-nowrap">
+        {label}
+      </span>
+      <span className="mt-1 inline-flex items-center self-start text-[9px] font-bold tracking-[0.08em] px-1.5 py-[2px] rounded-[4px] bg-[#DFFB4A] text-slate-900">
+        CHECKED
+      </span>
+    </div>
+  </div>
+);
 
 const SurveysHero = () => {
   return (
@@ -99,18 +122,49 @@ const SurveysHero = () => {
             </div>
           </div>
 
-          {/* Illustration */}
+          {/* Illustration + floating survey badges */}
           <div
             className="lg:col-span-5 flex justify-center lg:justify-end lg:pr-28 xl:pr-40"
             data-testid="surveys-hero-image-wrap"
           >
-            <img
-              src={HERO_IMAGE}
-              alt="A traditional Scottish stone cottage wearing a tartan kilt and sash, with bagpipes resting alongside"
-              className="surveys-hero-float w-[68%] sm:w-[56%] md:w-[48%] lg:w-[96%] max-w-[460px] h-auto select-none"
-              draggable={false}
-              data-testid="surveys-hero-image"
-            />
+            <div className="relative w-[72%] sm:w-[60%] md:w-[52%] lg:w-[96%] max-w-[460px]">
+              <img
+                src={HERO_IMAGE}
+                alt="A traditional Scottish stone cottage wearing a tartan kilt and sash, with bagpipes resting alongside"
+                className="surveys-hero-float w-full h-auto select-none"
+                draggable={false}
+                data-testid="surveys-hero-image"
+              />
+
+              {/* Top-left — Roof & Chimney */}
+              <CheckedBadge
+                label="Roof & Chimney"
+                className="-top-4 -left-24 xl:-left-28"
+                floatClass="surveys-badge-float-a"
+                testid="badge-roof"
+              />
+              {/* Top-right — Structural Condition */}
+              <CheckedBadge
+                label="Structural Condition"
+                className="top-14 -right-16 xl:-right-20"
+                floatClass="surveys-badge-float-b"
+                testid="badge-structural"
+              />
+              {/* Bottom-left — Damp & Moisture */}
+              <CheckedBadge
+                label="Damp & Moisture"
+                className="bottom-20 -left-28 xl:-left-32"
+                floatClass="surveys-badge-float-c"
+                testid="badge-damp"
+              />
+              {/* Bottom-right — Electrical & Safety */}
+              <CheckedBadge
+                label="Electrical & Safety"
+                className="-bottom-2 -right-20 xl:-right-24"
+                floatClass="surveys-badge-float-d"
+                testid="badge-electrical"
+              />
+            </div>
           </div>
         </div>
       </div>
