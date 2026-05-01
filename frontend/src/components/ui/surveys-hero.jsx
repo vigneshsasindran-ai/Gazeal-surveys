@@ -48,10 +48,10 @@ const SurveysHero = () => {
       />
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-12 pt-36 pb-24 md:pt-40 md:pb-28 lg:pt-44 lg:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center">
           {/* Copy */}
           <div
-            className="lg:col-span-6 text-white"
+            className="lg:col-span-7 text-white"
             data-testid="surveys-hero-copy"
           >
             <h1
@@ -101,13 +101,13 @@ const SurveysHero = () => {
 
           {/* Illustration */}
           <div
-            className="lg:col-span-6 flex justify-center lg:justify-start lg:-ml-40 xl:-ml-56"
+            className="lg:col-span-5 flex justify-center lg:justify-end"
             data-testid="surveys-hero-image-wrap"
           >
             <img
               src={HERO_IMAGE}
               alt="A traditional Scottish stone cottage wearing a tartan kilt and sash, with bagpipes resting alongside"
-              className="surveys-hero-float w-[72%] sm:w-[60%] md:w-[52%] lg:w-full max-w-[520px] h-auto select-none"
+              className="surveys-hero-float w-[64%] sm:w-[52%] md:w-[44%] lg:w-[88%] max-w-[420px] h-auto select-none"
               draggable={false}
               data-testid="surveys-hero-image"
             />
