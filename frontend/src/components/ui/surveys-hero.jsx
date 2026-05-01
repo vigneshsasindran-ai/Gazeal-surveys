@@ -101,13 +101,13 @@ const SurveysHero = () => {
 
           {/* Illustration */}
           <div
-            className="lg:col-span-5 flex justify-center lg:justify-end lg:pr-16 xl:pr-24"
+            className="lg:col-span-5 flex justify-center lg:justify-end lg:pr-28 xl:pr-40"
             data-testid="surveys-hero-image-wrap"
           >
             <img
               src={HERO_IMAGE}
               alt="A traditional Scottish stone cottage wearing a tartan kilt and sash, with bagpipes resting alongside"
-              className="surveys-hero-float w-[64%] sm:w-[52%] md:w-[44%] lg:w-[88%] max-w-[420px] h-auto select-none"
+              className="surveys-hero-float w-[68%] sm:w-[56%] md:w-[48%] lg:w-[96%] max-w-[460px] h-auto select-none"
               draggable={false}
               data-testid="surveys-hero-image"
             />

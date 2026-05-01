@@ -17,7 +17,7 @@ const NAV_LINKS = [
 ];
 
 const LOGO_SRC =
-  "https://customer-assets.emergentagent.com/job_ce36e598-d2a0-4d72-aaac-d0b490c4438e/artifacts/yr4lrp5e_Gazeal%20Surveys.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
 
 const SurveysHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
