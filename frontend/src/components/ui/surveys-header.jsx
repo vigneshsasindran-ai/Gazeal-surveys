@@ -16,7 +16,7 @@ const NAV_LINKS = [
 const LOGO_SRC =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
 
-const SurveysHeader = () => {
+const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -46,15 +46,13 @@ const SurveysHeader = () => {
     window.scrollTo({ top: y, behavior: "smooth" });
   };
 
-  const handleCta = () => {
+  const handleOrderSurvey = () => {
     setIsMobileMenuOpen(false);
-    const el = document.getElementById("apply") || document.getElementById("faq");
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }
+    if (onOrderSurvey) onOrderSurvey();
+  };
+  const handleLearnMore = () => {
+    setIsMobileMenuOpen(false);
+    if (onLearnMore) onLearnMore();
   };
 
   return (
@@ -130,15 +128,23 @@ const SurveysHeader = () => {
                 ))}
               </nav>
 
-              {/* Desktop CTA */}
-              <div className="hidden lg:flex items-center">
+              {/* Desktop CTAs */}
+              <div className="hidden lg:flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={handleCta}
-                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.35)]"
-                  data-testid="surveys-nav-cta"
+                  onClick={handleLearnMore}
+                  className="text-[14px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-manrope"
+                  data-testid="surveys-nav-learn-more"
                 >
                   Learn More
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOrderSurvey}
+                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.35)]"
+                  data-testid="surveys-nav-order-survey"
+                >
+                  Order Survey
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -232,11 +238,19 @@ const SurveysHeader = () => {
 
               <button
                 type="button"
-                onClick={handleCta}
-                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(2,94,186,0.4)] font-manrope"
-                data-testid="surveys-mobile-cta"
+                onClick={handleLearnMore}
+                className="w-full text-center py-4 text-base font-semibold rounded-2xl transition-all duration-300 text-white/85 hover:text-white border border-white/15 hover:border-white/35 font-manrope mb-3"
+                data-testid="surveys-mobile-learn-more"
               >
                 Learn More
+              </button>
+              <button
+                type="button"
+                onClick={handleOrderSurvey}
+                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(2,94,186,0.4)] font-manrope"
+                data-testid="surveys-mobile-order-survey"
+              >
+                Order Survey
               </button>
             </div>
           </div>

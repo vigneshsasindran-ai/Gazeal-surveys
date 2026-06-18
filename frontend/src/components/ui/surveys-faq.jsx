@@ -16,48 +16,73 @@ import { ArrowRight } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "What is Gazeal Surveys?",
+    question: "Who pays for the survey, the seller or the buyer?",
     answer:
-      "Gazeal Surveys is an upfront survey product inspired by the Scottish Home Report model. The survey is arranged when the property is listed and shared with buyers as part of the sale process, so condition is on the table before an offer is made — not weeks after. Sellers only pay when the property completes, and if the sale falls through unreasonably there is no cost to the seller.",
+      "The seller, and only on completion. They never pay up front, and if the sale collapses because the buyer pulls out unreasonably, they pay nothing at all.",
   },
   {
-    question: "How is this different from a normal survey?",
+    question: "Does it cost me anything as an agent to offer this?",
     answer:
-      "Normal surveys are ordered by the buyer after an offer has been accepted, which is exactly when most problems surface and exactly when chains start to break. Gazeal Surveys flips that timeline. The survey is in place at listing so buyers can read it before they offer, and the seller only pays at completion rather than upfront. Same regulated surveyor, very different position in the timeline.",
+      "No. Gazeal Surveys is available to every Gazeal agent at no cost to you. You add it to your service and strengthen your pitch without touching your overheads.",
   },
   {
-    question: "What happens to the cost if the sale falls through?",
+    question: "When is the survey carried out?",
     answer:
-      "If the sale falls through unreasonably, the seller does not pay for the survey. The cost is only triggered when a completion happens. That removes the biggest objection sellers have to ordering a survey early and makes it easy for agents to offer better upfront information without asking sellers to spend money before they have sold their home.",
+      "At the point of listing, as the property goes to market. That is the whole idea. The condition is known from day one, so buyers offer on the facts instead of finding them out weeks later.",
   },
   {
-    question: "Who carries out the surveys?",
+    question: "Will offering a survey slow my listing down?",
     answer:
-      "Surveys are carried out by surveyors provided through the Residential Property Surveyors Association (RPSA). They are regulated, independent professionals, which means the report a buyer reads is a report they can trust — and the indemnity covers both the seller and the buyer.",
+      "No. You market the property as normal and the survey runs alongside. Having the report ready tends to speed the sale up, because buyers commit faster and with fewer conditions when the information is already there.",
   },
   {
-    question: "Does this work alongside a standard Gazeal Reservation?",
+    question: "What type of survey is it?",
     answer:
-      "Yes. Gazeal Reservation already delivers around 95% sale success by securing commitment at the point of offer. Gazeal Surveys sits alongside it and addresses one of the largest remaining causes of fall-through: survey surprises late in the process. Used together, agents can push success rates up to 98% on a typical book.",
+      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association. It gives buyers a clear, independent view of the property before they offer.",
   },
   {
-    question: "Which agents can offer Gazeal Surveys?",
+    question: "Can buyers rely on the report?",
     answer:
-      "Gazeal Surveys is available to all Gazeal agents. If you are already using Gazeal Reservation you can start offering surveys to your sellers immediately — there is no separate onboarding, just a quick conversation with your account team.",
+      "Yes. It is independent and professionally accredited, and it indemnifies both the seller and the buyer, so both sides are protected by it.",
+  },
+  {
+    question: "Does the buyer still need their own survey or mortgage valuation?",
+    answer:
+      "A lender's mortgage valuation is a separate process and the buyer's lender will still run their own. The Gazeal Survey gives the buyer the condition information up front, so in most cases they have what they need to offer with confidence without commissioning a second survey.",
+  },
+  {
+    question: "What does \u201Cfalls through unreasonably\u201D mean?",
+    answer:
+      "It covers a buyer walking away without a fair reason, the kind of collapse the survey and the Reservation Agreement are built to stop. If a sale ends for a legitimate reason, that is handled fairly. The exact terms are set out in the agreement so both sides know where they stand.",
+  },
+  {
+    question: "What does the seller actually have to do?",
+    answer:
+      "Very little. They agree to the survey at listing and arrange access for the surveyor. Gazeal and the surveyor handle the rest.",
+  },
+  {
+    question: "What does \u201Cindemnifies both seller and buyer\u201D mean in plain terms?",
+    answer:
+      "It means the report is backed professionally, so neither your seller nor the buyer is left exposed by relying on it. Both parties are covered.",
+  },
+  {
+    question: "How do I explain the cost to a hesitant seller?",
+    answer:
+      "Keep it simple. They pay nothing now. The fee only comes out of the sale when it completes, and if the buyer walks away unreasonably, they pay nothing at all. No risk to them, and a far stronger chance of completing.",
+  },
+  {
+    question: "How do I introduce Gazeal Surveys to win the instruction?",
+    answer:
+      "Lead with certainty, not cost. Tell your seller they can give buyers full transparency from day one, the way Scotland does, at no upfront cost. It is a clear point of difference that wins listings and protects the sale.",
+  },
+  {
+    question: "Is it available for all my listings?",
+    answer:
+      "Gazeal Surveys is available to every Gazeal agent for residential sales. Your account team can confirm anything specific about property types or locations.",
   },
 ];
 
-const SurveysFAQ = () => {
-  const handleApply = () => {
-    const el = document.getElementById("apply");
-    if (el) {
-      const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }
-  };
-
+const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
   return (
     <section
       id="faq"
@@ -130,18 +155,28 @@ const SurveysFAQ = () => {
                     Start offering surveys to your sellers today.
                   </div>
                   <div className="text-white/55 text-sm font-manrope">
-                    A quick conversation with your account team — that&apos;s it.
+                    Send your seller an invite in under two minutes.
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleApply}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white font-semibold px-5 py-2.5 text-sm hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.4)] whitespace-nowrap"
-                  data-testid="surveys-faq-learn-more"
-                >
-                  Learn more
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={onLearnMore}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full text-white/85 hover:text-white font-medium px-4 py-2.5 text-sm border border-white/15 hover:border-white/35 transition-all font-manrope"
+                    data-testid="surveys-faq-learn-more"
+                  >
+                    Learn More
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOrderSurvey}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white font-semibold px-5 py-2.5 text-sm hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.4)] whitespace-nowrap"
+                    data-testid="surveys-faq-order-survey"
+                  >
+                    Order Survey
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </Accordion>
           </div>

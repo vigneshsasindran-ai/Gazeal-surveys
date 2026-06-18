@@ -12,7 +12,7 @@ const FOOTER_HEIGHT = 600;
 const LOGO_SRC =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
 
-const SurveysFooterReveal = () => {
+const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const revealRef = useRef(null);
 
@@ -125,15 +125,26 @@ const SurveysFooterReveal = () => {
                 </a>
               </div>
 
-              {/* CTA */}
-              <a
-                href="mailto:info@gazeal.co.uk"
-                className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.4)]"
-                data-testid="surveys-footer-cta"
-              >
-                Get in touch
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
+              {/* CTAs */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={onLearnMore}
+                  className="text-[13px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-manrope"
+                  data-testid="surveys-footer-learn-more"
+                >
+                  Learn More
+                </button>
+                <button
+                  type="button"
+                  onClick={onOrderSurvey}
+                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.4)]"
+                  data-testid="surveys-footer-cta"
+                >
+                  Order Survey
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Bottom bar */}

@@ -1,28 +1,56 @@
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import SurveysHeader from "@/components/ui/surveys-header";
 import SurveysHero from "@/components/ui/surveys-hero";
 import SurveysBento from "@/components/ui/surveys-bento";
 import SurveysFAQ from "@/components/ui/surveys-faq";
 import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
+import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
+import OrderSurveyPage from "@/pages/order-survey";
 
-const SurveysLanding = () => (
-  <div className="App min-h-screen bg-black">
-    <SurveysHeader />
-    <main className="relative z-10 bg-black">
-      <SurveysHero />
-      <SurveysBento />
-      <SurveysFAQ />
-    </main>
-    <SurveysFooterReveal />
-  </div>
-);
+const SurveysLanding = () => {
+  const navigate = useNavigate();
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+
+  const handleOrderSurvey = () => navigate("/order-survey");
+  const handleLearnMore = () => setLearnMoreOpen(true);
+
+  return (
+    <div className="App min-h-screen bg-black">
+      <SurveysHeader
+        onOrderSurvey={handleOrderSurvey}
+        onLearnMore={handleLearnMore}
+      />
+      <main className="relative z-10 bg-black">
+        <SurveysHero
+          onOrderSurvey={handleOrderSurvey}
+          onLearnMore={handleLearnMore}
+        />
+        <SurveysBento />
+        <SurveysFAQ
+          onOrderSurvey={handleOrderSurvey}
+          onLearnMore={handleLearnMore}
+        />
+      </main>
+      <SurveysFooterReveal
+        onOrderSurvey={handleOrderSurvey}
+        onLearnMore={handleLearnMore}
+      />
+      <SurveysLearnMoreModal
+        open={learnMoreOpen}
+        onClose={() => setLearnMoreOpen(false)}
+      />
+    </div>
+  );
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SurveysLanding />} />
+        <Route path="/order-survey" element={<OrderSurveyPage />} />
       </Routes>
     </BrowserRouter>
   );
