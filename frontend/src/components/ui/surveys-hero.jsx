@@ -71,10 +71,10 @@ const SurveysHero = () => {
       />
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-12 pt-36 pb-24 md:pt-40 md:pb-28 lg:pt-44 lg:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center">
-          {/* Copy */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 lg:items-center">
+          {/* Heading + paragraph (mobile: 1st, desktop: top-left) */}
           <div
-            className="lg:col-span-7 text-white"
+            className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1 text-white"
             data-testid="surveys-hero-copy"
           >
             <h1
@@ -95,36 +95,12 @@ const SurveysHero = () => {
               Gazeal has introduced upfront surveys inspired by the Scottish
               model, so buyers know the condition before they offer.
             </p>
-
-            {/* CTAs */}
-            <div
-              className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
-              data-testid="surveys-hero-cta-row"
-            >
-              <button
-                type="button"
-                onClick={() => scrollToId("contact")}
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300"
-                data-testid="surveys-hero-cta-primary"
-              >
-                Apply to Join
-                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => scrollToId("how-it-works")}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
-                data-testid="surveys-hero-cta-secondary"
-              >
-                Learn More
-              </button>
-            </div>
           </div>
 
-          {/* Illustration + floating survey badges */}
+          {/* Illustration + floating survey badges
+              (mobile: 2nd between paragraph and CTAs, desktop: right column spanning both rows) */}
           <div
-            className="lg:col-span-5 flex justify-center lg:justify-end lg:pr-28 xl:pr-40"
+            className="order-2 lg:order-none lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-2 flex justify-center lg:justify-end lg:pr-28 xl:pr-40"
             data-testid="surveys-hero-image-wrap"
           >
             <div className="relative w-[72%] sm:w-[60%] md:w-[52%] lg:w-[96%] max-w-[460px]">
@@ -136,10 +112,11 @@ const SurveysHero = () => {
                 data-testid="surveys-hero-image"
               />
 
-              {/* Top-left — Roof & Chimney (close to roof/chimney) */}
+              {/* Top-left — Roof & Chimney
+                  (desktop: low/left so it just touches the roof slope, not the chimney) */}
               <CheckedBadge
                 label="Roof & Chimney"
-                className="-top-2 left-1 sm:-top-3 sm:left-2 lg:-top-3 lg:left-4 xl:-top-4 xl:left-8"
+                className="-top-2 left-1 sm:-top-3 sm:left-2 lg:top-6 lg:-left-12 xl:top-8 xl:-left-16"
                 floatClass="surveys-badge-float-a"
                 testid="badge-roof"
               />
@@ -165,6 +142,31 @@ const SurveysHero = () => {
                 testid="badge-electrical"
               />
             </div>
+          </div>
+
+          {/* CTAs (mobile: 3rd below image, desktop: under paragraph in left column) */}
+          <div
+            className="order-3 lg:order-none lg:col-span-7 lg:row-start-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 lg:-mt-4"
+            data-testid="surveys-hero-cta-row"
+          >
+            <button
+              type="button"
+              onClick={() => scrollToId("contact")}
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300"
+              data-testid="surveys-hero-cta-primary"
+            >
+              Apply to Join
+              <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToId("how-it-works")}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
+              data-testid="surveys-hero-cta-secondary"
+            >
+              Learn More
+            </button>
           </div>
         </div>
       </div>
