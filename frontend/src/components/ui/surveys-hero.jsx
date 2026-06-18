@@ -25,21 +25,21 @@ const scrollToId = (id) => {
 
 const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
   <div
-    className={`pointer-events-none select-none absolute hidden lg:flex items-center gap-2.5 rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-1 ring-black/5 px-3.5 py-2.5 ${floatClass} ${className}`}
+    className={`pointer-events-none select-none absolute flex items-center gap-1.5 sm:gap-2.5 rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-1 ring-black/5 px-2 sm:px-3 lg:px-3.5 py-1.5 sm:py-2 lg:py-2.5 ${floatClass} ${className}`}
     data-testid={testid}
   >
     <BadgeCheck
-      className="w-7 h-7 shrink-0"
+      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-7 lg:h-7 shrink-0"
       strokeWidth={2.4}
       style={{ color: "#025eba" }}
       fill="#025eba"
       stroke="#ffffff"
     />
     <div className="flex flex-col leading-tight">
-      <span className="font-outfit font-semibold text-[13px] text-slate-900 whitespace-nowrap">
+      <span className="font-outfit font-semibold text-[9px] sm:text-[11px] lg:text-[13px] text-slate-900 whitespace-nowrap">
         {label}
       </span>
-      <span className="mt-1 inline-flex items-center self-start text-[9px] font-bold tracking-[0.08em] px-1.5 py-[2px] rounded-[4px] bg-[#DFFB4A] text-slate-900">
+      <span className="mt-0.5 lg:mt-1 inline-flex items-center self-start text-[7px] sm:text-[8px] lg:text-[9px] font-bold tracking-[0.08em] px-1 sm:px-1.5 py-[1px] lg:py-[2px] rounded-[3px] lg:rounded-[4px] bg-[#DFFB4A] text-slate-900">
         CHECKED
       </span>
     </div>
@@ -136,31 +136,31 @@ const SurveysHero = () => {
                 data-testid="surveys-hero-image"
               />
 
-              {/* Top-left — Roof & Chimney */}
+              {/* Top-left — Roof & Chimney (close to roof/chimney) */}
               <CheckedBadge
                 label="Roof & Chimney"
-                className="-top-4 -left-24 xl:-left-28"
+                className="-top-2 left-1 sm:-top-3 sm:left-2 lg:-top-3 lg:left-4 xl:-top-4 xl:left-8"
                 floatClass="surveys-badge-float-a"
                 testid="badge-roof"
               />
               {/* Top-right — Structural Condition */}
               <CheckedBadge
                 label="Structural Condition"
-                className="top-14 -right-16 xl:-right-20"
+                className="top-6 -right-2 sm:top-8 sm:-right-4 lg:top-14 lg:-right-12 xl:-right-20"
                 floatClass="surveys-badge-float-b"
                 testid="badge-structural"
               />
               {/* Bottom-left — Damp & Moisture */}
               <CheckedBadge
                 label="Damp & Moisture"
-                className="bottom-20 -left-28 xl:-left-32"
+                className="bottom-10 -left-3 sm:bottom-14 sm:-left-6 lg:bottom-20 lg:-left-24 xl:-left-32"
                 floatClass="surveys-badge-float-c"
                 testid="badge-damp"
               />
               {/* Bottom-right — Electrical & Safety */}
               <CheckedBadge
                 label="Electrical & Safety"
-                className="-bottom-2 -right-20 xl:-right-24"
+                className="-bottom-1 -right-2 sm:-bottom-1 sm:-right-4 lg:-bottom-2 lg:-right-16 xl:-right-24"
                 floatClass="surveys-badge-float-d"
                 testid="badge-electrical"
               />
