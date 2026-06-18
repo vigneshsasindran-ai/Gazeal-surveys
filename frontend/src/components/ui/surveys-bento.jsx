@@ -1,0 +1,176 @@
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+
+/*
+ * Gazeal Surveys — Features Bento
+ * Three dark glassmorphic cards, ported from the Elite bento pattern,
+ * rebranded with the Surveys blue gradient (#025eba → #4FB6FF) and the
+ * three 3D illustrations supplied with the flyer.
+ */
+
+const ICON_LOCK =
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/xebanqzg_DESIGN%20ELEMENTS%20%20%2821%29.png";
+const ICON_CLIPBOARD =
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/a9f4zu2f_DESIGN%20ELEMENTS%20%20%2819%29.png";
+const ICON_SHIELD =
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/pgz0h9t7_DESIGN%20ELEMENTS%20%20%2822%29.png";
+
+const Visual = ({ src, alt, delay = "0s" }) => (
+  <div className="relative mx-auto flex aspect-square size-28 sm:size-32 rounded-full border border-white/10 before:absolute before:-inset-2 before:rounded-full before:border before:border-white/5 after:absolute after:-inset-5 after:rounded-full after:border after:border-white/[0.03]">
+    <img
+      src={src}
+      alt={alt}
+      draggable={false}
+      className="surveys-bento-icon m-auto h-[78%] w-[78%] object-contain select-none"
+      style={{
+        animationDelay: delay,
+        filter: "drop-shadow(0 12px 30px rgba(2,94,186,0.35))",
+      }}
+    />
+  </div>
+);
+
+const SurveysCard = ({ children, className = "", ...props }) => (
+  <Card
+    className={`relative overflow-hidden border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm hover:border-[#4FB6FF]/30 transition-colors duration-300 ${className}`}
+    {...props}
+  >
+    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4FB6FF]/40 to-transparent pointer-events-none" />
+    {children}
+  </Card>
+);
+
+const SurveysBento = () => {
+  return (
+    <section
+      id="features"
+      className="relative bg-black pt-16 md:pt-20 pb-8 md:pb-12"
+      data-testid="surveys-bento-section"
+    >
+      {/* Ambient blue backdrop */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[400px] w-[600px] bg-gradient-to-b from-[#025eba]/20 to-transparent blur-3xl pointer-events-none opacity-50" />
+
+      <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+        {/* Heading */}
+        <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
+          <p className="font-manrope text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+            Transparency
+          </p>
+          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-didot italic leading-[1.2]">
+            <span className="text-white">Fix survey problems </span>
+            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+              before they break the sale.
+            </span>
+          </h2>
+          <p className="mt-5 font-manrope text-[14px] sm:text-[15px] text-white/55 leading-relaxed max-w-2xl mx-auto">
+            Gazeal Surveys is the upfront survey product inspired by the
+            Scottish model — buyers get full condition transparency before
+            they offer, sellers only pay when the sale completes, and if it
+            falls through there is no cost to the seller.
+          </p>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+          {/* Card 1 — No upfront cost */}
+          <SurveysCard className="h-full" data-testid="surveys-card-no-upfront-cost">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+                No upfront cost
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+                The seller does not pay when the survey is booked. The survey
+                is arranged at listing, shared with buyers during the sale,
+                and paid for only when the property completes. If the sale
+                falls through, there is no survey cost to the seller. This
+                removes the biggest objection and gives agents a simple way
+                to offer better upfront information without asking sellers to
+                spend money before they have sold their home.
+              </p>
+            </CardContent>
+          </SurveysCard>
+
+          {/* Card 2 — Critical property information */}
+          <SurveysCard className="h-full" data-testid="surveys-card-critical-info">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual
+                src={ICON_CLIPBOARD}
+                alt="House with a survey clipboard and pencil"
+                delay="0.8s"
+              />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+                Critical property information
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+                Buyers often make offers before they know enough about the
+                condition of the home. That creates risk later when a survey
+                finds something unexpected. Gazeal Surveys gives buyers the
+                key property information before they offer, so they can make a
+                clearer, more confident decision from the start. That means
+                fewer late surprises, fewer renegotiations, and a stronger
+                sale from the moment the offer is made.
+              </p>
+            </CardContent>
+          </SurveysCard>
+
+          {/* Card 3 — 98% sale success */}
+          <SurveysCard className="h-full" data-testid="surveys-card-success">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual
+                src={ICON_SHIELD}
+                alt="Glass shield with a checkmark"
+                delay="1.6s"
+              />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+                Up to{" "}
+                <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                  98%
+                </span>{" "}
+                sale success
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+                Gazeal already gives agents around 95% sale success by
+                securing commitment at the point of offer. Of the small
+                number of sales that still fall through, survey issues are
+                one of the biggest causes. Gazeal Surveys fixes this earlier
+                by giving buyers the information upfront. With commitment and
+                transparency working together, agents can give sellers the
+                strongest chance of completing, with success rates reaching
+                up to 98%.
+              </p>
+            </CardContent>
+          </SurveysCard>
+        </div>
+
+        {/* Indemnity / RPSA strip */}
+        <div
+          className="mt-8 sm:mt-10 rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-5 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 text-center"
+          data-testid="surveys-trust-strip"
+        >
+          {[
+            "Indemnifies both the seller and the buyer",
+            "Provided by the Residential Property Surveyors Association",
+            "Available to all Gazeal agents",
+          ].map((t) => (
+            <div key={t} className="flex items-center gap-2.5">
+              <span
+                className="inline-block h-1.5 w-1.5 rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                  boxShadow: "0 0 12px rgba(79,182,255,0.55)",
+                }}
+              />
+              <span className="font-manrope text-[12px] sm:text-[13px] text-white/70">
+                {t}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SurveysBento;

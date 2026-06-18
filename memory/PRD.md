@@ -2,61 +2,49 @@
 
 ## Problem Statement (original)
 Create a landing page for Gazeal Surveys, a product extension of Gazeal
-(similar to Gazeal Elite). Primary colour `#025eba`. Heading font Archivo,
-body font Outfit. The site must highlight seller surveys, the USP and killer
-features. Design must be beautiful, interactive, on-brand — strictly
-following modern frontend design principles (no AI slop, no purple/blue
-gradients, no generic centered card grids, deliberate asymmetric layouts,
-hairline 1px dividers, cream surfaces with brand-blue accents).
+(similar to Gazeal Elite). Primary colour `#025eba`. Heading fonts Archivo
++ Didot italic (for accent), body font Outfit / Manrope. Page must reuse
+the Gazeal Elite landing's foundation — black/dark theme, modular dark
+glass cards, FAQ accordion layout, scroll-revealing footer logo. Content
+sourced from the official Gazeal Surveys flyer.
 
 ## Brand
-- Primary: `#025eba` (used on hero, accents, CTAs, ribbons, icon containers)
-- Cream surface: `#F7F4EE` for the body sections, `#FFFFFF` for inner panels
-- Ink / Navy text: `#0B1220`, muted body text: `#4A5260`, hint: `#6B7280`
-- Accent lime: `#DFFB4A` (used sparingly — Gazeal-guarantee chip, "CHECKED" pills)
-- Heading font: Archivo (700/800)
-- Body font: Outfit (400–600)
-- Logo: Gazeal Surveys wordmark (white on blue / dark on cream)
+- Background: `#050505` (dark)
+- Primary brand: `#025eba` (deep blue)
+- Light accent: `#4FB6FF` (cyan-blue, matches the 3D icon highlights)
+- Brand gradient (replaces Elite's gold): `#4FB6FF → #025eba`
+- Heading font: Archivo / Didot italic (for accent headings)
+- Body font: Manrope / Outfit
+- Logo: white wordmark "Gazeal Surveys"
 
 ## Architecture
-- Frontend: React 19 + CRA + Tailwind + shadcn/ui (existing template)
-- Backend: FastAPI + Mongo — untouched (front-end-only spec for now)
-- Routes:
-  - `/` → `SurveysLanding` (hero + 4 sections + CTA + footer + Learn More modal)
-  - `/request-survey` → `RequestSurveyPage` (multi-step agent-for-seller form)
+- Frontend: React 19 + CRA + Tailwind + shadcn/ui
+- Backend: FastAPI + Mongo (untouched — static landing)
+- Route: `/` → `SurveysLanding`
 
-## Components
-- `surveys-header.jsx` — fixed transparent → glass-pill on scroll, mobile drawer, "Get Started" CTA → `/request-survey`.
-- `surveys-hero.jsx` — Section 1. 3-line Archivo headline, sub-copy, dual CTAs (`Apply to Join` → page, `Learn More` → modal). Kilted-cottage illustration with 4 floating "CHECKED" badges.
-- `surveys-why-built.jsx` — Section 2. Asymmetric Scotland vs England comparison card (~9% vs ~32% fall-through), 2024 ribbon footer.
-- `surveys-how-it-works.jsx` — Section 3. White panel inside cream surface; 3 staggered steps with brand-blue numerals and meta-timing pills.
-- `surveys-safety-net.jsx` — Section 4. Inverted navy panel ("If the buyer walks, the survey is on us"), £0 guarantee chip with lime ribbon.
-- `surveys-both-sides.jsx` — Section 5. Two intentionally different columns: For Buyers (blue accents) vs For Sellers (dark accents) separated by a vertical hairline.
-- `surveys-cta.jsx` — Final blue band CTA strip above footer with `Apply to Join` + `Learn how it works`.
-- `surveys-footer.jsx` — 3-column footer + RPSA badge + legal row.
-- `surveys-learn-more-modal.jsx` — 3-step funnel + hybrid optional "Notify me" email capture (front-end only, logs to console).
-- `pages/request-survey.jsx` — `/request-survey` dedicated multi-step form. Agent → Seller → Property listing (Rightmove/Zoopla URL validation) → Review & send. Front-end only, logs to console. Explicit copy that **RPSA will contact the seller directly to book**.
+## Components (final, after rebuild)
+- `surveys-header.jsx` — fixed transparent → liquid-glass pill on scroll, mobile drawer, "Learn More" CTA scrolls to the FAQ apply card (mirrors Elite header pattern, rebranded to blue).
+- `surveys-hero.jsx` — Section 1 (untouched). Solid #025eba background, 3-line Archivo headline, dual CTAs, kilted-cottage illustration with 4 floating "CHECKED" badges.
+- `surveys-bento.jsx` — 3 dark glassmorphic cards mirroring Elite's `features-bento`. Cards: "No upfront cost" (padlock-G icon), "Critical property information" (house+clipboard icon), "Up to 98% sale success" (shield+checkmark icon). Trust strip with RPSA + indemnity + agent availability.
+- `surveys-faq.jsx` — Sticky left column (Common Questions + contact card) + 6-item accordion on the right, ending in an "Apply" CTA card (`#apply` anchor).
+- `surveys-footer-reveal.jsx` — Scroll-triggered footer reveal with the Gazeal Surveys logo unravelling at the bottom, neon blue glow strip, link row + "Get in touch" mailto CTA.
 
-## Implemented (2026-06)
-- Sections 2–5 built modularly with on-brand cream/white surfaces + #025eba accents.
-- Footer with three columns (Product / Gazeal / Contact), RPSA chip, legal row.
-- Final CTA strip (blue) above the footer.
-- Learn More modal: 3 educational steps with progress dashes, optional notify-me email capture, success state.
-- `/request-survey` dedicated page: 4-step stepper, Rightmove/Zoopla URL validation, agent-for-seller copy + RPSA explanation banner, review confirmation, success state.
-- App.js wired with `<BrowserRouter>` + new route; header + hero + CTA all receive `onApply` (→ `/request-survey`) and `onLearnMore` (→ modal) props.
-- All flows verified via Playwright screenshots: hero, modal step 1→3, modal email success, request-survey step 1→4, request-survey "Request received" page.
-- No backend integrations (per user choice — submissions log to console).
+## Implemented (2026-06 — dark rebuild)
+- Discarded the light-theme sections 2-5, CTA strip, light footer, Learn More modal, and `/request-survey` page.
+- Migrated `index.css` to the Elite dark palette + added Manrope + Didot fonts.
+- New 3D icons sourced from the user-supplied assets (padlock, house+clipboard, shield).
+- Brand gradient swapped Elite gold (`#FFDE59 → #FF914D`) for Surveys blue (`#4FB6FF → #025eba`) throughout header, footer, FAQ, and bento cards.
+- Copy lifted verbatim from the Gazeal Surveys flyer.
+- All flows verified via Playwright: hero, bento, FAQ accordion + sticky column, scroll-revealing Gazeal Surveys logo footer with link bar + mailto CTA.
 
 ## Backlog (P1)
-- Backend `/api/leads` to persist Notify-me + Request-survey submissions to Mongo.
-- Email notification to support@gazeal.co.uk when an agent submits (Resend integration).
-- Rightmove/Zoopla scrape to auto-pull listing photos + address from URL.
-- FAQ accordion + testimonials section.
+- Backend `/api/leads` to capture "Get in touch" submissions and email enquiries.
+- Animated "How it works" timeline if the user wants more depth.
+- Testimonials/social-proof row (Elite-style) under the bento.
 
 ## Backlog (P2)
-- Dark mode variant.
+- Light mode toggle (probably unnecessary).
 - SEO metadata per section + sitemap.
-- Animated stat counters for the Scotland vs England comparison.
 
 ## Test Credentials
 Not applicable — static landing page, no auth.
