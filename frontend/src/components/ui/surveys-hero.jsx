@@ -11,7 +11,7 @@ import { ChevronRight, BadgeCheck } from "lucide-react";
  */
 
 const HERO_IMAGE =
-  "https://customer-assets.emergentagent.com/job_ce36e598-d2a0-4d72-aaac-d0b490c4438e/artifacts/y0mduhc7_Header%20image.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/m3mf6dk7_DESIGN%20ELEMENTS%20%20%2817%29.png";
 
 const scrollToId = (id) => {
   const el = document.getElementById(id);
