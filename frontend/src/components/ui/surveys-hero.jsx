@@ -46,7 +46,7 @@ const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
   </div>
 );
 
-const SurveysHero = () => {
+const SurveysHero = ({ onApply, onLearnMore }) => {
   return (
     <section
       id="hero"
@@ -151,7 +151,7 @@ const SurveysHero = () => {
           >
             <button
               type="button"
-              onClick={() => scrollToId("contact")}
+              onClick={() => (onApply ? onApply() : scrollToId("contact"))}
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300"
               data-testid="surveys-hero-cta-primary"
             >
@@ -161,7 +161,9 @@ const SurveysHero = () => {
 
             <button
               type="button"
-              onClick={() => scrollToId("how-it-works")}
+              onClick={() =>
+                onLearnMore ? onLearnMore() : scrollToId("how-it-works")
+              }
               className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
               data-testid="surveys-hero-cta-secondary"
             >

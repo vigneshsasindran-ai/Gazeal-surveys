@@ -10,16 +10,16 @@ import { Menu, X, ChevronRight } from "lucide-react";
 
 const NAV_LINKS = [
   { name: "Home", href: "#" },
+  { name: "Why", href: "#why-built" },
   { name: "How it works", href: "#how-it-works" },
-  { name: "About", href: "#about" },
-  { name: "FAQ", href: "#faq" },
+  { name: "Safety net", href: "#safety-net" },
   { name: "Contact", href: "#contact" },
 ];
 
 const LOGO_SRC =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
 
-const SurveysHeader = () => {
+const SurveysHeader = ({ onApply }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -51,6 +51,10 @@ const SurveysHeader = () => {
 
   const handleCta = () => {
     setIsMobileMenuOpen(false);
+    if (onApply) {
+      onApply();
+      return;
+    }
     const el = document.getElementById("contact");
     if (el) {
       const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
