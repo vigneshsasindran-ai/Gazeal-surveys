@@ -29,9 +29,6 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           {/* Left — headline + body + CTA */}
           <div className="lg:col-span-7 order-2 lg:order-1 lg:pt-4">
-            <p className="font-outfit text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
-              Survey + Reservation
-            </p>
             <h2
               className="font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white text-4xl sm:text-5xl lg:text-[56px]"
               data-testid="sale-agreed-heading"

@@ -53,20 +53,17 @@ const SurveysBento = () => {
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
         {/* Heading */}
         <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
-          <p className="font-outfit text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
-            Transparency
-          </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.2]">
+          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.18]">
             <span className="text-white">Fix survey problems </span>
             <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
               before they break the sale.
             </span>
           </h2>
-          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/65 leading-relaxed max-w-2xl mx-auto space-y-3">
+          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/70 leading-relaxed max-w-2xl mx-auto space-y-3">
             <span className="block">
               In Scotland, buyers understand the condition of the home before
-              they offer. That means fewer surprises, fewer late
-              renegotiations, and stronger sales from the start.
+              they offer, which means fewer surprises, fewer late
+              renegotiations and stronger sales from the start.
             </span>
             <span className="block mt-3">
               Gazeal Surveys brings that same upfront thinking to England and
@@ -84,14 +81,15 @@ const SurveysBento = () => {
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 No upfront cost
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
-                The seller does not pay when the survey is booked. The survey
-                is arranged at listing, shared with buyers during the sale,
-                and paid for only when the property completes. If the sale
-                falls through, there is no survey cost to the seller. This
-                removes the biggest objection and gives agents a simple way
-                to offer better upfront information without asking sellers to
-                spend money before they have sold their home.
+              <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
+                Your seller does not have to pay anything when the survey is
+                booked. It is arranged at the start of the marketing, shared
+                with buyers during the sale, and only paid for when the
+                property actually completes. If the sale falls through there
+                is no cost to your seller at all, so the biggest objection to
+                ordering a survey early simply disappears, and you can offer
+                better upfront information without asking your seller to
+                spend a penny before they have sold their home.
               </p>
             </CardContent>
           </SurveysCard>
@@ -107,14 +105,15 @@ const SurveysBento = () => {
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 Critical property information
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
-                Buyers often make offers before they know enough about the
-                condition of the home. That creates risk later when a survey
-                finds something unexpected. Gazeal Surveys gives buyers the
-                key property information before they offer, so they can make a
-                clearer, more confident decision from the start. That means
-                fewer late surprises, fewer renegotiations, and a stronger
-                sale from the moment the offer is made.
+              <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
+                Buyers often have to make offers before they know enough
+                about the condition of the home, and that creates real risk
+                later in the process when something unexpected turns up.
+                Gazeal Surveys puts the key property information in front of
+                buyers before they offer, so they can make a clearer, more
+                confident decision from the start. That tends to mean fewer
+                late surprises, fewer renegotiations and a stronger sale
+                from the moment the offer is made.
               </p>
             </CardContent>
           </SurveysCard>
@@ -134,15 +133,15 @@ const SurveysBento = () => {
                 </span>{" "}
                 sale success
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
-                Gazeal already gives agents around 95% sale success by
+              <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
+                Gazeal already helps agents reach around 95% sale success by
                 securing commitment at the point of offer. Of the small
-                number of sales that still fall through, survey issues are
-                one of the biggest causes. Gazeal Surveys fixes this earlier
-                by giving buyers the information upfront. With commitment and
-                transparency working together, agents can give sellers the
-                strongest chance of completing, with success rates reaching
-                up to 98%.
+                number of sales that still fall apart, survey issues are one
+                of the biggest causes. Gazeal Surveys fixes this earlier by
+                giving buyers the information they need upfront, so
+                commitment and transparency work together to give your
+                seller the strongest possible chance of completing, with
+                success rates reaching up to 98%.
               </p>
             </CardContent>
           </SurveysCard>

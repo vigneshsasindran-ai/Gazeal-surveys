@@ -669,7 +669,7 @@ const OrderSurveyPage = () => {
               <p className="font-outfit text-[15px] text-white/65 max-w-[52ch] mx-auto leading-relaxed mb-8">
                 RPSA will email your seller an invite from your branch and
                 book the survey directly. You&apos;ll get a copy of the
-                report the moment it&apos;s uploaded. They pay nothing now —
+                report the moment it&apos;s uploaded, and they pay nothing now,
                 only when the sale completes.
               </p>
               <button
