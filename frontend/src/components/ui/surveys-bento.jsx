@@ -70,9 +70,7 @@ const SurveysBento = () => {
             </span>
             <span className="block mt-3">
               Gazeal Surveys brings that same upfront thinking to England and
-              Wales. Sellers can order a survey when they list, buyers can
-              review the key information before they offer, and the sale
-              starts with more trust, more clarity, and far less risk.
+              Wales.
             </span>
           </p>
         </div>
