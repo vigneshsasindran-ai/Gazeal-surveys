@@ -70,6 +70,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (!open) return;
@@ -94,11 +95,32 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("[GazealSurveys] Learn-more lead:", formData);
-    // tiny delay to mimic the network flicker so the success state feels real
-    await new Promise((r) => setTimeout(r, 400));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/leads/learn-more`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            full_name: formData.fullName,
+            agency: formData.agency,
+            email: formData.email,
+          }),
+        }
+      );
+      if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || `Request failed (${res.status})`);
+      }
+      setIsSuccess(true);
+    } catch (err) {
+      setSubmitError(
+        "We couldn't send your request just now. Please try again in a moment."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!open) return null;
@@ -228,6 +250,14 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   </>
                 )}
               </button>
+              {submitError && (
+                <p
+                  className="text-[#FF8A8A] text-xs text-center mt-2 font-outfit"
+                  data-testid="learn-more-error"
+                >
+                  {submitError}
+                </p>
+              )}
               <p className="text-white/40 text-xs text-center mt-2 font-outfit">
                 By continuing you agree to Gazeal&apos;s terms of service.
               </p>

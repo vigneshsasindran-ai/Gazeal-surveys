@@ -47,6 +47,8 @@ const OrderSurveyPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [formData, setFormData] = useState({
     // About you
     agentName: "",
@@ -119,10 +121,45 @@ const OrderSurveyPage = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!validateStep(totalSteps)) return;
-    console.log("[GazealSurveys] Order survey submission:", formData);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/leads/order-survey`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            agent_name: formData.agentName,
+            agency_name: formData.agencyName,
+            branch: formData.branch,
+            phone: formData.phone,
+            email: formData.email,
+            seller_name: formData.sellerName,
+            seller_email: formData.sellerEmail,
+            seller_phone: formData.sellerPhone,
+            address_line_1: formData.addressLine1,
+            postcode: formData.postcode,
+            listing_url: formData.listingUrl,
+            asking_price: formData.askingPrice,
+            confirmation: formData.confirmation,
+          }),
+        }
+      );
+      if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || `Request failed (${res.status})`);
+      }
+      setIsSubmitted(true);
+    } catch (err) {
+      setSubmitError(
+        "We couldn't send the invite just now. Please try again in a moment."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -303,7 +340,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.agentName}
                           onChange={setField("agentName")}
-                          placeholder="Jane Doe"
+                          placeholder="Your full name"
                           data-testid="order-input-agent-name"
                         />
                         {errors.agentName && (
@@ -317,7 +354,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.agencyName}
                           onChange={setField("agencyName")}
-                          placeholder="Knight &amp; Co"
+                          placeholder="Agency name"
                           data-testid="order-input-agency"
                         />
                         {errors.agencyName && (
@@ -332,7 +369,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.branch}
                         onChange={setField("branch")}
-                        placeholder="Bristol Clifton (optional)"
+                        placeholder="Branch name (optional)"
                         data-testid="order-input-branch"
                       />
                     </div>
@@ -344,7 +381,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.phone}
                           onChange={setField("phone")}
-                          placeholder="0117 000 0000"
+                          placeholder="Contact number"
                           data-testid="order-input-phone"
                         />
                         {errors.phone && (
@@ -358,7 +395,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.email}
                           onChange={setField("email")}
-                          placeholder="jane@knight.co.uk"
+                          placeholder="Your work email"
                           data-testid="order-input-email"
                         />
                         {errors.email && (
@@ -387,7 +424,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.sellerName}
                         onChange={setField("sellerName")}
-                        placeholder="Sam Patel"
+                        placeholder="Seller's full name"
                         data-testid="order-input-seller-name"
                       />
                       {errors.sellerName && (
@@ -401,7 +438,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.sellerEmail}
                         onChange={setField("sellerEmail")}
-                        placeholder="sam@example.com"
+                        placeholder="Seller's email"
                         data-testid="order-input-seller-email"
                       />
                       <p className="font-outfit text-[12px] text-white/45 mt-1.5">
@@ -418,7 +455,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.sellerPhone}
                         onChange={setField("sellerPhone")}
-                        placeholder="07000 000000 (optional)"
+                        placeholder="Seller's phone (optional)"
                         data-testid="order-input-seller-phone"
                       />
                     </div>
@@ -445,7 +482,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.addressLine1}
                         onChange={setField("addressLine1")}
-                        placeholder="12 Park Lane"
+                        placeholder="First line of the property address"
                         data-testid="order-input-address"
                       />
                       {errors.addressLine1 && (
@@ -460,7 +497,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.postcode}
                           onChange={setField("postcode")}
-                          placeholder="BS8 1AA"
+                          placeholder="Postcode"
                           data-testid="order-input-postcode"
                         />
                         {errors.postcode && (
@@ -476,7 +513,7 @@ const OrderSurveyPage = () => {
                           className={inputCls}
                           value={formData.askingPrice}
                           onChange={setField("askingPrice")}
-                          placeholder="£450,000 (optional)"
+                          placeholder="Asking price (optional)"
                           data-testid="order-input-asking-price"
                         />
                       </div>
@@ -490,7 +527,7 @@ const OrderSurveyPage = () => {
                         className={inputCls}
                         value={formData.listingUrl}
                         onChange={setField("listingUrl")}
-                        placeholder="https://www.rightmove.co.uk/properties/..."
+                        placeholder="https://www.rightmove.co.uk/..."
                         data-testid="order-input-listing-url"
                       />
                       <p className="font-outfit text-[12px] text-white/45 mt-1.5">
@@ -592,6 +629,14 @@ const OrderSurveyPage = () => {
                 )}
 
                 {/* Footer nav */}
+                {submitError && (
+                  <p
+                    className="px-7 sm:px-9 pt-3 text-[#FF8A8A] text-xs font-outfit"
+                    data-testid="order-survey-error"
+                  >
+                    {submitError}
+                  </p>
+                )}
                 <div className="mt-10 pt-6 border-t border-white/10 flex items-center justify-between">
                   <button
                     type="button"
@@ -627,7 +672,8 @@ const OrderSurveyPage = () => {
                     <button
                       type="button"
                       onClick={submit}
-                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         background:
                           "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
@@ -635,8 +681,17 @@ const OrderSurveyPage = () => {
                       }}
                       data-testid="order-survey-submit"
                     >
-                      Send the Invite
-                      <Send className="w-4 h-4" />
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          Send the Invite
+                          <Send className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   )}
                 </div>

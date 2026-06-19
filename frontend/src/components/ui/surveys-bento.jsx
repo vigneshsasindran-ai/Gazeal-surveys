@@ -59,16 +59,10 @@ const SurveysBento = () => {
               before they break the sale.
             </span>
           </h2>
-          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/70 leading-relaxed max-w-2xl mx-auto space-y-3">
-            <span className="block">
-              In Scotland, buyers understand the condition of the home before
-              they offer, which means fewer surprises, fewer late
-              renegotiations and stronger sales from the start.
-            </span>
-            <span className="block mt-3">
-              Gazeal Surveys brings that same upfront thinking to England and
-              Wales.
-            </span>
+          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/70 leading-relaxed max-w-2xl mx-auto">
+            In Scotland, buyers understand the condition of the home before
+            they offer, which means fewer surprises, fewer late
+            renegotiations and stronger sales from the start.
           </p>
         </div>
 

@@ -92,8 +92,8 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
               className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[440px]"
               data-testid="surveys-hero-subcopy"
             >
-              Gazeal has introduced upfront surveys inspired by the Scottish
-              model, so buyers know the condition before they offer.
+              Gazeal has introduced upfront seller surveys inspired by the
+              Scottish model, so buyers know the condition before they offer.
             </p>
           </div>
 

@@ -19,6 +19,9 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Import after env is loaded so that resend.api_key is set correctly
+from routes.leads import build_router as build_leads_router  # noqa: E402
+
 # Create the main app without a prefix
 app = FastAPI()
 
@@ -67,6 +70,7 @@ async def get_status_checks():
     return status_checks
 
 # Include the router in the main app
+api_router.include_router(build_leads_router(db))
 app.include_router(api_router)
 
 app.add_middleware(
