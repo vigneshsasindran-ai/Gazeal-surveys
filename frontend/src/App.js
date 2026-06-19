@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import SurveysHeader from "@/components/ui/surveys-header";
 import SurveysHero from "@/components/ui/surveys-hero";
 import SurveysBento from "@/components/ui/surveys-bento";
+import SurveysSaleAgreed from "@/components/ui/surveys-sale-agreed";
+import SurveysBenefits from "@/components/ui/surveys-benefits";
 import SurveysFAQ from "@/components/ui/surveys-faq";
 import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
 import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
@@ -28,6 +30,8 @@ const SurveysLanding = () => {
           onLearnMore={handleLearnMore}
         />
         <SurveysBento />
+        <SurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
+        <SurveysBenefits />
         <SurveysFAQ
           onOrderSurvey={handleOrderSurvey}
           onLearnMore={handleLearnMore}

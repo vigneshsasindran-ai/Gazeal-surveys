@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const ICON_LOCK =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/xebanqzg_DESIGN%20ELEMENTS%20%20%2821%29.png";
 const ICON_CLIPBOARD =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/a9f4zu2f_DESIGN%20ELEMENTS%20%20%2819%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/msgu0rm9_DESIGN%20ELEMENTS%20%20%2823%29.png";
 const ICON_SHIELD =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/pgz0h9t7_DESIGN%20ELEMENTS%20%20%2822%29.png";
 
@@ -141,32 +141,6 @@ const SurveysBento = () => {
               </p>
             </CardContent>
           </SurveysCard>
-        </div>
-
-        {/* Indemnity / RPSA strip */}
-        <div
-          className="mt-8 sm:mt-10 rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-5 sm:py-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 text-center"
-          data-testid="surveys-trust-strip"
-        >
-          {[
-            "Indemnifies both the seller and the buyer",
-            "Provided by the Residential Property Surveyors Association",
-            "Available to all Gazeal agents",
-          ].map((t) => (
-            <div key={t} className="flex items-center gap-2.5">
-              <span
-                className="inline-block h-1.5 w-1.5 rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                  boxShadow: "0 0 12px rgba(79,182,255,0.55)",
-                }}
-              />
-              <span className="font-manrope text-[12px] sm:text-[13px] text-white/70">
-                {t}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
     </section>
