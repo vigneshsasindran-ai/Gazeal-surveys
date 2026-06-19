@@ -29,11 +29,11 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           {/* Left — headline + body + CTA */}
           <div className="lg:col-span-7 order-2 lg:order-1 lg:pt-4">
-            <p className="font-manrope text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+            <p className="font-outfit text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
               Survey + Reservation
             </p>
             <h2
-              className="font-didot italic leading-[1.1] text-white text-4xl sm:text-5xl lg:text-[56px]"
+              className="font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white text-4xl sm:text-5xl lg:text-[56px]"
               data-testid="sale-agreed-heading"
             >
               Survey It. Reserve It.
@@ -44,27 +44,26 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
             </h2>
 
             <p
-              className="mt-6 text-base sm:text-lg text-white/65 font-manrope leading-relaxed max-w-xl"
+              className="mt-6 text-base sm:text-lg text-white/65 font-outfit leading-relaxed max-w-xl"
               data-testid="sale-agreed-body"
             >
-              A sale agreed is the most fragile moment in your pipeline. Two
-              things break it. The survey that turns up a surprise at week
-              six, and the buyer who quietly drifts off to something else.
-              Handle both and the deal stops being a hope. Get your seller to
-              book a survey the day you list, so the condition is known
-              before a single offer lands and there is nothing left to
-              renegotiate. Then lock the buyer with a Gazeal Reservation, so
-              they are committed and your seller is compensated if they walk.
-              The property is proven, the buyer is bound, and the sale you
-              agreed in spring is the one that completes. Less chasing, fewer
-              collapses, and commission that lands instead of vanishing.
+              A sale agreed is the most fragile point in your pipeline. Two
+              things usually put it at risk: a survey issue appearing weeks
+              later, or a buyer losing commitment and walking away. Gazeal
+              helps you deal with both. Get the seller to order a survey
+              when the property is listed, so the condition is known before
+              offers are made and there is less room for renegotiation.
+              Then secure the buyer with a Gazeal Reservation Agreement, so
+              they are properly committed and the seller is compensated if
+              they pull out unreasonably. Less chasing, fewer fall-throughs,
+              and more commission protected.
             </p>
 
             <div className="mt-8">
               <button
                 type="button"
                 onClick={onOrderSurvey}
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-manrope font-semibold text-[14px] text-white hover:opacity-90 transition-all"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
                 style={{
                   background:
                     "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",

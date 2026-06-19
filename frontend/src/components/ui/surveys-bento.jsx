@@ -53,20 +53,27 @@ const SurveysBento = () => {
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
         {/* Heading */}
         <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
-          <p className="font-manrope text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+          <p className="font-outfit text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
             Transparency
           </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-didot italic leading-[1.2]">
+          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.2]">
             <span className="text-white">Fix survey problems </span>
             <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
               before they break the sale.
             </span>
           </h2>
-          <p className="mt-5 font-manrope text-[14px] sm:text-[15px] text-white/55 leading-relaxed max-w-2xl mx-auto">
-            Gazeal Surveys is the upfront survey product inspired by the
-            Scottish model — buyers get full condition transparency before
-            they offer, sellers only pay when the sale completes, and if it
-            falls through there is no cost to the seller.
+          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/65 leading-relaxed max-w-2xl mx-auto space-y-3">
+            <span className="block">
+              In Scotland, buyers understand the condition of the home before
+              they offer. That means fewer surprises, fewer late
+              renegotiations, and stronger sales from the start.
+            </span>
+            <span className="block mt-3">
+              Gazeal Surveys brings that same upfront thinking to England and
+              Wales. Sellers can order a survey when they list, buyers can
+              review the key information before they offer, and the sale
+              starts with more trust, more clarity, and far less risk.
+            </span>
           </p>
         </div>
 
@@ -76,10 +83,10 @@ const SurveysBento = () => {
           <SurveysCard className="h-full" data-testid="surveys-card-no-upfront-cost">
             <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
               <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
-              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 No upfront cost
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
                 The seller does not pay when the survey is booked. The survey
                 is arranged at listing, shared with buyers during the sale,
                 and paid for only when the property completes. If the sale
@@ -99,10 +106,10 @@ const SurveysBento = () => {
                 alt="House with a survey clipboard and pencil"
                 delay="0.8s"
               />
-              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 Critical property information
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
                 Buyers often make offers before they know enough about the
                 condition of the home. That creates risk later when a survey
                 finds something unexpected. Gazeal Surveys gives buyers the
@@ -122,14 +129,14 @@ const SurveysBento = () => {
                 alt="Glass shield with a checkmark"
                 delay="1.6s"
               />
-              <h3 className="mt-6 text-2xl sm:text-[26px] font-didot italic text-white">
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 Up to{" "}
                 <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
                   98%
                 </span>{" "}
                 sale success
               </h3>
-              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-manrope leading-relaxed">
+              <p className="mt-3 text-sm sm:text-[15px] text-white/65 font-outfit leading-relaxed">
                 Gazeal already gives agents around 95% sale success by
                 securing commitment at the point of offer. Of the small
                 number of sales that still fall through, survey issues are

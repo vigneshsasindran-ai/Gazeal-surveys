@@ -68,7 +68,7 @@ const Column = ({ audience, headline, items, accent }) => (
 
     <div className="flex items-center justify-between mb-6">
       <span
-        className="inline-flex items-center gap-2 font-manrope text-[11px] font-semibold tracking-[0.22em] uppercase"
+        className="inline-flex items-center gap-2 font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase"
         style={{ color: accent }}
       >
         <span
@@ -77,12 +77,12 @@ const Column = ({ audience, headline, items, accent }) => (
         />
         For {audience}
       </span>
-      <span className="font-manrope text-[11px] tracking-[0.18em] uppercase text-white/35">
+      <span className="font-outfit text-[11px] tracking-[0.18em] uppercase text-white/35">
         0{items.length}
       </span>
     </div>
 
-    <h3 className="font-didot italic text-white text-[28px] sm:text-[32px] leading-[1.1] mb-8 max-w-[18ch]">
+    <h3 className="font-archivo font-bold tracking-[-0.025em] text-white text-[28px] sm:text-[32px] leading-[1.1] mb-8 max-w-[18ch]">
       {headline}
     </h3>
 
@@ -107,7 +107,7 @@ const Column = ({ audience, headline, items, accent }) => (
             <p className="font-archivo font-semibold text-white text-[16px] sm:text-[17px] tracking-[-0.01em]">
               {item.title}
             </p>
-            <p className="mt-2 font-manrope text-[14px] leading-[1.6] text-white/60">
+            <p className="mt-2 font-outfit text-[14px] leading-[1.6] text-white/60">
               {item.body}
             </p>
           </div>
@@ -130,11 +130,11 @@ const SurveysBenefits = () => {
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
         {/* Heading */}
         <div className="mx-auto max-w-3xl text-center mb-12 lg:mb-16">
-          <p className="font-manrope text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+          <p className="font-outfit text-[11px] sm:text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
             Both sides covered
           </p>
           <h2
-            className="font-didot italic leading-[1.12] text-white text-3xl sm:text-4xl lg:text-[44px]"
+            className="font-archivo font-bold tracking-[-0.025em] leading-[1.12] text-white text-3xl sm:text-4xl lg:text-[44px]"
             data-testid="benefits-headline"
           >
             <span className="text-white">A product that works </span>
@@ -142,7 +142,7 @@ const SurveysBenefits = () => {
               for everyone in the chain.
             </span>
           </h2>
-          <p className="mt-5 font-manrope text-[14px] sm:text-[15px] text-white/55 leading-relaxed">
+          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-white/55 leading-relaxed">
             Surveys usually sit on one side of the table. Gazeal Surveys is
             written for both, with protection that follows the report wherever
             it goes.
@@ -174,7 +174,7 @@ const SurveysBenefits = () => {
             <p className="font-archivo font-bold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-2">
               Indemnified both sides
             </p>
-            <p className="font-manrope text-[14px] sm:text-[15px] text-white/80 leading-relaxed max-w-[68ch]">
+            <p className="font-outfit text-[14px] sm:text-[15px] text-white/80 leading-relaxed max-w-[68ch]">
               The Gazeal Survey is professionally accredited and indemnifies{" "}
               <span className="text-white font-semibold">both the seller and the buyer</span>.
               Neither party is left exposed by relying on the report — they

@@ -35,12 +35,12 @@ const STEPS = [
 ];
 
 const inputCls =
-  "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-manrope text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors";
+  "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors";
 
 const labelCls =
-  "block text-sm text-white/65 mb-2 font-manrope";
+  "block text-sm text-white/65 mb-2 font-outfit";
 
-const errorCls = "text-[#FF6B6B] text-xs mt-1 font-manrope";
+const errorCls = "text-[#FF6B6B] text-xs mt-1 font-outfit";
 
 const OrderSurveyPage = () => {
   const navigate = useNavigate();
@@ -140,7 +140,7 @@ const OrderSurveyPage = () => {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-1.5 font-manrope text-[13px] font-medium text-white/60 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 font-outfit text-[13px] font-medium text-white/60 hover:text-white transition-colors"
             data-testid="order-survey-cancel"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -154,10 +154,10 @@ const OrderSurveyPage = () => {
         <div className="max-w-[860px] mx-auto px-6">
           {/* Title */}
           <div className="text-center mb-10">
-            <p className="font-manrope text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+            <p className="font-outfit text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
               Order survey
             </p>
-            <h1 className="text-3xl md:text-[42px] font-didot italic text-white leading-[1.12]">
+            <h1 className="text-3xl md:text-[42px] font-archivo font-bold tracking-[-0.025em] text-white leading-[1.12]">
               Invite your seller{" "}
               <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
                 to book a survey
@@ -172,10 +172,10 @@ const OrderSurveyPage = () => {
                 className="mb-10 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-7"
                 data-testid="order-survey-intro"
               >
-                <h2 className="font-didot italic text-[22px] text-white mb-3">
+                <h2 className="font-archivo font-bold tracking-[-0.025em] text-[22px] text-white mb-3">
                   Before you start
                 </h2>
-                <p className="font-manrope text-[14px] leading-relaxed text-white/65 mb-4">
+                <p className="font-outfit text-[14px] leading-relaxed text-white/65 mb-4">
                   This sends your seller an invite from RPSA to arrange their
                   survey. Here is how it works:
                 </p>
@@ -187,7 +187,7 @@ const OrderSurveyPage = () => {
                   ].map((line, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-3 font-manrope text-[14px] text-white/75 leading-relaxed"
+                      className="flex items-start gap-3 font-outfit text-[14px] text-white/75 leading-relaxed"
                     >
                       <span
                         className="mt-[2px] inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0"
@@ -202,7 +202,7 @@ const OrderSurveyPage = () => {
                     </li>
                   ))}
                 </ul>
-                <p className="font-manrope text-[13px] text-white/45 mt-5">
+                <p className="font-outfit text-[13px] text-white/45 mt-5">
                   It takes two minutes and the listing link. We handle the
                   rest. Fields marked * are required.
                 </p>
@@ -249,7 +249,7 @@ const OrderSurveyPage = () => {
                           )}
                         </div>
                         <span
-                          className={`text-[11px] mt-2 hidden md:block font-manrope ${
+                          className={`text-[11px] mt-2 hidden md:block font-outfit ${
                             isActive
                               ? "text-white"
                               : isComplete
@@ -287,10 +287,10 @@ const OrderSurveyPage = () => {
                 {currentStep === 1 && (
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-didot italic text-[26px] text-white mb-1">
+                      <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
                         About you
                       </h3>
-                      <p className="font-manrope text-[14px] text-white/55">
+                      <p className="font-outfit text-[14px] text-white/55">
                         We use this to send the seller their invite from your
                         branch.
                       </p>
@@ -373,10 +373,10 @@ const OrderSurveyPage = () => {
                 {currentStep === 2 && (
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-didot italic text-[26px] text-white mb-1">
+                      <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
                         Your seller
                       </h3>
-                      <p className="font-manrope text-[14px] text-white/55">
+                      <p className="font-outfit text-[14px] text-white/55">
                         This is who we send the invite to.
                       </p>
                     </div>
@@ -404,7 +404,7 @@ const OrderSurveyPage = () => {
                         placeholder="sam@example.com"
                         data-testid="order-input-seller-email"
                       />
-                      <p className="font-manrope text-[12px] text-white/45 mt-1.5">
+                      <p className="font-outfit text-[12px] text-white/45 mt-1.5">
                         The invite is sent here.
                       </p>
                       {errors.sellerEmail && (
@@ -429,10 +429,10 @@ const OrderSurveyPage = () => {
                 {currentStep === 3 && (
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-didot italic text-[26px] text-white mb-1">
+                      <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
                         The property
                       </h3>
-                      <p className="font-manrope text-[14px] text-white/55">
+                      <p className="font-outfit text-[14px] text-white/55">
                         Just enough for the surveyor to plan their visit.
                       </p>
                     </div>
@@ -493,7 +493,7 @@ const OrderSurveyPage = () => {
                         placeholder="https://www.rightmove.co.uk/properties/..."
                         data-testid="order-input-listing-url"
                       />
-                      <p className="font-manrope text-[12px] text-white/45 mt-1.5">
+                      <p className="font-outfit text-[12px] text-white/45 mt-1.5">
                         Paste the full link to the live listing so the
                         surveyor has the detail they need.
                       </p>
@@ -508,19 +508,19 @@ const OrderSurveyPage = () => {
                 {currentStep === 4 && (
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-didot italic text-[26px] text-white mb-1">
+                      <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
                         Confirmation
                       </h3>
-                      <p className="font-manrope text-[14px] text-white/55">
+                      <p className="font-outfit text-[14px] text-white/55">
                         A quick review before we send the invite.
                       </p>
                     </div>
 
                     <div className="rounded-xl bg-white/[0.03] border border-white/10 p-5">
-                      <p className="font-manrope text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3">
+                      <p className="font-outfit text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3">
                         Summary
                       </p>
-                      <dl className="space-y-2.5 font-manrope text-[14px]">
+                      <dl className="space-y-2.5 font-outfit text-[14px]">
                         {[
                           ["Agent", `${formData.agentName || "—"} · ${formData.agencyName || "—"}${formData.branch ? ` (${formData.branch})` : ""}`],
                           ["Contact", `${formData.email || "—"} · ${formData.phone || "—"}`],
@@ -580,7 +580,7 @@ const OrderSurveyPage = () => {
                           <Check className="w-3 h-3 text-white" strokeWidth={3} />
                         )}
                       </span>
-                      <span className="text-white/80 text-sm font-manrope leading-relaxed">
+                      <span className="text-white/80 text-sm font-outfit leading-relaxed">
                         I confirm my seller is happy for RPSA to contact them
                         about arranging their survey. *
                       </span>
@@ -597,7 +597,7 @@ const OrderSurveyPage = () => {
                     type="button"
                     onClick={prev}
                     disabled={currentStep === 1}
-                    className={`inline-flex items-center gap-1.5 font-manrope font-medium text-[14px] ${
+                    className={`inline-flex items-center gap-1.5 font-outfit font-medium text-[14px] ${
                       currentStep === 1
                         ? "text-white/25 cursor-not-allowed"
                         : "text-white/65 hover:text-white"
@@ -612,7 +612,7 @@ const OrderSurveyPage = () => {
                     <button
                       type="button"
                       onClick={next}
-                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-manrope font-semibold text-[14px] text-white transition-all hover:opacity-90"
+                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90"
                       style={{
                         background:
                           "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
@@ -627,7 +627,7 @@ const OrderSurveyPage = () => {
                     <button
                       type="button"
                       onClick={submit}
-                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-manrope font-semibold text-[14px] text-white transition-all hover:opacity-90"
+                      className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90"
                       style={{
                         background:
                           "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
@@ -660,13 +660,13 @@ const OrderSurveyPage = () => {
               >
                 <Check className="w-6 h-6 text-white" strokeWidth={3} />
               </div>
-              <h2 className="font-didot italic text-[30px] text-white mb-3">
+              <h2 className="font-archivo font-bold tracking-[-0.025em] text-[30px] text-white mb-3">
                 Invite on its way to{" "}
                 <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
                   {formData.sellerName.split(" ")[0] || "your seller"}
                 </span>
               </h2>
-              <p className="font-manrope text-[15px] text-white/65 max-w-[52ch] mx-auto leading-relaxed mb-8">
+              <p className="font-outfit text-[15px] text-white/65 max-w-[52ch] mx-auto leading-relaxed mb-8">
                 RPSA will email your seller an invite from your branch and
                 book the survey directly. You&apos;ll get a copy of the
                 report the moment it&apos;s uploaded. They pay nothing now —
@@ -675,7 +675,7 @@ const OrderSurveyPage = () => {
               <button
                 type="button"
                 onClick={() => navigate("/")}
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-manrope font-semibold text-[14px] text-white hover:opacity-90 transition-all"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
                 style={{
                   background:
                     "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",

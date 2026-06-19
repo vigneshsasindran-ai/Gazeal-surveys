@@ -117,7 +117,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                     key={link.name}
                     href={link.href}
                     onClick={(e) => handleNav(e, link.href)}
-                    className="text-white/60 hover:text-white transition-all duration-300 text-[14px] font-medium relative group font-manrope"
+                    className="text-white/60 hover:text-white transition-all duration-300 text-[14px] font-medium relative group font-outfit"
                     data-testid={`surveys-nav-${link.name
                       .toLowerCase()
                       .replace(/\s+/g, "-")}`}
@@ -133,7 +133,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={handleLearnMore}
-                  className="text-[14px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-manrope"
+                  className="text-[14px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-outfit"
                   data-testid="surveys-nav-learn-more"
                 >
                   Learn More
@@ -141,7 +141,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={handleOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.35)]"
+                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(2,94,186,0.35)]"
                   data-testid="surveys-nav-order-survey"
                 >
                   Order Survey
@@ -217,7 +217,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                     key={link.name}
                     href={link.href}
                     onClick={(e) => handleNav(e, link.href)}
-                    className="block text-white/80 hover:text-white text-xl font-medium py-4 px-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.08] font-manrope"
+                    className="block text-white/80 hover:text-white text-xl font-medium py-4 px-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.08] font-outfit"
                     style={{
                       transitionDelay: `${i * 50}ms`,
                       transform: isMobileMenuOpen
@@ -239,7 +239,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               <button
                 type="button"
                 onClick={handleLearnMore}
-                className="w-full text-center py-4 text-base font-semibold rounded-2xl transition-all duration-300 text-white/85 hover:text-white border border-white/15 hover:border-white/35 font-manrope mb-3"
+                className="w-full text-center py-4 text-base font-semibold rounded-2xl transition-all duration-300 text-white/85 hover:text-white border border-white/15 hover:border-white/35 font-outfit mb-3"
                 data-testid="surveys-mobile-learn-more"
               >
                 Learn More
@@ -247,7 +247,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               <button
                 type="button"
                 onClick={handleOrderSurvey}
-                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(2,94,186,0.4)] font-manrope"
+                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(2,94,186,0.4)] font-outfit"
                 data-testid="surveys-mobile-order-survey"
               >
                 Order Survey

@@ -147,10 +147,10 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
               >
                 <Check className="h-6 w-6 text-[#4FB6FF]" strokeWidth={2.4} />
               </div>
-              <h2 className="text-2xl sm:text-[28px] font-didot italic mb-2 text-white">
+              <h2 className="text-2xl sm:text-[28px] font-archivo font-bold tracking-[-0.025em] mb-2 text-white">
                 Learn more about Gazeal Surveys
               </h2>
-              <p className="text-white/65 font-manrope text-sm sm:text-[15px] max-w-sm mx-auto leading-relaxed">
+              <p className="text-white/65 font-outfit text-sm sm:text-[15px] max-w-sm mx-auto leading-relaxed">
                 Tell us who you are and we&apos;ll get you on a quick call to
                 walk through how Surveys fits your agency.
               </p>
@@ -158,7 +158,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-white/60 mb-2 font-manrope">
+                <label className="block text-sm text-white/60 mb-2 font-outfit">
                   Full name
                 </label>
                 <input
@@ -168,13 +168,13 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, fullName: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-manrope text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="Enter your full name"
                   data-testid="learn-more-input-name"
                 />
               </div>
               <div>
-                <label className="block text-sm text-white/60 mb-2 font-manrope">
+                <label className="block text-sm text-white/60 mb-2 font-outfit">
                   Agency name
                 </label>
                 <input
@@ -184,13 +184,13 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, agency: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-manrope text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="Enter your agency name"
                   data-testid="learn-more-input-agency"
                 />
               </div>
               <div>
-                <label className="block text-sm text-white/60 mb-2 font-manrope">
+                <label className="block text-sm text-white/60 mb-2 font-outfit">
                   Work email
                 </label>
                 <input
@@ -200,7 +200,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-manrope text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="you@agency.co.uk"
                   data-testid="learn-more-input-email"
                 />
@@ -208,7 +208,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full mt-6 px-6 py-3.5 rounded-full font-manrope font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full mt-6 px-6 py-3.5 rounded-full font-outfit font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
                   background:
                     "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
@@ -228,7 +228,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   </>
                 )}
               </button>
-              <p className="text-white/40 text-xs text-center mt-2 font-manrope">
+              <p className="text-white/40 text-xs text-center mt-2 font-outfit">
                 By continuing you agree to Gazeal&apos;s terms of service.
               </p>
             </form>
@@ -248,10 +248,10 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
               >
                 <Check className="h-5 w-5 text-white" strokeWidth={3} />
               </div>
-              <h2 className="text-xl sm:text-2xl font-didot italic mb-1 text-white">
+              <h2 className="text-xl sm:text-2xl font-archivo font-bold tracking-[-0.025em] mb-1 text-white">
                 Book your Gazeal Surveys call
               </h2>
-              <p className="text-white/60 font-manrope text-sm">
+              <p className="text-white/60 font-outfit text-sm">
                 Thanks {formData.fullName.split(" ")[0] || "there"}. Pick a
                 slot that works for you below.
               </p>
@@ -260,7 +260,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
             <div className="mt-4 text-center">
               <button
                 onClick={handleClose}
-                className="text-white/40 hover:text-white/80 text-sm font-manrope transition-colors"
+                className="text-white/40 hover:text-white/80 text-sm font-outfit transition-colors"
                 data-testid="learn-more-done"
               >
                 Close

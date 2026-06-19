@@ -88,7 +88,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
           <div className="border-t border-white/10 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               {/* Links */}
-              <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 font-manrope">
+              <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 font-outfit">
                 <a
                   href="#features"
                   onClick={(e) => handleNav(e, "features")}
@@ -130,7 +130,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={onLearnMore}
-                  className="text-[13px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-manrope"
+                  className="text-[13px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-outfit"
                   data-testid="surveys-footer-learn-more"
                 >
                   Learn More
@@ -138,7 +138,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={onOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-manrope shadow-[0_4px_15px_rgba(2,94,186,0.4)]"
+                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(2,94,186,0.4)]"
                   data-testid="surveys-footer-cta"
                 >
                   Order Survey
@@ -148,7 +148,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
             </div>
 
             {/* Bottom bar */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-white/5 font-manrope">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-white/5 font-outfit">
               <p className="text-white/35 text-sm">
                 © {new Date().getFullYear()} Gazeal Surveys. All rights
                 reserved.
