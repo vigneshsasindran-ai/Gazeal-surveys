@@ -21,9 +21,18 @@ db = client[os.environ['DB_NAME']]
 
 # Import after env is loaded so that resend.api_key is set correctly
 from routes.leads import build_router as build_leads_router  # noqa: E402
+from routes.admin import build_admin_router  # noqa: E402
+from routes.consumer_api import build_consumer_api_router  # noqa: E402
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(
+    title="Gazeal Surveys API",
+    description=(
+        "Public form endpoints + authenticated v1 consumer API for "
+        "integrators (RPSA, CRMs). See /api/v1/guide for the integrator handbook."
+    ),
+    version="1.0.0",
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -71,6 +80,10 @@ async def get_status_checks():
 
 # Include the router in the main app
 api_router.include_router(build_leads_router(db))
+api_router.include_router(build_admin_router(db))
+api_router.include_router(
+    build_consumer_api_router(db, ROOT_DIR.parent / "docs" / "API_GUIDE.md")
+)
 app.include_router(api_router)
 
 app.add_middleware(

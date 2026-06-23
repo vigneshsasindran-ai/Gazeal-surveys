@@ -26,6 +26,8 @@ from fastapi import APIRouter
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from webhooks import fan_out
+
 logger = logging.getLogger(__name__)
 
 resend.api_key = os.environ["RESEND_API_KEY"]
@@ -331,6 +333,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             **lead.model_dump(),
         }
         await db.leads.insert_one(doc)
+        await fan_out(db, "learn_more.created", doc)
         email_id = None
         email_error = None
         try:
@@ -356,11 +359,12 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             **lead.model_dump(),
         }
         await db.leads.insert_one(doc)
+        await fan_out(db, "order_survey.created", doc)
         email_id = None
         email_error = None
         try:
             email_id = await _send_email(
-                subject=f"[Gazeal Surveys] Order Survey — {lead.agency_name}",
+                subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
                 html=_render_order_survey(lead),
             )
         except Exception as exc:
