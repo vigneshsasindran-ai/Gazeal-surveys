@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gazeal Surveys — API Integrator Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050505;
+    --paper: #F7F4EE;
+    --ink: #0B1220;
+    --muted: #4A5260;
+    --hairline: rgba(11,18,32,0.08);
+    --brand: #025eba;
+    --brand-light: #4FB6FF;
+    --code-bg: #0B1220;
+    --code-ink: #E8F0FB;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+                font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+                line-height: 1.6; }
+  ::selection { background: rgba(2,94,186,0.25); }
+
+  .page { max-width: 920px; margin: 0 auto; padding: 0 32px 100px; }
+
+  /* Hero */
+  header.hero {
+    background: #050505;
+    color: #fff;
+    margin: 0 -32px 60px;
+    padding: 56px 32px 64px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(60% 55% at 70% 0%, rgba(2,94,186,0.30) 0%, rgba(2,94,186,0) 60%);
+    pointer-events: none;
+  }
+  header.hero .inner { position: relative; max-width: 920px; margin: 0 auto; }
+  header.hero .eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--brand-light); font-weight: 600; margin-bottom: 12px;
+  }
+  header.hero h1 {
+    font-family: 'Archivo', sans-serif; font-weight: 800;
+    font-size: clamp(32px, 5vw, 48px); line-height: 1.05; letter-spacing: -0.025em;
+    margin: 0 0 14px; max-width: 18ch;
+  }
+  header.hero h1 .accent {
+    background: linear-gradient(135deg, #4FB6FF 0%, #025eba 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header.hero p {
+    color: rgba(255,255,255,0.70); font-size: 16px; max-width: 60ch; margin: 0;
+  }
+  header.hero .meta {
+    margin-top: 22px; display: flex; flex-wrap: wrap; gap: 16px;
+    color: rgba(255,255,255,0.55); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  header.hero .meta strong { color: #fff; font-weight: 600; letter-spacing: 0.08em; }
+
+  /* TOC */
+  nav.toc {
+    background: #fff; border: 1px solid var(--hairline); border-radius: 16px;
+    padding: 22px 26px; margin: -24px 0 56px;
+    box-shadow: 0 1px 0 rgba(11,18,32,0.04);
+  }
+  nav.toc .label {
+    font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--brand);
+    margin-bottom: 12px;
+  }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; column-count: 2; column-gap: 32px; }
+  nav.toc ul ul { column-count: 1; padding-left: 14px; margin-top: 6px; }
+  nav.toc li { padding: 4px 0; break-inside: avoid; }
+  nav.toc a { color: var(--ink); text-decoration: none; font-size: 14px; }
+  nav.toc a:hover { color: var(--brand); }
+  @media (max-width: 720px) { nav.toc ul { column-count: 1; } }
+
+  /* Body content */
+  h2 {
+    font-family: 'Archivo', sans-serif; font-weight: 700; letter-spacing: -0.02em;
+    font-size: 28px; line-height: 1.2; margin: 60px 0 16px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--hairline);
+  }
+  h3 {
+    font-family: 'Archivo', sans-serif; font-weight: 700; letter-spacing: -0.015em;
+    font-size: 20px; line-height: 1.25; margin: 36px 0 10px;
+  }
+  h4 {
+    font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 16px;
+    margin: 26px 0 8px; color: var(--brand);
+  }
+  p { margin: 0 0 14px; color: var(--ink); font-size: 15.5px; }
+  a { color: var(--brand); text-decoration: none; border-bottom: 1px solid rgba(2,94,186,0.25); }
+  a:hover { border-bottom-color: var(--brand); }
+  strong { font-weight: 600; }
+  hr { border: none; height: 1px; background: var(--hairline); margin: 56px 0; }
+  blockquote {
+    margin: 18px 0; padding: 14px 18px; background: rgba(2,94,186,0.06);
+    border-left: 3px solid var(--brand); border-radius: 0 12px 12px 0;
+    color: var(--ink);
+  }
+  blockquote p { margin: 0; font-size: 14.5px; }
+
+  /* Lists */
+  ul, ol { padding-left: 22px; margin: 0 0 18px; }
+  li { margin: 4px 0; font-size: 15.5px; }
+
+  /* Tables */
+  table {
+    border-collapse: collapse; width: 100%; margin: 18px 0 26px;
+    font-size: 14px; background: #fff;
+    border: 1px solid var(--hairline); border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: #F2EFE8; text-align: left; padding: 12px 14px;
+    font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink);
+    border-bottom: 1px solid var(--hairline);
+  }
+  tbody td {
+    padding: 12px 14px; border-bottom: 1px solid var(--hairline);
+    color: var(--ink); vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody code { background: rgba(2,94,186,0.08); color: var(--brand); }
+
+  /* Inline code & code blocks */
+  code {
+    font-family: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px; background: rgba(11,18,32,0.06); color: var(--ink);
+    padding: 2px 6px; border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 18px 20px; border-radius: 12px; overflow-x: auto;
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px; line-height: 1.55; margin: 14px 0 22px;
+    position: relative;
+  }
+  pre::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(79,182,255,0.55), transparent);
+  }
+  pre code { background: none; color: inherit; padding: 0; font-size: 13px; }
+
+  /* Footer */
+  footer.foot {
+    margin-top: 80px; padding: 28px 0; border-top: 1px solid var(--hairline);
+    font-size: 12px; color: var(--muted); display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer.foot strong { color: var(--ink); font-weight: 700; }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    .page { padding: 0 12px 24px; }
+    header.hero { margin: 0 -12px 32px; padding: 32px 12px; background: #fff; color: var(--ink); border-bottom: 1px solid var(--hairline); }
+    header.hero::before { display: none; }
+    header.hero h1, header.hero p, header.hero .meta { color: var(--ink); }
+    header.hero .eyebrow { color: var(--brand); }
+    nav.toc { box-shadow: none; }
+    pre { background: #F7F4EE; color: var(--ink); border: 1px solid var(--hairline); }
+    pre code { color: var(--ink); }
+    a { color: var(--ink); border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <div class="inner">
+    <div class="eyebrow">Gazeal Surveys · Integrator handbook</div>
+    <h1>The API <span class="accent">integrator guide.</span></h1>
+    <p>For surveyor partners (RPSA), CRMs (HubSpot, Salesforce), automation tools and internal dashboards connecting to the Gazeal Surveys lead pipeline.</p>
+    <div class="meta">
+      <span><strong>Base URL</strong> &nbsp; https://survey-pro-10.emergent.host/api</span>
+      <span><strong>Version</strong> &nbsp; v1</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="label">On this page</div>
+  <div class="toc">
+<ul>
+<li><a href="#1-concepts">1. Concepts</a><ul>
+<li><a href="#consumer">Consumer</a></li>
+<li><a href="#lead-types">Lead types</a></li>
+<li><a href="#scopes">Scopes</a></li>
+</ul>
+</li>
+<li><a href="#2-authentication">2. Authentication</a></li>
+<li><a href="#3-two-ways-to-consume-data">3. Two ways to consume data</a><ul>
+<li><a href="#31-webhook-push-real-time">3.1 Webhook push (real-time)</a></li>
+<li><a href="#32-pull-api">3.2 Pull API</a></li>
+</ul>
+</li>
+<li><a href="#4-webhook-ops-for-gazeal-admins">4. Webhook ops — for Gazeal admins</a><ul>
+<li><a href="#41-replay-a-delivery">4.1 Replay a delivery</a></li>
+<li><a href="#42-mint-a-new-consumer">4.2 Mint a new consumer</a></li>
+<li><a href="#43-rotate-a-consumers-key">4.3 Rotate a consumer's key</a></li>
+<li><a href="#44-deactivate-delete">4.4 Deactivate / delete</a></li>
+<li><a href="#45-list-deliveries">4.5 List deliveries</a></li>
+</ul>
+</li>
+<li><a href="#5-connecting-common-platforms">5. Connecting common platforms</a><ul>
+<li><a href="#51-rpsa-or-any-surveyor-partner">5.1 RPSA (or any surveyor partner)</a></li>
+<li><a href="#52-hubspot-crm">5.2 HubSpot CRM</a></li>
+<li><a href="#53-salesforce">5.3 Salesforce</a></li>
+<li><a href="#54-zapier-make-n8n">5.4 Zapier / Make / n8n</a></li>
+<li><a href="#55-internal-dashboard">5.5 Internal dashboard</a></li>
+</ul>
+</li>
+<li><a href="#6-errors">6. Errors</a></li>
+<li><a href="#7-versioning-deprecations">7. Versioning &amp; deprecations</a></li>
+<li><a href="#8-contact">8. Contact</a></li>
+</ul>
+</div>
+
+</nav>
+
+<main>
+<h1 id="gazeal-surveys-api-integrator-guide">Gazeal Surveys API — Integrator Guide</h1>
+<blockquote>
+<p>Last updated: June 2026 · Version 1</p>
+</blockquote>
+<p>This guide is for integrators connecting to Gazeal Surveys: surveyor partners
+(RPSA), CRMs (HubSpot, Salesforce), automation tools (Zapier, Make, n8n) and
+internal dashboards.</p>
+<p>Base URL (production): <code>https://survey-pro-10.emergent.host/api</code></p>
+<hr />
+<h2 id="1-concepts">1. Concepts</h2>
+<h3 id="consumer">Consumer</h3>
+<p>An <strong>API consumer</strong> is anything that talks to our API. Each consumer has a
+unique API key (a bearer token) and an optional webhook URL. Consumers are
+provisioned and managed internally by Gazeal — you do not register yourself.</p>
+<h3 id="lead-types">Lead types</h3>
+<p>We capture two lead types today. They are returned from the API with a
+<code>type</code> discriminator.</p>
+<table>
+<thead>
+<tr>
+<th><code>type</code></th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>order_survey</code></td>
+<td>An agent fills the <strong>Order Survey</strong> form</td>
+</tr>
+<tr>
+<td><code>learn_more</code></td>
+<td>An agent fills the <strong>Learn More</strong> modal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scopes">Scopes</h3>
+<p>Your API key is scoped. Common scopes:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>leads:order:read</code></td>
+<td>Read <code>order_survey</code> leads via the pull API</td>
+</tr>
+<tr>
+<td><code>leads:learn:read</code></td>
+<td>Read <code>learn_more</code> leads via the pull API</td>
+</tr>
+<tr>
+<td><code>leads:*:read</code></td>
+<td>Read every lead type via the pull API</td>
+</tr>
+<tr>
+<td><code>webhook:order_survey</code></td>
+<td>Receive a webhook each time an <code>order_survey</code> is filed</td>
+</tr>
+<tr>
+<td><code>webhook:learn_more</code></td>
+<td>Receive a webhook each time a <code>learn_more</code> is filed</td>
+</tr>
+<tr>
+<td><code>webhook:*</code></td>
+<td>Receive every webhook event</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-authentication">2. Authentication</h2>
+<p>Every authenticated request must carry:</p>
+<div class="highlight"><pre><span></span><code>Authorization: Bearer &lt;YOUR_API_KEY&gt;
+</code></pre></div>
+<p>Tokens start with <code>gzl_live_</code>. If a request omits the header or carries an
+invalid / revoked token you'll get <code>401 Unauthorized</code>. If the token is valid
+but missing the required scope you'll get <code>403 Forbidden</code>.</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://survey-pro-10.emergent.host/api/v1/health<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer gzl_live_XXXXXXXXX&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="3-two-ways-to-consume-data">3. Two ways to consume data</h2>
+<p>You can use one or both. Most integrators do <strong>both</strong>: receive webhooks for
+real-time delivery, fall back to the pull API for replay / audit.</p>
+<h3 id="31-webhook-push-real-time">3.1 Webhook push (real-time)</h3>
+<p>We POST to a URL you supply, the moment a lead is captured.</p>
+<p>Headers we send:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Content-Type</code></td>
+<td>Always <code>application/json</code></td>
+</tr>
+<tr>
+<td><code>X-Gazeal-Event</code></td>
+<td>Event name, e.g. <code>order_survey.created</code></td>
+</tr>
+<tr>
+<td><code>X-Gazeal-Event-Id</code></td>
+<td>Unique event ID, prefixed <code>evt_</code></td>
+</tr>
+<tr>
+<td><code>X-Gazeal-Timestamp</code></td>
+<td>Unix epoch seconds when we signed the request</td>
+</tr>
+<tr>
+<td><code>X-Gazeal-Signature</code></td>
+<td>HMAC-SHA256 signature you must verify (see §3.1.1)</td>
+</tr>
+<tr>
+<td><code>Idempotency-Key</code></td>
+<td>Same as <code>X-Gazeal-Event-Id</code>. Safe to dedupe by this.</td>
+</tr>
+<tr>
+<td><code>User-Agent</code></td>
+<td><code>Gazeal-Surveys-Webhook/1.0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Sample body:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;order_survey.created&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;event_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;evt_9b3d50f1-…&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-06-19T00:58:23.451Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9b3d50f1-…&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;order_survey&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;submitted_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-06-19T00:58:23.451Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;agent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jane Doe&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;agency&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Knight &amp; Co&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;branch&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bristol Clifton&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jane@knight.co.uk&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;phone&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0117 000 0000&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;seller&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sam Patel&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sam@example.com&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;phone&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;address_line_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12 Park Lane&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;postcode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BS8 1AA&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;listing_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.rightmove.co.uk/properties/12345&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;asking_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;£450,000&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;confirmation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="311-verifying-the-signature">3.1.1 Verifying the signature</h4>
+<p>Always verify <code>X-Gazeal-Signature</code> before trusting the body. The signature
+is computed as:</p>
+<div class="highlight"><pre><span></span><code>sha256=&lt;HMAC_SHA256(secret, &quot;&lt;timestamp&gt;.&lt;raw_body&gt;&quot;)&gt;
+</code></pre></div>
+<p>Where:
+- <code>secret</code> is your <code>whsec_…</code> webhook signing secret (provided alongside your
+  API key)
+- <code>&lt;timestamp&gt;</code> is the value of <code>X-Gazeal-Timestamp</code>
+- <code>&lt;raw_body&gt;</code> is the <strong>raw</strong> request body — do not parse and re-stringify</p>
+<p>Python example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">hmac</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">verify</span><span class="p">(</span><span class="n">secret</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">raw_body</span><span class="p">,</span> <span class="n">signature_header</span><span class="p">):</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;sha256=&quot;</span> <span class="o">+</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+        <span class="n">secret</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="n">raw_body</span><span class="p">,</span>
+        <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">hmac</span><span class="o">.</span><span class="n">compare_digest</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">signature_header</span><span class="p">)</span>
+</code></pre></div>
+<p>Node.js example:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">crypto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;crypto&quot;</span><span class="p">);</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">verify</span><span class="p">(</span><span class="nx">secret</span><span class="p">,</span><span class="w"> </span><span class="nx">timestamp</span><span class="p">,</span><span class="w"> </span><span class="nx">rawBody</span><span class="p">,</span><span class="w"> </span><span class="nx">signatureHeader</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sha256=&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">crypto</span>
+<span class="w">    </span><span class="p">.</span><span class="nx">createHmac</span><span class="p">(</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">secret</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">timestamp</span><span class="si">}</span><span class="sb">.</span><span class="si">${</span><span class="nx">rawBody</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s2">&quot;hex&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">crypto</span><span class="p">.</span><span class="nx">timingSafeEqual</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">Buffer</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">expected</span><span class="p">),</span><span class="w"> </span><span class="nx">Buffer</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">signatureHeader</span><span class="p">)</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>If the signature is wrong, respond with HTTP <code>400</code>. If a request is older
+than 5 minutes (replay attack), respond with HTTP <code>400</code>.</p>
+<h4 id="312-retry-policy">3.1.2 Retry policy</h4>
+<p>If your endpoint returns a non-2xx response, we retry up to <strong>3 times</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Attempt</th>
+<th>Time after capture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>immediate</td>
+</tr>
+<tr>
+<td>2</td>
+<td>+ 60 seconds</td>
+</tr>
+<tr>
+<td>3</td>
+<td>+ 5 minutes</td>
+</tr>
+</tbody>
+</table>
+<p>After 3 failures we mark the delivery as <code>failed</code> and alert the Gazeal team
+by email. You can request a manual replay (see §4.1) — there is no auto
+replay beyond the 3rd attempt.</p>
+<p>To indicate success, return any 2xx status code with no body required.
+We treat the request as delivered the moment the connection closes.</p>
+<h4 id="313-idempotency">3.1.3 Idempotency</h4>
+<p>Network blips can cause us to deliver the same event twice. Always dedupe
+on <code>event_id</code> (or the <code>Idempotency-Key</code> header — same value).</p>
+<h3 id="32-pull-api">3.2 Pull API</h3>
+<p>When polling is acceptable, or as a replay channel after a webhook failure:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># List the most recent order_survey leads</span>
+curl<span class="w"> </span><span class="s2">&quot;https://survey-pro-10.emergent.host/api/v1/leads?type=order_survey&amp;limit=20&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer gzl_live_XXXXXXXXX&quot;</span>
+</code></pre></div>
+<p>Response:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w">  </span><span class="p">[</span><span class="w"> </span><span class="cm">/* array of leads, newest first */</span><span class="w"> </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next_cursor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-06-15T09:12:08.001Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>To paginate, pass the previous <code>next_cursor</code> back as <code>cursor=</code>:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;https://.../api/v1/leads?type=order_survey&amp;limit=20&amp;cursor=2026-06-15T09:12:08.001Z&quot;</span>
+</code></pre></div>
+<p>When <code>next_cursor</code> is <code>null</code>, you have the full history.</p>
+<h4 id="filters">Filters</h4>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Example</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>order_survey</code></td>
+<td>Optional — defaults to all allowed types</td>
+</tr>
+<tr>
+<td><code>since</code></td>
+<td><code>2026-06-15T00:00:00Z</code></td>
+<td>Only leads created on/after this time</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td><code>50</code></td>
+<td>Default 50, max 200</td>
+</tr>
+<tr>
+<td><code>cursor</code></td>
+<td><code>2026-06-15T09:12:08.001Z</code></td>
+<td>From the previous page</td>
+</tr>
+</tbody>
+</table>
+<h4 id="fetch-one">Fetch one</h4>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;https://.../api/v1/leads/9b3d50f1-…&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer gzl_live_XXXXXXXXX&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="4-webhook-ops-for-gazeal-admins">4. Webhook ops — for Gazeal admins</h2>
+<p>These endpoints live under <code>/api/v1/admin/...</code> and require the
+<code>ADMIN_TOKEN</code> env var (held by Gazeal only).</p>
+<h3 id="41-replay-a-delivery">4.1 Replay a delivery</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/deliveries/&lt;delivery_id&gt;/replay&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="42-mint-a-new-consumer">4.2 Mint a new consumer</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/consumers&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;name&quot;: &quot;RPSA&quot;,</span>
+<span class="s1">    &quot;scopes&quot;: [&quot;leads:order:read&quot;, &quot;webhook:order_survey&quot;],</span>
+<span class="s1">    &quot;webhook_url&quot;: &quot;https://rpsa.example.com/gazeal/webhook&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<p>Response (only time the <code>api_key</code> / <code>webhook_secret</code> are returned):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;…&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RPSA&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;scopes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;leads:order:read&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;webhook:order_survey&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;webhook_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://rpsa.example.com/gazeal/webhook&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-06-19T…&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;api_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gzl_live_…&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;webhook_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;whsec_…&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="43-rotate-a-consumers-key">4.3 Rotate a consumer's key</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/consumers/&lt;id&gt;/rotate&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>Returns a <strong>new</strong> <code>api_key</code> + <code>webhook_secret</code>. The old ones stop working
+immediately.</p>
+<h3 id="44-deactivate-delete">4.4 Deactivate / delete</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Soft: keep the row, deny new requests</span>
+curl<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/consumers/&lt;id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;active&quot;: false}&#39;</span>
+
+<span class="c1"># Hard: remove the row entirely</span>
+curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/consumers/&lt;id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h3 id="45-list-deliveries">4.5 List deliveries</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;https://.../api/v1/admin/deliveries?status=failed&amp;limit=50&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$ADMIN_TOKEN</span><span class="s2">&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="5-connecting-common-platforms">5. Connecting common platforms</h2>
+<h3 id="51-rpsa-or-any-surveyor-partner">5.1 RPSA (or any surveyor partner)</h3>
+<ol>
+<li>Gazeal mints a consumer with <code>name=RPSA</code>, scopes
+   <code>["leads:order:read", "webhook:order_survey"]</code>, and the supplier's
+   webhook URL.</li>
+<li>Gazeal hands the <code>api_key</code> and <code>webhook_secret</code> over via a secure channel.</li>
+<li>Supplier endpoint:</li>
+<li>Verifies the HMAC signature on every request</li>
+<li>Returns HTTP 200 on accept, parses the <code>data.*</code> block, creates a
+     "Survey to book" record on their side</li>
+<li>Optionally polls <code>GET /api/v1/leads?type=order_survey&amp;since=...</code> once a
+     day for a sanity check</li>
+</ol>
+<h3 id="52-hubspot-crm">5.2 HubSpot CRM</h3>
+<p><strong>Option A — HubSpot Workflows (no code):</strong></p>
+<ol>
+<li>In HubSpot, create a Workflow triggered on a schedule (every 5 minutes).</li>
+<li>Add a "Custom Coded Action" or use HubSpot's API connector to call:
+   <div class="highlight"><pre><span></span><code>GET https://.../api/v1/leads?type=order_survey&amp;since={{previous_run_at}}
+Authorization: Bearer gzl_live_…
+</code></pre></div></li>
+<li>For each lead in the response, create or update a HubSpot Contact (use
+   <code>data.agent.email</code> as the identifier) and a Deal in your "Survey
+   Orders" pipeline.</li>
+</ol>
+<p><strong>Option B — Webhook to HubSpot:</strong></p>
+<p>Subscribe via the consumer's <code>webhook_url</code>. Map our payload to HubSpot's
+Contact + Deal in your receiver. The Contact's email is <code>data.agent.email</code>,
+the Deal name is <code>data.seller.name</code> + <code>data.property.address_line_1</code>.</p>
+<h3 id="53-salesforce">5.3 Salesforce</h3>
+<p>Use Salesforce's "Apex REST" or "Platform Events":</p>
+<ul>
+<li>Subscribe a public-facing Apex REST endpoint as the <code>webhook_url</code></li>
+<li>Verify the HMAC signature</li>
+<li>Insert a Lead or Opportunity record from the payload</li>
+</ul>
+<h3 id="54-zapier-make-n8n">5.4 Zapier / Make / n8n</h3>
+<p>The fastest way to fan out to many destinations:</p>
+<ol>
+<li>In Zapier, create a Zap with <strong>Webhooks by Zapier → Catch Hook</strong>. Copy
+   the URL Zapier gives you.</li>
+<li>Provide that URL to Gazeal as your <code>webhook_url</code>.</li>
+<li>Add as many downstream steps as you need (Airtable row, Slack message,
+   Google Sheet, etc.) — Zapier handles the fan-out and the formatting.</li>
+</ol>
+<p>Zapier doesn't natively verify HMAC. For sensitive payloads, route to a
+small Cloudflare Worker / AWS Lambda first to verify the signature, then
+forward to Zapier.</p>
+<h3 id="55-internal-dashboard">5.5 Internal dashboard</h3>
+<p>If you're building an internal dashboard, mint a consumer with
+<code>["leads:*:read"]</code> and no <code>webhook_url</code>. Poll the pull API on demand.</p>
+<hr />
+<h2 id="6-errors">6. Errors</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>Malformed body / bad query params</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Missing or invalid <code>Authorization</code> header</td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Token is valid but lacks the required scope</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Resource not found</td>
+</tr>
+<tr>
+<td><code>429</code></td>
+<td>Too many requests (none today, but reserve handling)</td>
+</tr>
+<tr>
+<td><code>5xx</code></td>
+<td>Our server problem — retry with exponential backoff</td>
+</tr>
+</tbody>
+</table>
+<p>Every error response is a JSON object: <code>{"detail": "&lt;reason&gt;"}</code>.</p>
+<hr />
+<h2 id="7-versioning-deprecations">7. Versioning &amp; deprecations</h2>
+<p>The API is versioned via the URL path (<code>/api/v1/...</code>). Breaking changes
+will ship under a new path (<code>/api/v2/...</code>). Within a version we may add
+new optional fields to responses — clients must tolerate unknown fields.</p>
+<p>Deprecation notice: we will announce any v1 deprecation at least 6 months
+before sunset, by email to the contact on file for each consumer.</p>
+<hr />
+<h2 id="8-contact">8. Contact</h2>
+<ul>
+<li>Operational issues, webhook failures, key rotations:
+  <strong>vignesh.sasindran@gazeal.co.uk</strong></li>
+<li>API guide live URL: <code>GET /api/v1/guide</code></li>
+<li>OpenAPI / Swagger UI: <code>https://survey-pro-10.emergent.host/docs</code></li>
+</ul>
+</main>
+
+<footer class="foot">
+  <div>© Gazeal Surveys · Integrator guide</div>
+  <div>Contact <strong>vignesh.sasindran@gazeal.co.uk</strong> for keys and support</div>
+</footer>
+
+</div>
+</body>
+</html>

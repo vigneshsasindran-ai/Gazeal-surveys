@@ -2,6 +2,7 @@
 
   GET /api/v1/health          – unauthenticated health probe
   GET /api/v1/guide           – integrator markdown guide
+  GET /api/v1/guide.html      – branded HTML version of the guide
   GET /api/v1/leads           – list leads (scoped per consumer)
   GET /api/v1/leads/{id}      – fetch one (scoped per consumer)
 """
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from consumers import build_require_consumer, has_scope, reshape_lead
@@ -48,6 +49,16 @@ def build_consumer_api_router(
         if not guide_path.exists():
             raise HTTPException(404, "Integrator guide not found")
         return guide_path.read_text(encoding="utf-8")
+
+    @router.get("/guide.html", response_class=HTMLResponse)
+    async def guide_html():
+        html_path = guide_path.with_suffix(".html")
+        if not html_path.exists():
+            raise HTTPException(
+                404,
+                "Branded HTML guide not built. Run: python3 docs/build_html_guide.py",
+            )
+        return html_path.read_text(encoding="utf-8")
 
     @router.get("/leads")
     async def list_leads(
