@@ -196,6 +196,7 @@
 <li><a href="#1-concepts">1. Concepts</a><ul>
 <li><a href="#consumer">Consumer</a></li>
 <li><a href="#lead-types">Lead types</a></li>
+<li><a href="#side-effects-of-an-order-survey-submission">Side effects of an Order Survey submission</a></li>
 <li><a href="#scopes">Scopes</a></li>
 </ul>
 </li>
@@ -224,6 +225,7 @@
 <li><a href="#6-errors">6. Errors</a></li>
 <li><a href="#7-versioning-deprecations">7. Versioning &amp; deprecations</a></li>
 <li><a href="#8-contact">8. Contact</a></li>
+<li><a href="#8-contact_1">8. Contact</a></li>
 </ul>
 </div>
 
@@ -265,6 +267,21 @@ provisioned and managed internally by Gazeal — you do not register yourself.</
 </tr>
 </tbody>
 </table>
+<h3 id="side-effects-of-an-order-survey-submission">Side effects of an Order Survey submission</h3>
+<p>Every time an agent submits an Order Survey, four things happen, in order:</p>
+<ol>
+<li>The submission is persisted to MongoDB (audit).</li>
+<li>An internal notification email is sent to the Gazeal ops inbox.</li>
+<li><strong>The seller is automatically emailed</strong> the Seller Survey Agreement
+   link (via PandaDoc), branded by Gazeal Surveys, including the agent's
+   name and the property address.</li>
+<li>The webhook fan-out fires (see §3.1) to every active consumer with
+   the <code>webhook:order_survey</code> scope.</li>
+</ol>
+<p>If you are receiving webhooks for <code>order_survey.created</code>, treat them as
+"agent has submitted the order <strong>and</strong> the seller has already received
+their agreement to sign". Your downstream workflow should pick up after
+that point.</p>
 <h3 id="scopes">Scopes</h3>
 <p>Your API key is scoped. Common scopes:</p>
 <table>
@@ -381,7 +398,7 @@ real-time delivery, fall back to the pull API for replay / audit.</p>
 <span class="w">    </span><span class="nt">&quot;property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;address_line_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12 Park Lane&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;postcode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BS8 1AA&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;listing_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.rightmove.co.uk/properties/12345&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;listing_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.rightmove.co.uk/properties/12345 — or any free-text detail the agent supplied&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;asking_price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;£450,000&quot;</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;confirmation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
@@ -658,6 +675,18 @@ new optional fields to responses — clients must tolerate unknown fields.</p>
 before sunset, by email to the contact on file for each consumer.</p>
 <hr />
 <h2 id="8-contact">8. Contact</h2>
+<ul>
+<li>Operational issues, webhook failures, key rotations:
+  <strong>vignesh.sasindran@gazeal.co.uk</strong></li>
+<li>API guide live URL: <code>GET /api/v1/guide</code></li>
+<li>OpenAPI / Swagger UI: <code>https://survey-pro-10.emergent.host/docs</code>
+Within a version we may add
+new optional fields to responses — clients must tolerate unknown fields.</li>
+</ul>
+<p>Deprecation notice: we will announce any v1 deprecation at least 6 months
+before sunset, by email to the contact on file for each consumer.</p>
+<hr />
+<h2 id="8-contact_1">8. Contact</h2>
 <ul>
 <li>Operational issues, webhook failures, key rotations:
   <strong>vignesh.sasindran@gazeal.co.uk</strong></li>

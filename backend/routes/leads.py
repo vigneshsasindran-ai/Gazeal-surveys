@@ -19,7 +19,7 @@ import logging
 import os
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
+from typing import List, Optional
 
 import resend
 from fastapi import APIRouter
@@ -60,7 +60,7 @@ class OrderSurveyLead(BaseModel):
     # Property
     address_line_1: str = Field(..., min_length=1, max_length=200)
     postcode: str = Field(..., min_length=1, max_length=20)
-    listing_url: str = Field(..., min_length=1, max_length=400)
+    listing_url: Optional[str] = Field(default="", max_length=600)
     asking_price: Optional[str] = ""
     confirmation: bool = False
 
@@ -234,6 +234,222 @@ def _render_learn_more(lead: LearnMoreLead) -> str:
     )
 
 
+def _render_seller_invite(lead: OrderSurveyLead) -> str:
+    """Branded, application-style email to the seller with the agreement link.
+
+    Layout principles: clear sender, factual subject line, a single primary
+    action, an unmistakable explanation of why the email arrived. No icons,
+    no decorative emoji, no marketing fluff.
+    """
+    agreement_url = (
+        "https://eform.pandadoc.com/?eform=869a7851-dfff-46b0-9d1e-f643bba5905a"
+    )
+    address = lead.address_line_1
+    if lead.postcode:
+        address = f"{address}, {lead.postcode}"
+
+    return f"""\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign your Seller Survey Agreement</title>
+</head>
+<body style="margin:0;padding:0;background:#F2EFE8;
+             font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+             color:#0B1220;line-height:1.6;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+         width="100%" style="background:#F2EFE8;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+             width="600" style="max-width:600px;background:#ffffff;
+             border-radius:14px;overflow:hidden;
+             box-shadow:0 1px 0 rgba(11,18,32,0.04);">
+
+        <!-- App-style header bar -->
+        <tr>
+          <td style="background:#025eba;padding:18px 28px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td valign="middle">
+                  <img src="{_LOGO_URL}" alt="Gazeal Surveys" width="140"
+                       style="display:block;border:0;outline:none;
+                              text-decoration:none;height:auto;">
+                </td>
+                <td align="right" valign="middle"
+                    style="font-size:11px;letter-spacing:2px;
+                           text-transform:uppercase;color:rgba(255,255,255,0.85);
+                           font-weight:600;">
+                  Seller agreement
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Greeting -->
+        <tr>
+          <td style="padding:32px 36px 4px;">
+            <p style="margin:0 0 6px;font-size:13px;color:#6B7280;
+                      letter-spacing:1.6px;text-transform:uppercase;
+                      font-weight:600;">For your action</p>
+            <h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;
+                       font-weight:700;letter-spacing:-0.3px;color:#0B1220;
+                       max-width:24ch;">
+              Sign your Seller Survey Agreement
+            </h1>
+            <p style="margin:0;font-size:15px;color:#0B1220;">
+              Hi {lead.seller_name.split(' ')[0] if lead.seller_name else 'there'},
+            </p>
+          </td>
+        </tr>
+
+        <!-- Why this email -->
+        <tr>
+          <td style="padding:18px 36px 4px;font-size:15px;color:#0B1220;">
+            <p style="margin:0 0 12px;">
+              You are receiving this email because
+              <strong>{lead.agent_name}</strong> at
+              <strong>{lead.agency_name}</strong> has ordered a seller
+              survey on your property
+              <strong>{address}</strong> through Gazeal.
+            </p>
+            <p style="margin:0;">
+              To get started, the next step is for you to review and sign
+              your Seller Survey Agreement. This is the document that
+              authorises RPSA to arrange your survey and confirms the terms,
+              including the fact that you pay nothing now and only when your
+              sale completes.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Order panel — calm, application-style -->
+        <tr>
+          <td style="padding:22px 36px 6px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                   style="background:#F7F4EE;border:1px solid rgba(11,18,32,0.08);
+                          border-radius:12px;">
+              <tr>
+                <td style="padding:18px 20px;">
+                  <p style="margin:0 0 10px;font-size:11px;color:#6B7280;
+                            letter-spacing:1.6px;text-transform:uppercase;
+                            font-weight:600;">Order details</p>
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td style="padding:4px 0;font-size:12px;color:#6B7280;
+                                 width:120px;letter-spacing:0.5px;">Agent</td>
+                      <td style="padding:4px 0;font-size:14px;color:#0B1220;">
+                        {lead.agent_name} &middot; {lead.agency_name}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:4px 0;font-size:12px;color:#6B7280;
+                                 width:120px;letter-spacing:0.5px;">Property</td>
+                      <td style="padding:4px 0;font-size:14px;color:#0B1220;">
+                        {address}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CTA -->
+        <tr>
+          <td style="padding:24px 36px 8px;">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background:#025eba;border-radius:8px;">
+                  <a href="{agreement_url}"
+                     style="display:inline-block;padding:14px 26px;
+                            font-size:15px;font-weight:600;color:#ffffff;
+                            text-decoration:none;letter-spacing:0.2px;">
+                    Review &amp; sign agreement
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:14px 0 0;font-size:12px;color:#6B7280;">
+              If the button does not work, paste this link into your browser:<br>
+              <span style="font-size:12px;color:#025eba;word-break:break-all;">
+                {agreement_url}
+              </span>
+            </p>
+          </td>
+        </tr>
+
+        <!-- What happens next -->
+        <tr>
+          <td style="padding:24px 36px 4px;">
+            <p style="margin:0 0 10px;font-size:11px;color:#6B7280;
+                      letter-spacing:1.6px;text-transform:uppercase;
+                      font-weight:600;">What happens after you sign</p>
+            <ol style="margin:0;padding-left:18px;font-size:14px;color:#0B1220;
+                       line-height:1.65;">
+              <li style="margin-bottom:6px;">
+                RPSA receives your signed agreement and contacts you
+                directly to arrange the survey visit.
+              </li>
+              <li style="margin-bottom:6px;">
+                An accredited surveyor visits the property and completes
+                the survey.
+              </li>
+              <li>
+                The completed report is shared with you and your agent,
+                ready to share with serious buyers.
+              </li>
+            </ol>
+          </td>
+        </tr>
+
+        <!-- Reassurance -->
+        <tr>
+          <td style="padding:26px 36px 6px;">
+            <p style="margin:0;font-size:13px;color:#4A5260;
+                      background:rgba(2,94,186,0.05);
+                      border-left:3px solid #025eba;
+                      padding:12px 14px;border-radius:0 8px 8px 0;">
+              You pay nothing on signing. The survey fee is only settled when
+              your property sale completes, and if the sale falls through
+              unreasonably there is no cost to you at all.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:24px 36px 28px;background:#F7F4EE;
+                     border-top:1px solid rgba(11,18,32,0.08);">
+            <p style="margin:0 0 6px;font-size:12px;color:#0B1220;
+                      font-weight:600;">
+              Gazeal Surveys
+            </p>
+            <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.6;">
+              Survey provided by RPSA (Residential Property Surveyors
+              Association) in partnership with Gazeal.<br>
+              Questions? Reply to this email and we will be in touch.
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin:18px 0 0;font-size:11px;color:#6B7280;
+                font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                Helvetica,Arial,sans-serif;">
+        This email was sent because your agent ordered a Gazeal seller
+        survey on the property listed above.
+      </p>
+    </td></tr>
+  </table>
+</body>
+</html>
+"""
+
+
 def _render_order_survey(lead: OrderSurveyLead) -> str:
     contact_pieces = [
         f"{lead.agent_name}",
@@ -303,10 +519,10 @@ def _render_order_survey(lead: OrderSurveyLead) -> str:
     )
 
 
-async def _send_email(subject: str, html: str) -> Optional[str]:
+async def _send_email(subject: str, html: str, to: Optional[List[str]] = None) -> Optional[str]:
     params = {
         "from": SENDER_EMAIL,
-        "to": [NOTIFY_EMAIL],
+        "to": to if to else [NOTIFY_EMAIL],
         "subject": subject,
         "html": html,
     }
@@ -360,6 +576,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         }
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
+
         email_id = None
         email_error = None
         try:
@@ -369,10 +586,25 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             )
         except Exception as exc:
             email_error = str(exc)
+
+        # Second email: send the seller their agreement link
+        seller_email_id = None
+        seller_email_error = None
+        try:
+            seller_email_id = await _send_email(
+                subject="Action required: sign your Seller Survey Agreement",
+                html=_render_seller_invite(lead),
+                to=[lead.seller_email],
+            )
+        except Exception as exc:
+            seller_email_error = str(exc)
+
         return {
             "id": doc["id"],
             "email_id": email_id,
             "email_error": email_error,
+            "seller_email_id": seller_email_id,
+            "seller_email_error": seller_email_error,
             "status": "ok",
         }
 

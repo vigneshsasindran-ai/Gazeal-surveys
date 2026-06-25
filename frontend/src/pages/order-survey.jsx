@@ -96,14 +96,6 @@ const OrderSurveyPage = () => {
     if (step === 3) {
       if (!formData.addressLine1.trim()) e.addressLine1 = "Required";
       if (!formData.postcode.trim()) e.postcode = "Required";
-      if (!formData.listingUrl.trim())
-        e.listingUrl = "Required";
-      else if (
-        !/^https?:\/\/(www\.)?(rightmove|zoopla)\.co\.uk\//i.test(
-          formData.listingUrl.trim()
-        )
-      )
-        e.listingUrl = "Paste a Rightmove or Zoopla URL";
     }
     if (step === 4) {
       if (!formData.confirmation) e.confirmation = "Please confirm to continue";
@@ -520,20 +512,21 @@ const OrderSurveyPage = () => {
                     </div>
                     <div>
                       <label className={labelCls}>
-                        Property listing link (Rightmove or Zoopla) *
+                        Property web link or details to help us identify the property
                       </label>
-                      <input
-                        type="url"
-                        className={inputCls}
+                      <p className="font-outfit text-[12px] text-white/45 mt-1.5 mb-2">
+                        Optional, but really helps the surveyor. A Rightmove
+                        or Zoopla link is ideal; a description, what3words or
+                        any other detail works too.
+                      </p>
+                      <textarea
+                        rows={3}
+                        className={`${inputCls} resize-none`}
                         value={formData.listingUrl}
                         onChange={setField("listingUrl")}
-                        placeholder="https://www.rightmove.co.uk/..."
+                        placeholder="e.g. https://www.rightmove.co.uk/... or 'detached corner plot with the blue door, opposite the church'"
                         data-testid="order-input-listing-url"
                       />
-                      <p className="font-outfit text-[12px] text-white/45 mt-1.5">
-                        Paste the full link to the live listing so the
-                        surveyor has the detail they need.
-                      </p>
                       {errors.listingUrl && (
                         <p className={errorCls}>{errors.listingUrl}</p>
                       )}
@@ -567,7 +560,7 @@ const OrderSurveyPage = () => {
                             "Property",
                             `${formData.addressLine1 || "—"}${formData.postcode ? `, ${formData.postcode}` : ""}`,
                           ],
-                          ["Listing", formData.listingUrl || "—"],
+                          ["Property details", formData.listingUrl || "—"],
                           ["Asking price", formData.askingPrice || "—"],
                         ].map(([k, v]) => (
                           <div

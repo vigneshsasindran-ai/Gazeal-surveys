@@ -26,6 +26,23 @@ We capture two lead types today. They are returned from the API with a
 | `order_survey` | An agent fills the **Order Survey** form     |
 | `learn_more`   | An agent fills the **Learn More** modal      |
 
+### Side effects of an Order Survey submission
+
+Every time an agent submits an Order Survey, four things happen, in order:
+
+1. The submission is persisted to MongoDB (audit).
+2. An internal notification email is sent to the Gazeal ops inbox.
+3. **The seller is automatically emailed** the Seller Survey Agreement
+   link (via PandaDoc), branded by Gazeal Surveys, including the agent's
+   name and the property address.
+4. The webhook fan-out fires (see §3.1) to every active consumer with
+   the `webhook:order_survey` scope.
+
+If you are receiving webhooks for `order_survey.created`, treat them as
+"agent has submitted the order **and** the seller has already received
+their agreement to sign". Your downstream workflow should pick up after
+that point.
+
 ### Scopes
 Your API key is scoped. Common scopes:
 
@@ -106,7 +123,7 @@ Sample body:
     "property": {
       "address_line_1": "12 Park Lane",
       "postcode": "BS8 1AA",
-      "listing_url": "https://www.rightmove.co.uk/properties/12345",
+      "listing_url": "https://www.rightmove.co.uk/properties/12345 — or any free-text detail the agent supplied",
       "asking_price": "£450,000"
     },
     "confirmation": true
@@ -385,6 +402,20 @@ Every error response is a JSON object: `{"detail": "<reason>"}`.
 
 The API is versioned via the URL path (`/api/v1/...`). Breaking changes
 will ship under a new path (`/api/v2/...`). Within a version we may add
+new optional fields to responses — clients must tolerate unknown fields.
+
+Deprecation notice: we will announce any v1 deprecation at least 6 months
+before sunset, by email to the contact on file for each consumer.
+
+---
+
+## 8. Contact
+
+- Operational issues, webhook failures, key rotations:
+  **vignesh.sasindran@gazeal.co.uk**
+- API guide live URL: `GET /api/v1/guide`
+- OpenAPI / Swagger UI: `https://survey-pro-10.emergent.host/docs`
+Within a version we may add
 new optional fields to responses — clients must tolerate unknown fields.
 
 Deprecation notice: we will announce any v1 deprecation at least 6 months
