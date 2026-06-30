@@ -1,0 +1,37 @@
+{
+  "summary": "Full E2E + edge-case testing of the new Gazeal Surveys hosted clickwrap Seller Survey Agreement (backend agreement APIs + frontend /agreement/:token page). 10/10 pytest backend tests pass; 4/4 Playwright frontend flows (pending → accept with persistence, declined, invalid token, mobile responsive) pass.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/leads/order-survey", "issue": "Response does not surface agreement_token or agreement_url. Test had to fall back to looking up the token in MongoDB by lead_id. Consider returning agreement_token in the response for easier client / integration verification (it's already in the email but not in the JSON)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_agreements.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Optional, nice-to-have) Include 'agreement_token' (and/or 'agreement_url') in the JSON response of POST /api/leads/order-survey so downstream integrations / regression tests can resolve the token without database access."
+  ],
+  "critical_code_review_comments": [
+    "agreements.py public_context returns seller.first_name='there' when seller_name is empty — acceptable fallback but the public_context also exposes seller.full_name (full name) on the public endpoint; if privacy is a concern for the seller's full name on the unauthenticated GET, consider removing full_name from the public payload.",
+    "agreement.jsx silently swallows non-OK accept/decline responses in `post()` (catch with no error class info). If accept returns 409 (declined → accept transition) the user sees only a generic 'try again' toast. Consider distinguishing 409 'state conflict' from network errors.",
+    "agreement.jsx scroll-unlock threshold (scrollHeight - 28) is permissive; users on very tall viewports may already be unlocked on first paint because clientHeight ≈ scrollHeight. Consider requiring an explicit scroll event before unlocking, or use a larger 'must reach bottom' gate.",
+    "leads.py mints the agreement_token but does not surface it in the API response — drift between what backend does and what client / tests can verify."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_agreements.py (new)"
+  ],
+  "success_rate": {"backend": "100% (10/10)", "frontend": "100% (4/4 flows)"},
+  "test_credentials": "No auth required. Sample read-only token 51Sk9WbNm5w. Tests dynamically create fresh tokens via POST /api/leads/order-survey then resolve via Mongo lookup (lead_id → agreements collection).",
+  "seed_data_creation": "Test suite creates TEST_-prefixed leads & agreements per run (uuid-suffixed). Two extra UI tokens were created during this run: 5cnWqgHGtOE (now accepted) and 60xy39w5Q9k (declined). They can be safely left as test artefacts or cleaned from Mongo `agreements`/`leads` collections.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests live at /app/backend/tests/test_agreements.py. They require pymongo because the order-survey response does NOT expose the agreement token; tests pull it from Mongo by lead_id. If the API is later changed to return agreement_token in the response, swap the Mongo lookup for the JSON field. Idempotency contract verified: accept→accept = 200 {already_accepted}, decline→decline = 200 {already_declined}, accept→decline = 409, decline→accept = 409, GET unknown = 404, accept/decline on unknown = 404.",
+  "rca of the issue": "N/A — no defects found. The clickwrap feature is functioning as specified: token issuance, 15-clause render, scroll-gated Agree, accept → IP/UA/timestamp persisted, banner shown, page remains live across reloads (per Msg 358 requirement)."
+}
