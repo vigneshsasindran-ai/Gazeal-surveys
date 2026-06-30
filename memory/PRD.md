@@ -96,6 +96,11 @@ Production requirements added during the build:
   `IntersectionObserver` sentinel after the last clause, with a sticky
   bottom action bar showing the scroll hint until the seller reaches the
   end of the terms.
+- **"Footer overlaps the clauses on scroll"**: removed the landing-page
+  `SurveysFooterReveal` (a 600px fixed scroll-reveal overlay) from the
+  agreement page; replaced it with a compact static `AgreementFooter`
+  (logo + Main Site / Elite / email links + copyright) so the clauses
+  remain visible at every scroll position.
 
 ## Backlog
 ### P1
