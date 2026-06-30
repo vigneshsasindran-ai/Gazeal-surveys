@@ -79,10 +79,23 @@ Production requirements added during the build:
   for downstream integrations.
 
 ## Tested
-- Backend: 10/10 pytest (`/app/backend/tests/test_agreements.py`).
-- Frontend: 4/4 Playwright flows (pending→accept persisted reload,
-  declined, invalid token 404 view, mobile responsive).
+- Backend: 14/14 pytest (`/app/backend/tests/test_agreements.py`).
+- Frontend: All Playwright flows pass (pending→scroll-unlock→accept persisted, decline persisted, invalid token 404 view, mobile responsive).
 - Brand visuals verified via screenshot.
+
+## Bug fixes (2026-06)
+- **"Agreement not found"** on production email link: backend now derives the
+  agreement URL from the order request's `Origin` header (falling back to
+  `Referer` host, then `FRONTEND_BASE_URL` env). The resolved
+  `agreement_url` is persisted on the agreement document so the email
+  link always matches whichever domain the agent submitted from
+  (preview / emergent.host / `survey.gazeal.co.uk`).
+- **"Text rendering inside a modal behind the scroll screens"**: removed
+  the nested `max-h-[520px] overflow-y-auto` clause box. Clauses now flow
+  inline with the page scroll. Agree is unlocked by an
+  `IntersectionObserver` sentinel after the last clause, with a sticky
+  bottom action bar showing the scroll hint until the seller reaches the
+  end of the terms.
 
 ## Backlog
 ### P1
