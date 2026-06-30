@@ -25,7 +25,7 @@ const scrollToId = (id) => {
 
 const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
   <div
-    className={`pointer-events-none select-none absolute flex items-center gap-1.5 sm:gap-2.5 rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-1 ring-black/5 px-2 sm:px-3 lg:px-3.5 py-1.5 sm:py-2 lg:py-2.5 ${floatClass} ${className}`}
+    className={`pointer-events-none select-none absolute flex items-center gap-1 sm:gap-1.5 lg:gap-2 rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-1 ring-black/5 px-2 sm:px-3 lg:px-3.5 py-1.5 sm:py-2 lg:py-2.5 ${floatClass} ${className}`}
     data-testid={testid}
   >
     <BadgeCheck
