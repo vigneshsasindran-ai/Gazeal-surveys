@@ -1,0 +1,33 @@
+{
+  "summary": "Bug-fix retest of Gazeal Surveys seller agreement clickwrap (/agreement/:token). BUG 1 (agreement_url derived from Origin/Referer with FRONTEND_BASE_URL fallback, agreement_token + agreement_url surfaced in POST /api/leads/order-survey response, agreement_url persisted in Mongo) and BUG 2 (no nested max-h-[520px] overflow scroll box, clauses flow inline with page, IntersectionObserver sentinel unlocks Agree on window scroll, sticky bottom action bar hidden after accept/decline) BOTH FIXED AND VERIFIED. 14/14 pytest backend tests pass; all Playwright UI flows pass (pending → scroll-unlock → accept → reload persistence; decline → reload persistence; invalid token shows 'Agreement not found').",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_agreements.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "leads.py builds agreement_url from request Origin/Referer cleanly with a sensible env fallback — code is correct. One subtle behaviour to be aware of: if a future proxy strips Origin but injects an unexpected Referer (e.g., from cross-origin navigation), the email link will use that referer's host. In practice browsers send Origin for POST/JSON so this is fine, but worth a note in the email-link integration runbook.",
+    "agreements.py /accept fan-out now uses doc.get('agreement_url') with fallback — good. Old documents (pre-fix) without 'agreement_url' will still fall back to FRONTEND_BASE_URL, so no data migration required.",
+    "agreement.jsx IntersectionObserver gating is robust on tall pages (sentinel sits after the last clause). 409 path now surfaces a clear message via data-testid='agreement-error'. The post() catch still swallows the underlying error class for non-409 failures, which is acceptable for user UX but consider logging to console for debuggability.",
+    "Reused FRONTEND_BASE_URL fallback in two places (leads.py line ~595 and agreements.py line ~179) — fine as is, but could be centralised into a small helper for DRY if more endpoints start needing the public base URL."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_agreements.py (added: 1) agreement_token + agreement_url surfaced in response; 2) agreement_url persisted in Mongo; 3) Origin header derives agreement_url; 4) Referer fallback; 5) FRONTEND_BASE_URL fallback when no Origin/Referer)"
+  ],
+  "success_rate": {"backend": "100% (14/14)", "frontend": "100% (all flows: pending unlock, accept+persist, decline+persist, invalid token)"},
+  "test_credentials": "No auth required. Tests dynamically mint tokens via POST /api/leads/order-survey (now returns agreement_token + agreement_url in the response — no Mongo lookup needed). Sample read-only token: 51Sk9WbNm5w. UI test artefacts left this run: NTX_jV6Mrqo (accepted), OOBaYTROhI8 (declined).",
+  "seed_data_creation": "Suite creates TEST_-prefixed leads + agreements per run (uuid-suffixed). Two UI-test tokens created during this run remain in Mongo: NTX_jV6Mrqo (accepted), OOBaYTROhI8 (declined). Safe to leave or purge from agreements/leads collections.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests at /app/backend/tests/test_agreements.py — 14 tests, all green. TestAgreementUrlDerivation hits localhost:8001 directly to bypass cloudflare/ingress header rewriting (per user note). UI flow now uses IntersectionObserver on data-testid='agreement-sentinel' (the previous nested 'agreement-scroll' box has been fully removed). To enable Agree: window.scrollTo(0, document.body.scrollHeight) and wait ~500–900ms for the observer. The sticky action bar is a position:fixed div at bottom:0 with data-testid='agreement-accept' / 'agreement-decline'; it is removed from the DOM after status transitions to accepted or declined.",
+  "rca of the issue": "Both reported user-facing bugs are conclusively fixed. BUG 1 ('Agreement not found' on the email link): root cause was that the agreement_url was minted off backend's FRONTEND_BASE_URL env which pointed to the preview domain, so when the seller's email arrived with that link but the agreement document had been written under the user's production host (survey.gazeal.co.uk), the GET resolved against the wrong host context. Fix derives base_url from the request that placed the order (Origin → Referer host → env fallback) and persists the resulting agreement_url on the agreements doc — verified via the new TestAgreementUrlDerivation tests on localhost:8001 (Origin: https://survey.gazeal.co.uk → agreement_url starts with https://survey.gazeal.co.uk/agreement/<token>; missing headers → falls back to FRONTEND_BASE_URL). Also verified the freshly minted token is immediately retrievable via GET /api/agreements/<token> (no 'not found' race). BUG 2 ('text rendering inside a modal behind the scroll screens'): root cause was the clauses container had max-h-[520px] + overflow-y-auto, creating a nested scroll viewport that looked like a hidden modal. Fix removes the nested scroll (DOM confirmed: zero elements with max-h-[520px] overflow-y-auto on the page) — clauses now flow inline; an IntersectionObserver on a sentinel after clause #15 gates the Agree button on real window scroll-to-bottom; sticky fixed action bar at viewport bottom; hidden once accepted/declined."
+}

@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 import resend
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -565,7 +565,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         }
 
     @router.post("/order-survey")
-    async def submit_order_survey(lead: OrderSurveyLead):
+    async def submit_order_survey(lead: OrderSurveyLead, request: Request):
         doc = {
             "id": str(uuid.uuid4()),
             "kind": "order_survey",
@@ -578,12 +578,26 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # Mint a unique agreement token + persist the agreement record so the
         # seller can accept the terms via a branded, permanent link.
         agreement_token = secrets.token_urlsafe(8)
-        agreement_url = (
-            f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{agreement_token}"
-        )
+        # Derive the public base URL from the request that placed the order
+        # (Origin / Referer) so the email link always matches the domain the
+        # agent used — whether that's the preview URL, the emergent.host
+        # deployment, or the custom survey.gazeal.co.uk domain. Falls back to
+        # the configured FRONTEND_BASE_URL env if neither header is present.
+        origin = request.headers.get("origin") or ""
+        if not origin:
+            referer = request.headers.get("referer") or ""
+            if referer:
+                # Strip path from referer → scheme://host
+                from urllib.parse import urlparse
+                p = urlparse(referer)
+                if p.scheme and p.netloc:
+                    origin = f"{p.scheme}://{p.netloc}"
+        base_url = origin or os.environ.get("FRONTEND_BASE_URL", "")
+        agreement_url = f"{base_url.rstrip('/')}/agreement/{agreement_token}"
         await db.agreements.insert_one(
             {
                 "token": agreement_token,
+                "agreement_url": agreement_url,
                 "lead_id": doc["id"],
                 "status": "pending",
                 "created_at": doc["created_at"],

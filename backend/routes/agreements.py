@@ -176,7 +176,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "address_line_1": doc.get("address_line_1"),
             "postcode": doc.get("postcode"),
             "agreement_token": token,
-            "agreement_url": f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
+            "agreement_url": doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
             "accepted_at": now,
         }
         await fan_out(db, "agreement.signed", fanout_doc)

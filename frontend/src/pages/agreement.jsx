@@ -9,6 +9,11 @@ import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
  * design language as the rest of the Surveys site. Reuses the existing
  * header & scroll-revealing footer. Persistent URL: once accepted, the
  * page stays live and shows the recorded acceptance state forever.
+ *
+ * Clauses flow inline with the page scroll (no nested scroll box). The
+ * Agree button unlocks via IntersectionObserver on a sentinel placed
+ * after the final clause — i.e. the seller must scroll to the end of the
+ * terms before they can accept.
  */
 
 const CLAUSES = [
@@ -36,7 +41,7 @@ const AgreementPage = () => {
   const [unlocked, setUnlocked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [actionErr, setActionErr] = useState("");
-  const scrollRef = useRef(null);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}`)
@@ -45,10 +50,24 @@ const AgreementPage = () => {
       .catch(() => setLoadErr("We couldn't find this agreement."));
   }, [token]);
 
-  const onScroll = (e) => {
-    const el = e.target;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 28) setUnlocked(true);
-  };
+  // Unlock Agree only when the sentinel (placed after the last clause)
+  // scrolls into view in the main window — i.e. the seller has read to
+  // the bottom of the terms.
+  useEffect(() => {
+    if (!data || data.status !== "pending") return;
+    const node = sentinelRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setUnlocked(true);
+        });
+      },
+      { rootMargin: "0px 0px -80px 0px", threshold: 0.01 }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [data]);
 
   const post = async (action) => {
     setBusy(true);
@@ -58,9 +77,19 @@ const AgreementPage = () => {
         `${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/${action}`,
         { method: "POST" }
       );
-      if (!res.ok) throw new Error(await res.text());
-      const ctx = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}`).then((r) => r.json());
+      if (!res.ok) {
+        if (res.status === 409) {
+          setActionErr("This agreement has already been recorded with a different decision.");
+        } else {
+          throw new Error(await res.text());
+        }
+      }
+      const ctx = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}`
+      ).then((r) => r.json());
       setData(ctx);
+      // Scroll the user back to the top so they see the new banner state.
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setActionErr("We couldn't record that. Please try again in a moment.");
     } finally {
@@ -93,6 +122,7 @@ const AgreementPage = () => {
   const accepted = data.status === "accepted";
   const declined = data.status === "declined";
   const stampDate = accepted ? new Date(data.accepted_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" }) : null;
+  const pending = !accepted && !declined;
 
   return (
     <div className="min-h-screen bg-black text-white" data-testid="agreement-page">
@@ -102,7 +132,7 @@ const AgreementPage = () => {
         <div className="absolute inset-x-0 top-0 h-[480px] pointer-events-none"
              style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(2,94,186,0.22) 0%, rgba(2,94,186,0) 60%)" }} />
 
-        <div className="relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40 pb-24">
+        <div className={`relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40 ${pending ? "pb-44" : "pb-24"}`}>
           {/* Status banner */}
           {accepted && (
             <div className="mb-8 rounded-2xl border border-[#4FB6FF]/35 bg-gradient-to-br from-[#4FB6FF]/[0.12] to-[#025eba]/[0.06] p-5 flex items-center gap-4"
@@ -118,7 +148,8 @@ const AgreementPage = () => {
             </div>
           )}
           {declined && (
-            <div className="mb-8 rounded-2xl border border-[#FF8A8A]/30 bg-[#FF8A8A]/[0.07] p-5">
+            <div className="mb-8 rounded-2xl border border-[#FF8A8A]/30 bg-[#FF8A8A]/[0.07] p-5"
+                 data-testid="agreement-status-declined">
               <p className="font-archivo font-bold text-[15px] text-white">Agreement was declined</p>
               <p className="font-outfit text-[13px] text-white/70 mt-1">Please contact your agent if you'd like to revisit the terms.</p>
             </div>
@@ -144,56 +175,69 @@ const AgreementPage = () => {
             </p>
           </div>
 
-          {/* Scroll surface */}
-          <div className="mt-8 rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] overflow-hidden">
-            <div ref={scrollRef} onScroll={onScroll}
-                 className="max-h-[520px] overflow-y-auto p-6 sm:p-8 space-y-7"
-                 data-testid="agreement-scroll">
-              {CLAUSES.map((c) => (
-                <section key={c.no} data-testid={`agreement-clause-${c.no}`}>
-                  <h2 className="flex items-baseline gap-3 mb-2">
-                    <span className="font-archivo font-bold text-[#4FB6FF] text-[14px]">{c.no}</span>
-                    <span className="font-archivo font-bold text-white text-[16px] tracking-[-0.01em]">{c.title}</span>
-                  </h2>
-                  <p className="font-outfit text-[14px] leading-[1.7] text-white/70 pl-8">{c.body}</p>
-                </section>
-              ))}
-              <p className="font-outfit text-[12px] text-white/45 pl-8 pt-2 border-t border-white/[0.06]">
-                Summary for convenience only. The full signed agreement and the RPSA Service Terms govern in the event of any difference. By accepting, you confirm you have read and agree to those terms.
-              </p>
-            </div>
-            {!unlocked && !accepted && !declined && (
-              <div className="px-6 py-3 border-t border-white/[0.06] flex items-center gap-2 text-[12px] font-outfit text-white/55"
-                   data-testid="agreement-scroll-hint">
-                <ChevronDown className="w-3.5 h-3.5" />
-                Scroll to the end to enable Agree
-              </div>
-            )}
+          {/* Clauses — flow inline with page scroll (no nested scroll box) */}
+          <div className="mt-10 space-y-7" data-testid="agreement-clauses">
+            {CLAUSES.map((c) => (
+              <section key={c.no} data-testid={`agreement-clause-${c.no}`}
+                       className="rounded-xl border border-white/[0.06] bg-white/[0.015] p-5 sm:p-6">
+                <h2 className="flex items-baseline gap-3 mb-2">
+                  <span className="font-archivo font-bold text-[#4FB6FF] text-[14px]">{c.no}</span>
+                  <span className="font-archivo font-bold text-white text-[16px] tracking-[-0.01em]">{c.title}</span>
+                </h2>
+                <p className="font-outfit text-[14px] leading-[1.7] text-white/70 pl-8">{c.body}</p>
+              </section>
+            ))}
+            <p className="font-outfit text-[12px] text-white/45 pl-8 pt-2 border-t border-white/[0.06]">
+              Summary for convenience only. The full signed agreement and the RPSA Service Terms govern in the event of any difference. By accepting, you confirm you have read and agree to those terms.
+            </p>
+            {/* Sentinel for the unlock observer */}
+            <div ref={sentinelRef} data-testid="agreement-sentinel" className="h-1 w-full" />
           </div>
-
-          {/* Action bar */}
-          {!accepted && !declined && (
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center">
-              <button type="button" onClick={() => post("decline")} disabled={busy}
-                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 hover:border-white/35 text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
-                      data-testid="agreement-decline">
-                <X className="w-4 h-4" /> Disagree
-              </button>
-              <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked}
-                      className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
-                      data-testid="agreement-accept">
-                <Check className="w-4 h-4" /> Agree to the terms
-              </button>
-              {actionErr && <p className="font-outfit text-[12px] text-[#FF8A8A] sm:ml-3" data-testid="agreement-error">{actionErr}</p>}
-            </div>
-          )}
 
           {/* Reference footer */}
           <p className="mt-10 font-outfit text-[12px] text-white/40">
             Reference: <span className="font-mono text-white/60">{data.token}</span> · This link is unique to your property submission and remains live for your records.
           </p>
         </div>
+
+        {/* Sticky action bar — only shown while pending */}
+        {pending && (
+          <div className="fixed bottom-0 inset-x-0 z-30 pointer-events-none">
+            <div className="pointer-events-auto bg-gradient-to-t from-black via-black/95 to-black/0 backdrop-blur-sm">
+              <div className="max-w-3xl mx-auto px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+                <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
+                     data-testid="agreement-scroll-hint">
+                  {unlocked ? (
+                    <span className="text-[#4FB6FF]">Thank you — you're ready to confirm.</span>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                      Please scroll to the end of the terms to enable Agree.
+                    </>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button type="button" onClick={() => post("decline")} disabled={busy}
+                          className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 hover:border-white/35 text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
+                          data-testid="agreement-decline">
+                    <X className="w-4 h-4" /> Disagree
+                  </button>
+                  <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked}
+                          className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
+                          style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
+                          data-testid="agreement-accept">
+                    <Check className="w-4 h-4" /> Agree to the terms
+                  </button>
+                </div>
+              </div>
+              {actionErr && (
+                <div className="max-w-3xl mx-auto px-6 pb-4">
+                  <p className="font-outfit text-[12px] text-[#FF8A8A]" data-testid="agreement-error">{actionErr}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
       <SurveysFooterReveal />
