@@ -109,10 +109,10 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
                 data-testid="surveys-hero-image"
               />
 
-              {/* Top-left — All Postcodes
+              {/* Top-left — No Upfront Cost
                   (desktop: low/left so it just touches the roof slope, not the chimney) */}
               <CheckedBadge
-                label="All Postcodes"
+                label="No Upfront Cost"
                 className="-top-2 left-1 sm:-top-3 sm:left-2 lg:top-6 lg:-left-12 xl:top-8 xl:-left-16"
                 floatClass="surveys-badge-float-a"
                 testid="badge-roof"
@@ -131,9 +131,9 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
                 floatClass="surveys-badge-float-c"
                 testid="badge-damp"
               />
-              {/* Bottom-right — No Upfront Cost */}
+              {/* Bottom-right — All Postcodes */}
               <CheckedBadge
-                label="No Upfront Cost"
+                label="All Postcodes"
                 className="-bottom-1 -right-2 sm:-bottom-1 sm:-right-4 lg:-bottom-2 lg:-right-16 xl:-right-24"
                 floatClass="surveys-badge-float-d"
                 testid="badge-electrical"
