@@ -243,6 +243,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
     action, an unmistakable explanation of why the email arrived. No icons,
     no decorative emoji, no marketing fluff.
     """
+    reference = agreement_url.rstrip("/").split("/")[-1] if agreement_url else ""
     address = lead.address_line_1
     if lead.postcode:
         address = f"{address}, {lead.postcode}"
@@ -406,6 +407,9 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
               Association) in partnership with Gazeal.<br>
               Questions? Reply to this email and we will be in touch.
             </p>
+            <p style="margin:10px 0 0;font-size:11px;color:#6B7280;">
+              Reference: <code style="font-size:11px;color:#0B1220;">{reference}</code>
+            </p>
           </td>
         </tr>
       </table>
@@ -541,24 +545,28 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
     @router.post("/order-survey")
     async def submit_order_survey(lead: OrderSurveyLead, request: Request):
+        # Mint the unique reference up front so it lives on both the lead
+        # and the agreement (single value, shared across systems).
+        agreement_token = secrets.token_urlsafe(8)
+
         doc = {
             "id": str(uuid.uuid4()),
             "kind": "order_survey",
             "created_at": datetime.now(timezone.utc).isoformat(),
+            "reference_number": agreement_token,
             **lead.model_dump(),
         }
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
         notify_order_submitted(doc)
 
-        # Mint a unique agreement token + persist the agreement record so the
-        # seller can accept the terms via a branded, permanent link.
-        agreement_token = secrets.token_urlsafe(8)
-        # Derive the public base URL from the request that placed the order
-        # (Origin / Referer) so the email link always matches the domain the
-        # agent used — whether that's the preview URL, the emergent.host
-        # deployment, or the custom survey.gazeal.co.uk domain. Falls back to
-        # the configured FRONTEND_BASE_URL env if neither header is present.
+        # Persist the agreement record so the seller can accept the terms
+        # via a branded, permanent link. Derive the public base URL from the
+        # request (Origin / Referer) so the email link always matches the
+        # domain the agent used — whether that's the preview URL, the
+        # emergent.host deployment, or the custom survey.gazeal.co.uk
+        # domain. Falls back to the configured FRONTEND_BASE_URL env if
+        # neither header is present.
         origin = request.headers.get("origin") or ""
         if not origin:
             referer = request.headers.get("referer") or ""
@@ -573,6 +581,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         await db.agreements.insert_one(
             {
                 "token": agreement_token,
+                "reference_number": agreement_token,
                 "agreement_url": agreement_url,
                 "lead_id": doc["id"],
                 "status": "pending",
@@ -588,6 +597,8 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 "postcode": lead.postcode,
             }
         )
+        # Reference already stamped on the lead at insert; agreement now
+        # carries it too for cross-collection lookup.
 
         email_id = None
         email_error = None
@@ -613,6 +624,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         return {
             "id": doc["id"],
+            "reference_number": agreement_token,
             "agreement_token": agreement_token,
             "agreement_url": agreement_url,
             "email_id": email_id,

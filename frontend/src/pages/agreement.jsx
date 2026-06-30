@@ -177,7 +177,7 @@ const AgreementPage = () => {
                 <p className="font-outfit text-[13px] text-white/70 mt-0.5">Accepted on {stampDate}. This page remains live for your reference.</p>
                 {data.accepted_ip && (
                   <p className="font-outfit text-[12px] text-white/55 mt-1.5" data-testid="agreement-accepted-ip">
-                    Recorded from IP <span className="font-mono text-white/75">{data.accepted_ip}</span> &middot; Token <span className="font-mono text-white/75">{data.token}</span>
+                    Recorded from IP <span className="font-mono text-white/75">{data.accepted_ip}</span> &middot; Reference <span className="font-mono text-white/75">{data.reference_number || data.token}</span>
                   </p>
                 )}
               </div>
@@ -232,7 +232,7 @@ const AgreementPage = () => {
 
           {/* Reference footer */}
           <p className="mt-10 font-outfit text-[12px] text-white/40">
-            Reference: <span className="font-mono text-white/60">{data.token}</span> · This link is unique to your property submission and remains live for your records.
+            Reference: <span className="font-mono text-white/60">{data.reference_number || data.token}</span> · This link is unique to your property submission and remains live for your records.
           </p>
 
           {/* Reservation Agreement explainer + interest checkbox */}

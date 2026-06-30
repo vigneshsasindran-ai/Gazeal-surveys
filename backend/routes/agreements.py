@@ -39,6 +39,7 @@ def public_context(agreement: dict) -> dict:
     """Personalised data that the public agreement page needs to render."""
     return {
         "token": agreement["token"],
+        "reference_number": agreement.get("reference_number") or agreement["token"],
         "status": agreement.get("status", "pending"),
         "seller": {
             "first_name": (agreement.get("seller_name") or "").split(" ")[0]
@@ -137,7 +138,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                   <tr><td style="color:#6B7280;">Accepted</td><td>{now}</td></tr>
                   <tr><td style="color:#6B7280;">IP / UA</td><td>{ip} &middot; <code style="font-size:11px;">{ua}</code></td></tr>
                 </table>
-                <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">Token: <code>{token}</code></p>
+                <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">Reference: <code>{token}</code></p>
                 """,
             )
         except Exception:

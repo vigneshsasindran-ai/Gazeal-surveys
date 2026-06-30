@@ -62,6 +62,7 @@ def notify_order_submitted(lead: dict[str, Any]) -> None:
         {
             "type": "section",
             "fields": [
+                _field("Reference", f"`{lead.get('reference_number') or '—'}`"),
                 _field("Property", address),
                 _field("Asking price", lead.get("asking_price") or "—"),
                 _field("Agent", f"{lead.get('agent_name','')} · {lead.get('agency_name','')}"),
@@ -99,7 +100,7 @@ def notify_agreement_accepted(doc: dict[str, Any]) -> None:
                 _field("Property", address),
                 _field("Seller", f"{doc.get('seller_name','')}\n{doc.get('seller_email','')}"),
                 _field("Listing agent", f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"),
-                _field("Token", f"`{doc.get('token','')}`"),
+                _field("Reference", f"`{doc.get('reference_number') or doc.get('token','')}`"),
                 _field("Accepted at", doc.get("accepted_at") or "—"),
                 _field("IP address", f"`{doc.get('accepted_ip') or 'unknown'}`"),
             ],
