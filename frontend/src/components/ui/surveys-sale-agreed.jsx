@@ -44,16 +44,10 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
               className="mt-6 text-base sm:text-lg text-white/65 font-outfit leading-relaxed max-w-xl"
               data-testid="sale-agreed-body"
             >
-              A sale agreed is the most fragile point in your pipeline. Two
-              things usually put it at risk: a survey issue appearing weeks
-              later, or a buyer losing commitment and walking away. Gazeal
-              helps you deal with both. Get the seller to order a survey
-              when the property is listed, so the condition is known before
-              offers are made and there is less room for renegotiation.
-              Then secure the buyer with a Gazeal Reservation Agreement, so
-              they are properly committed and the seller is compensated if
-              they pull out unreasonably. Less chasing, fewer fall-throughs,
-              and more commission protected.
+              A survey gives the buyer confidence in the property before
+              they offer. A Gazeal Reservation Agreement gives the seller
+              confidence in the buyer once the offer is accepted. Put the
+              two together and the sale becomes far more certain.
             </p>
 
             <div className="mt-8">

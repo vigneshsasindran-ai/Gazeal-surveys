@@ -56,15 +56,13 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
         <h3 className="font-archivo font-bold text-white text-[20px] sm:text-[22px] leading-[1.2] tracking-[-0.015em] max-w-[22ch]">
           {title}
         </h3>
-        <span
-          className={`shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl ${
-            isPositive
-              ? "bg-gradient-to-br from-[#4FB6FF] to-[#025eba] shadow-[0_6px_22px_rgba(2,94,186,0.4)]"
-              : "bg-white/[0.05] border border-white/10"
-          }`}
-        >
-          <Icon className="w-5 h-5 text-white" strokeWidth={2.2} />
-        </span>
+        {isPositive && (
+          <span
+            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4FB6FF] to-[#025eba] shadow-[0_6px_22px_rgba(2,94,186,0.4)]"
+          >
+            <Icon className="w-5 h-5 text-white" strokeWidth={2.2} />
+          </span>
+        )}
       </div>
 
       <ul className="space-y-3.5">
@@ -177,6 +175,17 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
           className="mt-8 rounded-2xl border border-[#4FB6FF]/25 bg-[#4FB6FF]/[0.04] p-6 sm:p-7"
           data-testid="re-interest-card"
         >
+          <p className="font-outfit text-[12px] tracking-[0.22em] uppercase font-semibold text-[#4FB6FF] mb-3"
+             data-testid="re-interest-eyebrow">
+            Want to think about it?
+          </p>
+          <p className="font-outfit text-[14px] text-white/75 leading-[1.65] mb-5 max-w-[60ch]">
+            You don&apos;t have to decide now. Tick the box below and we&apos;ll
+            send you more details on how a Gazeal Reservation Agreement could
+            help protect your sale. You can come back to this page later to
+            accept or decline the survey terms once you&apos;ve had a chance to
+            read everything.
+          </p>
           {submitted ? (
             <div className="flex items-start gap-3" data-testid="re-interest-submitted">
               <span
@@ -190,7 +199,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                   Thanks &mdash; we&apos;ll be in touch shortly.
                 </p>
                 <p className="mt-1 font-outfit text-[13px] text-white/65">
-                  We&apos;ll email you details on how a Gazeal Reservation Agreement could help protect your sale.
+                  We&apos;ll email you details on how a Gazeal Reservation Agreement could help protect your sale. This page stays live for you to come back and accept or decline once you&apos;re ready.
                 </p>
               </div>
             </div>
