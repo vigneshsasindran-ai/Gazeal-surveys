@@ -39,9 +39,6 @@ const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
       <span className="font-outfit font-semibold text-[9px] sm:text-[11px] lg:text-[13px] text-slate-900 whitespace-nowrap">
         {label}
       </span>
-      <span className="mt-0.5 lg:mt-1 inline-flex items-center self-start text-[7px] sm:text-[8px] lg:text-[9px] font-bold tracking-[0.08em] px-1 sm:px-1.5 py-[1px] lg:py-[2px] rounded-[3px] lg:rounded-[4px] bg-[#DFFB4A] text-slate-900">
-        CHECKED
-      </span>
     </div>
   </div>
 );
@@ -112,31 +109,31 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
                 data-testid="surveys-hero-image"
               />
 
-              {/* Top-left — Roof & Chimney
+              {/* Top-left — All Postcodes
                   (desktop: low/left so it just touches the roof slope, not the chimney) */}
               <CheckedBadge
-                label="Roof & Chimney"
+                label="All Postcodes"
                 className="-top-2 left-1 sm:-top-3 sm:left-2 lg:top-6 lg:-left-12 xl:top-8 xl:-left-16"
                 floatClass="surveys-badge-float-a"
                 testid="badge-roof"
               />
-              {/* Top-right — Structural Condition */}
+              {/* Top-right — Level 2/3 Survey */}
               <CheckedBadge
-                label="Structural Condition"
+                label="Level 2/3 Survey"
                 className="top-6 -right-2 sm:top-8 sm:-right-4 lg:top-14 lg:-right-12 xl:-right-20"
                 floatClass="surveys-badge-float-b"
                 testid="badge-structural"
               />
-              {/* Bottom-left — Damp & Moisture */}
+              {/* Bottom-left — Buyer Indemnified */}
               <CheckedBadge
-                label="Damp & Moisture"
+                label="Buyer Indemnified"
                 className="bottom-10 -left-3 sm:bottom-14 sm:-left-6 lg:bottom-20 lg:-left-24 xl:-left-32"
                 floatClass="surveys-badge-float-c"
                 testid="badge-damp"
               />
-              {/* Bottom-right — Electrical & Safety */}
+              {/* Bottom-right — No Upfront Cost */}
               <CheckedBadge
-                label="Electrical & Safety"
+                label="No Upfront Cost"
                 className="-bottom-1 -right-2 sm:-bottom-1 sm:-right-4 lg:-bottom-2 lg:-right-16 xl:-right-24"
                 floatClass="surveys-badge-float-d"
                 testid="badge-electrical"
