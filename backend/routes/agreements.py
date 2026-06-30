@@ -22,6 +22,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 
 from webhooks import fan_out
+from slack_notify import notify_agreement_accepted, notify_reservation_interest
 
 logger = logging.getLogger(__name__)
 
@@ -182,6 +183,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_at": now,
         }
         await fan_out(db, "agreement.signed", fanout_doc)
+        notify_agreement_accepted({**doc, "token": token})
 
         return {"status": "accepted", "accepted_at": now}
 
@@ -260,6 +262,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             )
         except Exception:
             logger.exception("Reservation interest notify failed")
+
+        notify_reservation_interest({**doc, "token": token})
 
         return {"status": "expressed", "reservation_interest_at": now}
 

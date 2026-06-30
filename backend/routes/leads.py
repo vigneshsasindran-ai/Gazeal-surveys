@@ -28,6 +28,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from webhooks import fan_out
+from slack_notify import notify_order_submitted
 
 logger = logging.getLogger(__name__)
 
@@ -548,6 +549,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         }
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
+        notify_order_submitted(doc)
 
         # Mint a unique agreement token + persist the agreement record so the
         # seller can accept the terms via a branded, permanent link.
