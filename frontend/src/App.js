@@ -5,6 +5,7 @@ import SurveysHeader from "@/components/ui/surveys-header";
 import SurveysHero from "@/components/ui/surveys-hero";
 import SurveysBento from "@/components/ui/surveys-bento";
 import SurveysSaleAgreed from "@/components/ui/surveys-sale-agreed";
+import ReservationExplainer from "@/components/ui/reservation-explainer";
 import SurveysBenefits from "@/components/ui/surveys-benefits";
 import SurveysFAQ from "@/components/ui/surveys-faq";
 import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
@@ -32,6 +33,14 @@ const SurveysLanding = () => {
         />
         <SurveysBento />
         <SurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
+        <section
+          className="relative bg-black pt-2 pb-20 md:pt-4 md:pb-28"
+          data-testid="surveys-reservation-compare-section"
+        >
+          <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+            <ReservationExplainer variant="agent" />
+          </div>
+        </section>
         <SurveysBenefits />
         <SurveysFAQ
           onOrderSurvey={handleOrderSurvey}

@@ -1,16 +1,18 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
-import ReservationExplainer from "@/components/ui/reservation-explainer";
 
 /*
  * "Survey It. Reserve It." — paired-product section
  *
- *   • Headline + brief intro + CTA (keeps existing tone)
- *   • Modular comparison: with vs without a Gazeal Reservation Agreement
- *     (shared component, agent variant — no interest checkbox)
+ * Mirrors the Gazeal Elite "Advance" section pattern:
+ *   • Left column: headline + paragraph + CTA
+ *   • Right column: 3D illustration (house + survey clipboard)
  *
  * Rebranded with the Surveys blue gradient (#4FB6FF → #025eba).
  */
+
+const SCENE_IMAGE =
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/s7e4jhr2_DESIGN%20ELEMENTS%20%20%2819%29.png";
 
 const SurveysSaleAgreed = ({ onOrderSurvey }) => {
   return (
@@ -24,48 +26,74 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
       <div className="pointer-events-none absolute right-0 bottom-0 h-[360px] w-[360px] rounded-full bg-[#4FB6FF]/10 blur-3xl opacity-50" />
 
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
-        {/* Heading row */}
-        <div className="max-w-3xl mb-12 lg:mb-16">
-          <h2
-            className="font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white text-4xl sm:text-5xl lg:text-[56px]"
-            data-testid="sale-agreed-heading"
-          >
-            Survey It. Reserve It.
-            <br />
-            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
-              Now It&apos;s as Good as Sold.
-            </span>
-          </h2>
-
-          <p
-            className="mt-5 text-base sm:text-lg text-white/65 font-outfit leading-relaxed max-w-xl"
-            data-testid="sale-agreed-body"
-          >
-            A sale agreed is the most fragile point in your pipeline. An
-            upfront survey and a Gazeal Reservation Agreement protect both
-            ends — fewer surprises, fewer fall-throughs.
-          </p>
-
-          <div className="mt-7">
-            <button
-              type="button"
-              onClick={onOrderSurvey}
-              className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
-              style={{
-                background:
-                  "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                boxShadow: "0 6px 22px rgba(2,94,186,0.4)",
-              }}
-              data-testid="sale-agreed-cta"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Left — headline + body + CTA */}
+          <div className="lg:col-span-7 order-2 lg:order-1 lg:pt-4">
+            <h2
+              className="font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white text-4xl sm:text-5xl lg:text-[56px]"
+              data-testid="sale-agreed-heading"
             >
-              Order Survey
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              Survey It. Reserve It.
+              <br />
+              <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                Now It&apos;s as Good as Sold.
+              </span>
+            </h2>
+
+            <p
+              className="mt-6 text-base sm:text-lg text-white/65 font-outfit leading-relaxed max-w-xl"
+              data-testid="sale-agreed-body"
+            >
+              A sale agreed is the most fragile point in your pipeline. Two
+              things usually put it at risk: a survey issue appearing weeks
+              later, or a buyer losing commitment and walking away. Gazeal
+              helps you deal with both. Get the seller to order a survey
+              when the property is listed, so the condition is known before
+              offers are made and there is less room for renegotiation.
+              Then secure the buyer with a Gazeal Reservation Agreement, so
+              they are properly committed and the seller is compensated if
+              they pull out unreasonably. Less chasing, fewer fall-throughs,
+              and more commission protected.
+            </p>
+
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={onOrderSurvey}
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                  boxShadow: "0 6px 22px rgba(2,94,186,0.4)",
+                }}
+                data-testid="sale-agreed-cta"
+              >
+                Order Survey
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Right — illustration */}
+          <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[420px]">
+              <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-[#4FB6FF]/15 via-transparent to-[#025eba]/15 blur-2xl" />
+
+              <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-4 sm:p-6">
+                <img
+                  src={SCENE_IMAGE}
+                  alt="A 3D illustration of a small house standing next to a survey clipboard with green ticks and a pencil."
+                  className="w-full h-auto rounded-xl object-contain surveys-bento-icon"
+                  loading="lazy"
+                  style={{
+                    filter: "drop-shadow(0 18px 40px rgba(2,94,186,0.35))",
+                  }}
+                  data-testid="sale-agreed-image"
+                />
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Modular comparison */}
-        <ReservationExplainer variant="agent" />
       </div>
     </section>
   );

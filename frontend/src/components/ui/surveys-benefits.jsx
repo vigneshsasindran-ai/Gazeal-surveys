@@ -33,43 +33,11 @@ const STEPS = [
   },
 ];
 
-const SELLER_BENEFITS = [
-  {
-    title: "Nothing to pay up front",
-    body: "The survey only settles when the sale completes.",
-  },
-  {
-    title: "No cost if the sale falls through",
-    body: "If the buyer walks unreasonably, the seller pays nothing.",
-  },
-  {
-    title: "Fewer last-minute renegotiations",
-    body: "Condition is known before offers — no late survey haggling.",
-  },
-  {
-    title: "A sale that actually completes",
-    body: "Survey surprises don't kill the deal at week six.",
-  },
-];
+const SELLER_COPY =
+  "An upfront survey shows the world your home is sale ready, and it puts none of your money at risk to do it. You pay nothing when the survey is carried out, because the fee only settles once the sale completes, and if the buyer walks away without good reason, you pay nothing at all. The real gain comes later. When buyers can see the condition of your home before they offer, they stop trying to chip the price with a late survey, and the report that usually derails a sale around week six holds no surprises. Your home reaches completion because the thing that breaks most sales has already been dealt with in the open.";
 
-const BUYER_BENEFITS = [
-  {
-    title: "Stop paying for homes you never buy",
-    body: "The report is attached to the listing — read before you offer.",
-  },
-  {
-    title: "Offer with confidence, not nerves",
-    body: "An independent condition survey is already in your hands.",
-  },
-  {
-    title: "An independent surveyor, not the seller's pick",
-    body: "Accredited RPSA surveyors, appointed independently of the seller and agent.",
-  },
-  {
-    title: "A simpler path to completion",
-    body: "Less for solicitors and lenders to chase. Faster to keys in hand.",
-  },
-];
+const BUYER_COPY =
+  "An upfront survey lets you see the true condition of a home before you spend a penny on it. The report is attached to the listing, so you read it before you offer rather than paying for a survey on a house you may never buy. That means you can offer with a clear head instead of crossed fingers, because an independent assessment is already in your hands. It is carried out by an accredited RPSA surveyor appointed independently of the seller and the agent, so the view you get is honest rather than the seller's own pick. With the condition known from the start, there is far less for solicitors and lenders to chase, and you reach the keys sooner.";
 
 const StepCard = ({ index, icon: Icon, title, body }) => (
   <div
@@ -159,7 +127,7 @@ const SegmentedLabel = ({ audience }) => (
   </div>
 );
 
-const BenefitColumn = ({ audience, headline, items }) => (
+const BenefitColumn = ({ audience, headline, body }) => (
   <div
     className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm p-8 sm:p-10"
     data-testid={`benefits-${audience.toLowerCase()}-column`}
@@ -176,38 +144,16 @@ const BenefitColumn = ({ audience, headline, items }) => (
       <SegmentedLabel audience={audience} />
     </div>
 
-    <h3 className="font-archivo font-bold tracking-[-0.025em] text-white text-[26px] sm:text-[30px] leading-[1.15] mb-8 max-w-[20ch]">
+    <h3 className="font-archivo font-bold tracking-[-0.025em] text-white text-[26px] sm:text-[30px] leading-[1.15] mb-6 max-w-[20ch]">
       {headline}
     </h3>
 
-    <ol className="space-y-0">
-      {items.map((item, i) => (
-        <li
-          key={item.title}
-          className="grid grid-cols-[44px_1fr] gap-4 py-5"
-          style={{
-            borderTop:
-              i === 0 ? "none" : "1px solid rgba(255,255,255,0.06)",
-          }}
-          data-testid={`benefits-${audience.toLowerCase()}-item-${i + 1}`}
-        >
-          <span
-            className="font-archivo font-bold text-[18px] leading-none pt-1"
-            style={{ color: "#4FB6FF" }}
-          >
-            {String(i + 1).padStart(2, "0")}
-          </span>
-          <div>
-            <p className="font-archivo font-semibold text-white text-[16px] sm:text-[17px] tracking-[-0.01em]">
-              {item.title}
-            </p>
-            <p className="mt-2 font-outfit text-[14px] leading-[1.65] text-white/65">
-              {item.body}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <p
+      className="font-outfit text-[15px] sm:text-[16px] leading-[1.75] text-white/70"
+      data-testid={`benefits-${audience.toLowerCase()}-body`}
+    >
+      {body}
+    </p>
   </div>
 );
 
@@ -268,12 +214,12 @@ const SurveysBenefits = () => {
           <BenefitColumn
             audience="Sellers"
             headline="Show your home is sale ready, with zero financial risk."
-            items={SELLER_BENEFITS}
+            body={SELLER_COPY}
           />
           <BenefitColumn
             audience="Buyers"
             headline="See the condition before you spend a penny."
-            items={BUYER_BENEFITS}
+            body={BUYER_COPY}
           />
         </div>
 

@@ -2,41 +2,37 @@ import React, { useState } from "react";
 import { Check, X, ShieldCheck, AlertTriangle, ArrowRight } from "lucide-react";
 
 /*
- * Reservation Agreement explainer — a modular, side-by-side comparison
- * between selling WITH a Gazeal Reservation Agreement and WITHOUT one,
- * plus the survey-fee terms in each scenario.
+ * Reservation Agreement comparison — two modular boxes, no heading.
+ * Each box has 4 items; the 4th is highlighted as the "important note"
+ * (fee terms).
  *
- * Two surfaces use this:
- *   1. The seller agreement page — `variant="seller"` shows the interest
- *      checkbox + submit so the seller can ask Gazeal for more info.
- *   2. The landing page "Survey It. Reserve It." section —
- *      `variant="agent"` reframes the headline + drops the seller form.
+ *   Box 1 — Survey with a Reservation Agreement (recommended, blue tone)
+ *   Box 2 — Survey without a Reservation Agreement (neutral, grey tone)
+ *
+ * On the seller agreement page (`variant="seller"`) an interest checkbox
+ * + submit appears below the boxes, posting to
+ * `POST /api/agreements/{token}/express-interest`.
  */
 
-const WITH_BENEFITS = [
+const WITH_ITEMS = [
   "Buyer is committed to the sale",
   "No gazundering or late price renegotiations",
   "Compensation guaranteed by Gazeal if the buyer pulls out unreasonably",
 ];
 
-const WITHOUT_RISKS = [
+const WITH_FEE_NOTE =
+  "Sellers do not pay survey fees if the buyer pulls out unreasonably, or if the sale ends for a fair reason by both parties under the terms of the agreement. The seller only pays on completion, or when they pull out of the sale unreasonably.";
+
+const WITHOUT_ITEMS = [
   "Buyer may not be committed to the sale",
   "Gazundering and price renegotiations at any point",
   "No compensation if the sale falls through",
 ];
 
-const FEES_WITH = [
-  "Pay nothing if the buyer pulls out unreasonably",
-  "Pay nothing if the sale ends for a fair reason — bad survey, title problem, failed mortgage or broken chain",
-  "You only pay on completion, or if you pull out of the sale unreasonably",
-];
+const WITHOUT_FEE_NOTE =
+  "Survey fee becomes payable after 6 months from instruction, and no protection against renegotiation on the back of the survey.";
 
-const FEES_WITHOUT = [
-  "Survey fee becomes payable six months after instruction if no sale completes",
-  "No protection against renegotiation on the back of the survey",
-];
-
-const Column = ({ tone, title, eyebrow, benefits, fees, icon: Icon, testid }) => {
+const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
   const isPositive = tone === "with";
   return (
     <div
@@ -48,36 +44,38 @@ const Column = ({ tone, title, eyebrow, benefits, fees, icon: Icon, testid }) =>
       data-testid={testid}
     >
       {isPositive && (
-        <div className="absolute -top-3 left-7 px-2.5 py-1 rounded-full text-[10px] tracking-[0.18em] uppercase font-outfit font-bold text-white"
-             style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}>
+        <div
+          className="absolute -top-3 left-7 px-2.5 py-1 rounded-full text-[10px] tracking-[0.18em] uppercase font-outfit font-bold text-white"
+          style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}
+        >
           Recommended
         </div>
       )}
 
-      <div className="flex items-start justify-between mb-5">
-        <div>
-          <p className={`font-outfit font-semibold text-[10px] tracking-[0.22em] uppercase mb-2 ${
-            isPositive ? "text-[#4FB6FF]" : "text-white/45"
-          }`}>{eyebrow}</p>
-          <h3 className="font-archivo font-bold text-white text-[22px] sm:text-[24px] leading-[1.15] tracking-[-0.015em] max-w-[18ch]">
-            {title}
-          </h3>
-        </div>
-        <span className={`shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl ${
-          isPositive
-            ? "bg-gradient-to-br from-[#4FB6FF] to-[#025eba] shadow-[0_6px_22px_rgba(2,94,186,0.4)]"
-            : "bg-white/[0.05] border border-white/10"
-        }`}>
+      <div className="flex items-start justify-between mb-6">
+        <h3 className="font-archivo font-bold text-white text-[20px] sm:text-[22px] leading-[1.2] tracking-[-0.015em] max-w-[22ch]">
+          {title}
+        </h3>
+        <span
+          className={`shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl ${
+            isPositive
+              ? "bg-gradient-to-br from-[#4FB6FF] to-[#025eba] shadow-[0_6px_22px_rgba(2,94,186,0.4)]"
+              : "bg-white/[0.05] border border-white/10"
+          }`}
+        >
           <Icon className="w-5 h-5 text-white" strokeWidth={2.2} />
         </span>
       </div>
 
-      <ul className="space-y-3 mb-6">
-        {benefits.map((b) => (
+      <ul className="space-y-3.5">
+        {items.map((b) => (
           <li key={b} className="flex items-start gap-2.5">
-            <span className={`mt-0.5 inline-flex h-4.5 w-4.5 items-center justify-center rounded-full shrink-0 ${
-              isPositive ? "bg-[#4FB6FF]/15" : "bg-white/[0.06]"
-            }`} style={{ height: 18, width: 18 }}>
+            <span
+              className={`mt-0.5 inline-flex items-center justify-center rounded-full shrink-0 ${
+                isPositive ? "bg-[#4FB6FF]/15" : "bg-white/[0.06]"
+              }`}
+              style={{ height: 20, width: 20 }}
+            >
               {isPositive ? (
                 <Check className="w-3 h-3 text-[#4FB6FF]" strokeWidth={3} />
               ) : (
@@ -89,20 +87,40 @@ const Column = ({ tone, title, eyebrow, benefits, fees, icon: Icon, testid }) =>
         ))}
       </ul>
 
-      <div className={`pt-5 border-t ${isPositive ? "border-[#4FB6FF]/15" : "border-white/[0.06]"}`}>
-        <p className={`font-outfit font-semibold text-[10px] tracking-[0.22em] uppercase mb-3 ${
-          isPositive ? "text-[#4FB6FF]" : "text-white/45"
-        }`}>Survey fee</p>
-        <ul className="space-y-2.5">
-          {fees.map((f) => (
-            <li key={f} className="flex items-start gap-2.5">
-              <span className={`mt-1.5 h-1 w-1 rounded-full shrink-0 ${
-                isPositive ? "bg-[#4FB6FF]" : "bg-white/30"
-              }`} />
-              <span className="font-outfit text-[13px] leading-[1.6] text-white/65">{f}</span>
-            </li>
-          ))}
-        </ul>
+      {/* Item 4 — highlighted/boxed fee note */}
+      <div
+        className={`mt-5 rounded-xl p-4 sm:p-5 ${
+          isPositive
+            ? "border border-[#4FB6FF]/45 bg-gradient-to-br from-[#4FB6FF]/[0.14] to-[#025eba]/[0.06]"
+            : "border border-white/15 bg-white/[0.04]"
+        }`}
+        data-testid={`${testid}-note`}
+      >
+        <div className="flex items-start gap-3">
+          <span
+            className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0 ${
+              isPositive
+                ? "bg-gradient-to-br from-[#4FB6FF] to-[#025eba]"
+                : "bg-white/[0.08] border border-white/15"
+            }`}
+          >
+            {isPositive ? (
+              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            ) : (
+              <X className="w-3 h-3 text-white/60" strokeWidth={3} />
+            )}
+          </span>
+          <div>
+            <p
+              className={`font-archivo font-bold text-[11px] tracking-[0.18em] uppercase mb-1.5 ${
+                isPositive ? "text-[#4FB6FF]" : "text-white/55"
+              }`}
+            >
+              Survey fee
+            </p>
+            <p className="font-outfit text-[13.5px] leading-[1.6] text-white/85">{feeNote}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -134,67 +152,54 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
   };
 
   return (
-    <section
-      className="relative"
-      data-testid={`reservation-explainer-${variant}`}
-    >
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-3">
-          {isSeller ? "Before you go" : "Pair it with"}
-        </p>
-        <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl lg:text-[42px] leading-[1.1] tracking-[-0.025em]">
-          {isSeller ? (
-            <>What a <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">Reservation Agreement</span> does for you.</>
-          ) : (
-            <>Survey it. Then <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">reserve it</span>.</>
-          )}
-        </h2>
-        <p className="mt-4 font-outfit text-[15px] sm:text-[16px] text-white/65 leading-[1.6] max-w-xl mx-auto">
-          {isSeller
-            ? "Two ways to sell. The right Reservation Agreement protects you, your sale, and your survey fee."
-            : "An upfront survey takes the surprises off the table. A Gazeal Reservation Agreement keeps the buyer committed. Together they protect more of your pipeline."}
-        </p>
-      </div>
-
+    <section className="relative" data-testid={`reservation-explainer-${variant}`}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
-        <Column
+        <Box
           tone="with"
-          eyebrow="With Reservation Agreement"
-          title="Commitment, protection, no fee surprises"
+          title="Survey with a Reservation Agreement"
           icon={ShieldCheck}
-          benefits={WITH_BENEFITS}
-          fees={FEES_WITH}
+          items={WITH_ITEMS}
+          feeNote={WITH_FEE_NOTE}
           testid={`re-${variant}-with`}
         />
-        <Column
+        <Box
           tone="without"
-          eyebrow="Without Reservation Agreement"
-          title="Standard sale, no safety net"
+          title="Survey without a Reservation Agreement"
           icon={AlertTriangle}
-          benefits={WITHOUT_RISKS}
-          fees={FEES_WITHOUT}
+          items={WITHOUT_ITEMS}
+          feeNote={WITHOUT_FEE_NOTE}
           testid={`re-${variant}-without`}
         />
       </div>
 
       {isSeller && token && (
-        <div className="mt-8 rounded-2xl border border-[#4FB6FF]/25 bg-[#4FB6FF]/[0.04] p-6 sm:p-7"
-             data-testid="re-interest-card">
+        <div
+          className="mt-8 rounded-2xl border border-[#4FB6FF]/25 bg-[#4FB6FF]/[0.04] p-6 sm:p-7"
+          data-testid="re-interest-card"
+        >
           {submitted ? (
             <div className="flex items-start gap-3" data-testid="re-interest-submitted">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                    style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}>
+              <span
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}
+              >
                 <Check className="w-4 h-4 text-white" strokeWidth={3} />
               </span>
               <div>
-                <p className="font-archivo font-bold text-white text-[15px]">Thanks &mdash; we&apos;ll be in touch shortly.</p>
-                <p className="mt-1 font-outfit text-[13px] text-white/65">We&apos;ll email you details on how a Gazeal Reservation Agreement could help protect your sale.</p>
+                <p className="font-archivo font-bold text-white text-[15px]">
+                  Thanks &mdash; we&apos;ll be in touch shortly.
+                </p>
+                <p className="mt-1 font-outfit text-[13px] text-white/65">
+                  We&apos;ll email you details on how a Gazeal Reservation Agreement could help protect your sale.
+                </p>
               </div>
             </div>
           ) : (
             <>
-              <label className="flex items-start gap-3 cursor-pointer select-none"
-                     data-testid="re-interest-label">
+              <label
+                className="flex items-start gap-3 cursor-pointer select-none"
+                data-testid="re-interest-label"
+              >
                 <input
                   type="checkbox"
                   checked={interested}
@@ -203,8 +208,12 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                   data-testid="re-interest-checkbox"
                 />
                 <span>
-                  <span className="block font-archivo font-bold text-white text-[15px]">I&apos;d like to know more about Gazeal Reservation Agreements.</span>
-                  <span className="block mt-1 font-outfit text-[13px] text-white/65">Tick to ask Gazeal to send you details on how a Reservation Agreement could help protect your sale and your survey fee.</span>
+                  <span className="block font-archivo font-bold text-white text-[15px]">
+                    I&apos;d like to know more about Gazeal Reservation Agreements.
+                  </span>
+                  <span className="block mt-1 font-outfit text-[13px] text-white/65">
+                    Tick to ask Gazeal to send you details on how a Reservation Agreement could help protect your sale and your survey fee.
+                  </span>
                 </span>
               </label>
               <div className="mt-5 flex items-center gap-3">
@@ -223,7 +232,9 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
                 {err && (
-                  <span className="font-outfit text-[12px] text-[#FF8A8A]" data-testid="re-interest-error">{err}</span>
+                  <span className="font-outfit text-[12px] text-[#FF8A8A]" data-testid="re-interest-error">
+                    {err}
+                  </span>
                 )}
               </div>
             </>
