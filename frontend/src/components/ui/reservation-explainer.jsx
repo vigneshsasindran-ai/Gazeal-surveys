@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, X, ShieldCheck, AlertTriangle, ArrowRight } from "lucide-react";
+import { Check, X, ShieldCheck, AlertTriangle } from "lucide-react";
 
 /*
  * Reservation Agreement comparison — two modular boxes, no heading.
@@ -131,8 +131,9 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
   const [submitted, setSubmitted] = useState(initialInterest);
   const [err, setErr] = useState("");
 
-  const submitInterest = async () => {
-    if (!interested || !token) return;
+  const toggleInterest = async (checked) => {
+    setInterested(checked);
+    if (!checked || submitted || !token) return;
     setSubmitting(true);
     setErr("");
     try {
@@ -143,7 +144,8 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
       if (!res.ok) throw new Error("failed");
       setSubmitted(true);
     } catch {
-      setErr("We couldn't record that just now — please try again.");
+      setErr("We couldn't record that just now — please untick and try again.");
+      setInterested(false);
     } finally {
       setSubmitting(false);
     }
@@ -212,8 +214,9 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                 <input
                   type="checkbox"
                   checked={interested}
-                  onChange={(e) => setInterested(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-white/30 bg-white/[0.06] accent-[#025eba] cursor-pointer"
+                  onChange={(e) => toggleInterest(e.target.checked)}
+                  disabled={submitting}
+                  className="mt-1 h-4 w-4 rounded border-white/30 bg-white/[0.06] accent-[#025eba] cursor-pointer disabled:opacity-60"
                   data-testid="re-interest-checkbox"
                 />
                 <span>
@@ -221,31 +224,22 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                     I&apos;d like to know more about Gazeal Reservation Agreements.
                   </span>
                   <span className="block mt-1 font-outfit text-[13px] text-white/65">
-                    Tick to ask Gazeal to send you details on how a Reservation Agreement could help protect your sale and your survey fee.
+                    Tick this box and Gazeal will email you details on how a
+                    Reservation Agreement could help protect your sale.
+                    {submitting && (
+                      <span className="ml-1 text-[#4FB6FF]">Saving…</span>
+                    )}
                   </span>
                 </span>
               </label>
-              <div className="mt-5 flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={submitInterest}
-                  disabled={!interested || submitting}
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-outfit font-semibold text-[13px] text-white disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-                  style={{
-                    background: "linear-gradient(135deg,#4FB6FF,#025eba)",
-                    boxShadow: "0 6px 22px rgba(2,94,186,0.4)",
-                  }}
-                  data-testid="re-interest-submit"
+              {err && (
+                <p
+                  className="mt-3 font-outfit text-[12px] text-[#FF8A8A]"
+                  data-testid="re-interest-error"
                 >
-                  {submitting ? "Sending…" : "Send me details"}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-                {err && (
-                  <span className="font-outfit text-[12px] text-[#FF8A8A]" data-testid="re-interest-error">
-                    {err}
-                  </span>
-                )}
-              </div>
+                  {err}
+                </p>
+              )}
             </>
           )}
         </div>
