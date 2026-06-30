@@ -623,6 +623,8 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         return {
             "id": doc["id"],
+            "agreement_token": agreement_token,
+            "agreement_url": agreement_url,
             "email_id": email_id,
             "email_error": email_error,
             "seller_email_id": seller_email_id,

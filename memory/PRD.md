@@ -1,52 +1,106 @@
 # Gazeal Surveys — PRD
 
 ## Problem Statement (original)
-Create a landing page for Gazeal Surveys, a product extension of Gazeal
-(similar to Gazeal Elite). Primary colour `#025eba`. Reuse the Gazeal Elite
-landing's foundation — black/dark theme, modular dark glass cards, FAQ
-accordion layout, scroll-revealing footer logo. Content sourced from the
-official Gazeal Surveys flyer. Two distinct CTAs:
-  • **Order Survey** → dedicated multi-step page mirroring the Gazeal
-    Advance `/get-paid` pattern, where an agent sends an invite to a seller.
-  • **Learn More** → popup modal mirroring the Gazeal Elite "Submit
-    Application" pattern, capturing Name + Agency + Email then handing off
-    to a HubSpot meetings embed.
+Dark-themed, highly polished landing page for Gazeal Surveys (agents
+ordering RPSA surveys for their sellers). Mimic the Gazeal Elite brand:
+black/cream/white dark aesthetic, Archivo headings, Outfit body, no
+"AI-slop" gradients. Two primary CTAs:
+- **Order Survey** → multi-step `/order-survey` page (agent invites seller).
+- **Learn More** → modal capturing name+agency+email then handing to a
+  HubSpot meeting embed.
+
+Production requirements added during the build:
+1. Resend-powered email notifications to Gazeal + branded seller invites.
+2. Native, hosted **Seller Survey Agreement** clickwrap page (replaces
+   PandaDoc) at `/agreement/:token` with persistent live state per Msg 358.
+3. Consumer API + webhook fan-out for third-party integrators (RPSA).
 
 ## Brand
-- Background: `#050505` (dark)
-- Primary brand: `#025eba` (deep blue)
-- Light accent: `#4FB6FF` (cyan-blue)
-- Brand gradient: `#4FB6FF → #025eba`
-- Heading fonts: Archivo / Didot italic (accent)
-- Body fonts: Manrope / Outfit
+- Background: `#050505` (dark) with cream + pure-white surfaces.
+- Primary: `#025eba`. Light accent: `#4FB6FF`. Gradient: `#4FB6FF → #025eba`.
+- Headings: Archivo bold (and Didot italic accent).
+- Body: Outfit / Manrope.
 
 ## Architecture
 - Frontend: React 19 + CRA + Tailwind + shadcn/ui
-- Backend: FastAPI + Mongo (untouched — front-end-only spec)
-- Routes:
-  - `/` → `SurveysLanding`
-  - `/order-survey` → `OrderSurveyPage`
+- Backend: FastAPI + Mongo (Motor) + Resend
+- Routes (frontend):
+  - `/` → SurveysLanding
+  - `/order-survey` → OrderSurveyPage
+  - `/agreement/:token` → AgreementPage (clickwrap)
+- Routes (backend, all under `/api`):
+  - `POST /leads/order-survey` — order capture, mints agreement token,
+    sends agent notification + branded seller invite, returns
+    `{ id, agreement_token, agreement_url, email_id, seller_email_id, ... }`
+  - `POST /leads/learn-more` — modal lead capture + Gazeal notification
+  - `GET  /agreements/{token}` — public agreement context
+  - `POST /agreements/{token}/accept` — captures IP/UA/timestamp, idempotent,
+    emails Vignesh, fan-outs `agreement.signed` webhook
+  - `POST /agreements/{token}/decline` — idempotent, emails Vignesh
+  - `GET  /v1/leads` (+ admin mint key) — Consumer API for RPSA / CRMs
+  - `POST /v1/admin/consumers` — mint API keys (admin-token guarded)
 
-## Components
-- `surveys-header.jsx` — fixed liquid-glass header on scroll. Two CTAs: outline "Learn More" (opens modal) and gradient "Order Survey" (→ `/order-survey`).
-- `surveys-hero.jsx` — Section 1 (untouched layout). CTAs renamed to "Order Survey" (white pill) and "Learn More" (outline).
-- `surveys-bento.jsx` — 3 dark glass cards (No upfront cost / Critical property information / 98% sale success) with the 3D padlock, house+clipboard and shield icons; trust strip.
-- `surveys-faq.jsx` — sticky left column + 13-item accordion (all official copy from the user) + apply card with both CTAs.
-- `surveys-footer-reveal.jsx` — scroll-revealing Gazeal Surveys logo + footer with both CTAs.
-- `surveys-learn-more-modal.jsx` — Elite-style 2-state modal: form → HubSpot meeting embed at `https://meetings.hubspot.com/bryan-mansell/gazeal-surveys?embed=true` (prefills firstName/lastName/email).
-- `pages/order-survey.jsx` — Advance-style 4-step page: About you → Your seller → The property → Confirmation. "Before you start" intro card, Rightmove/Zoopla URL validation, "Send the Invite" button, success state.
+## Data model
+- `leads`: form submissions (`learn_more` | `order_survey`).
+- `agreements`: `{ token, lead_id, status: pending|accepted|declined,
+  accepted_at, accepted_ip, accepted_ua, declined_at, seller_*, agent_*,
+  address_line_1, postcode }`.
+- `api_consumers`, `webhook_deliveries`: webhook fan-out + retry.
 
-## Implemented (2026-06)
-- Replaced all "Apply" labels with **Order Survey** primary CTA across hero / header / FAQ apply card / footer.
-- Built `/order-survey` dedicated page mirroring the Gazeal Advance `GetPaidPage` pattern (intro card, stepper strip, glass card form, navigation footer, success state).
-- Built the Learn More modal mirroring the Gazeal Elite `StandardModal` pattern with HubSpot meeting embed handoff.
-- Front-end only — both flows log submissions to `console`. HubSpot embed handles real bookings.
-- All flows verified via Playwright: hero CTAs, Learn More modal → HubSpot, /order-survey 4-step flow → success.
+## Implemented
+### 2026-06 — Landing & forms
+- Dark-themed landing with Hero, Bento, Sale-Agreed, Benefits, FAQ, footer.
+- `/order-survey` 4-step Advance-pattern page (agent → seller → property →
+  confirmation, with success state).
+- Learn-More modal handing off to HubSpot meeting embed.
 
-## Backlog (P1)
-- Backend `/api/leads` to persist Learn More and Order Survey submissions.
-- Email notification (Resend) to the Gazeal team when an order arrives.
-- Auto-scrape Rightmove/Zoopla listing for address + photos.
+### 2026-06 — Backend & emails
+- `POST /api/leads/learn-more` and `POST /api/leads/order-survey` persist
+  to Mongo and send branded Resend emails.
+- `_render_seller_invite` produces an application-style email with the
+  agreement link.
+
+### 2026-06 — Consumer API
+- `webhooks.py` + `consumers.py`: HMAC-signed fan-out with retries.
+- `routes/admin.py`: admin-token-guarded consumer minting.
+- `routes/consumer_api.py`: paginated `GET /api/v1/leads`.
+- `/app/docs/API_GUIDE.md` + `.html`: integrator handbook.
+
+### 2026-06 — Native Seller Agreement clickwrap (replaces PandaDoc)
+- `/app/backend/routes/agreements.py`: token mint, GET, POST accept/decline,
+  IP+UA capture, Resend notifications to Vignesh, webhook fan-out
+  (`agreement.signed`).
+- `/app/frontend/src/pages/agreement.jsx`: full clickwrap UI with the 15
+  clauses, scroll-gated Agree, persistent accepted/declined banner, Archivo
+  + Outfit typography, reused SurveysHeader + SurveysFooterReveal.
+- Idempotent acceptance: re-accept returns 200 `{already_accepted}`, link
+  remains live forever per Msg 358.
+- Order-survey response now exposes `agreement_token` + `agreement_url`
+  for downstream integrations.
+
+## Tested
+- Backend: 10/10 pytest (`/app/backend/tests/test_agreements.py`).
+- Frontend: 4/4 Playwright flows (pending→accept persisted reload,
+  declined, invalid token 404 view, mobile responsive).
+- Brand visuals verified via screenshot.
+
+## Backlog
+### P1
+- Admin Dashboard integration (Pattern 2): wire user's external admin app
+  to `/api/v1/leads` Consumer API. Awaiting dashboard URL/tech stack.
+
+### P2
+- Map `survey.gazeal.co.uk` to this preview (platform-level domain config).
+- Optional auto-scrape Rightmove/Zoopla listing for address + photos.
+
+### Nice-to-have polish (from testing-agent code review)
+- Decide whether to expose `seller.full_name` on the unauthenticated GET
+  agreement endpoint (currently included).
+- Strengthen scroll-unlock gate: require an explicit scroll event before
+  unlocking Agree on very tall viewports (`scrollHeight - 28` threshold).
+- Distinguish 409 state-conflict from network errors in the agreement page
+  error toast.
 
 ## Test Credentials
-Not applicable — static landing page, no auth.
+Not applicable — landing+forms+clickwrap, no end-user auth. Admin token
+for Consumer API minting lives in `/app/backend/.env` as `ADMIN_TOKEN`.
