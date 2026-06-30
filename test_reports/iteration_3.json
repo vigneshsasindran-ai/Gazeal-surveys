@@ -1,0 +1,34 @@
+{
+  "summary": "Verified the agreement-page footer fix: SurveysFooterReveal has been removed from /agreement/:token and replaced with the new compact static AgreementFooter (data-testid='agreement-footer'). All 15 clauses remain visible and unoccluded at every scroll position. Backend regression (agreement_url derivation from Origin) re-verified via direct localhost:8001 POST. Accept/Decline flows + persistence + idempotency + 409 conflicts all still work. 17/17 UI assertions on the footer/clause-visibility/unlock test + 8/8 effective assertions on accept-decline (10 total — 2 reclassified: backend returns `{status: already_accepted|already_declined}` rather than boolean flags, which is still a valid idempotent 200 contract).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_agreements.py",
+    "/app/test_reports/pytest/pytest_results.xml (from iteration_2, unchanged backend)"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "agreement.jsx: The new AgreementFooter component is defined inside agreement.jsx — fine for now (only used once). If a second agreement-style page is added, lift it to /app/frontend/src/components/ui/agreement-footer.jsx for reuse.",
+    "agreement.jsx is now ~280 lines and contains the CLAUSES array inline. If clauses ever need to be edited by non-engineers or A/B tested, consider extracting CLAUSES into /app/frontend/src/data/agreement-clauses.json (or fetched from the backend per-jurisdiction).",
+    "The only fixed-position elements on /agreement/:token are now SurveysHeader (h=104, z=50) and the sticky action bar (h=87, z=30) — neither can occlude clause content. Verified by enumerating all position:fixed elements with bounding boxes ≥50×50.",
+    "Idempotent backend contract returns `{status: 'already_accepted'}` / `{status: 'already_declined'}` rather than boolean flags. The UI only treats non-OK responses as errors (and surfaces 409 specifically), so the 200-with-status-string path is handled correctly — but consider standardising the response shape (e.g., always include `status` AND `already: true`) so frontend consumers don't have to special-case either format."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (smoke-verified: POST /api/leads/order-survey with Origin returns agreement_url=https://survey.gazeal.co.uk/agreement/<token>; accept/decline endpoints return correct 200 / 200-idempotent / 409 codes. Full 14-test pytest suite from iteration_2 not re-run per main-agent instruction since backend code is unchanged.)",
+    "frontend": "100% (17/17 footer + clause-visibility + unlock assertions; 8/8 effective accept-decline + persistence + 409 assertions)"
+  },
+  "test_credentials": "No auth required. Sample token leA0bbWoR7M still pending. Tokens created this iteration: gqPQnUXJ4jc (pending, used for scroll/footer test), 7LI3jnDGIdE (accepted), umtJgZnHsYk (declined).",
+  "seed_data_creation": "Three TEST_-prefixed leads + agreements created this iteration (gqPQnUXJ4jc pending, 7LI3jnDGIdE accepted, umtJgZnHsYk declined). Safe to leave in Mongo as read-only fixtures.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "The agreement page (/app/frontend/src/pages/agreement.jsx) now has its own inline AgreementFooter (data-testid='agreement-footer') and does NOT import SurveysFooterReveal. Only fixed-position elements on the page are: SurveysHeader (top, z=50) and the sticky action bar (bottom, z=30, only when status='pending'). Backend agreements/leads endpoints are unchanged since iteration_2; /app/backend/tests/test_agreements.py (14 green tests) is the canonical regression suite.",
+  "rca of the issue": "User reported that the 600px SurveysFooterReveal (used on the landing page, with position:fixed + translateY scroll-progress trick) was sliding up over the agreement clauses while the seller scrolled. Main agent's fix: agreement.jsx no longer imports SurveysFooterReveal; instead it defines AgreementFooter — a plain non-fixed footer with mt-12 spacing, the Gazeal logo, three links and a copyright line. Verified by (a) DOM query: no element with data-testid='surveys-footer-reveal' on /agreement/<any>; (b) enumerating all position:fixed elements ≥50×50 on the page — only SurveysHeader (h=104) and the sticky action bar (h=87) remain, none ≥500px; (c) scrolling to y=1000, 2000, 3000 and document.body.scrollHeight and confirming at least one agreement-clause-NN element is visible and topmost (via document.elementFromPoint check) at every position. Bug is conclusively fixed."
+}

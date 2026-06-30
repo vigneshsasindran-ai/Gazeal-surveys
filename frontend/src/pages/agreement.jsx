@@ -1,20 +1,50 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Check, X, ChevronDown } from "lucide-react";
+import { Check, X, ChevronDown, ArrowUpRight, Mail } from "lucide-react";
 import SurveysHeader from "@/components/ui/surveys-header";
-import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
  * design language as the rest of the Surveys site. Reuses the existing
- * header & scroll-revealing footer. Persistent URL: once accepted, the
- * page stays live and shows the recorded acceptance state forever.
+ * header but renders its OWN compact static footer (the scroll-reveal
+ * footer used on the landing page would otherwise translate upward and
+ * cover the clauses while the seller is reading). Persistent URL: once
+ * accepted, the page stays live and shows the recorded acceptance state
+ * forever.
  *
  * Clauses flow inline with the page scroll (no nested scroll box). The
  * Agree button unlocks via IntersectionObserver on a sentinel placed
  * after the final clause — i.e. the seller must scroll to the end of the
  * terms before they can accept.
  */
+
+const LOGO_SRC =
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
+
+const AgreementFooter = () => (
+  <footer className="relative bg-black border-t border-white/10 mt-12" data-testid="agreement-footer">
+    <div className="max-w-3xl mx-auto px-6 py-12 flex flex-col items-center gap-6">
+      <img src={LOGO_SRC} alt="Gazeal Surveys" className="h-10 w-auto opacity-70" />
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-outfit text-[13px]">
+        <a href="https://gazeal.co.uk" target="_blank" rel="noopener noreferrer"
+           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+          Gazeal Main Site <ArrowUpRight className="w-3 h-3" />
+        </a>
+        <a href="https://elite.gazeal.co.uk" target="_blank" rel="noopener noreferrer"
+           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+          Gazeal Elite <ArrowUpRight className="w-3 h-3" />
+        </a>
+        <a href="mailto:info@gazeal.co.uk"
+           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+          <Mail className="w-3.5 h-3.5" /> info@gazeal.co.uk
+        </a>
+      </div>
+      <p className="font-outfit text-[12px] text-white/35 text-center">
+        © {new Date().getFullYear()} Gazeal Surveys. All rights reserved.
+      </p>
+    </div>
+  </footer>
+);
 
 const CLAUSES = [
   { no: "01", title: "The parties and the survey", body: "You are commissioning a Home Insight Survey, a survey designed for sellers and buyers and carried out by an accredited RPSA panel surveyor. The buyer can rely on it with the assurance of cover under the surveyor's professional indemnity insurance. Gazeal Surveys provides the service through the RPSA, and Gazeal Limited, the leading provider of reservation agreements, acts as their agent for these purposes." },
@@ -105,7 +135,7 @@ const AgreementPage = () => {
           <h1 className="font-archivo font-bold text-3xl mb-4">Agreement not found</h1>
           <p className="font-outfit text-white/65">{loadErr} Please check the link in your email or contact your agent.</p>
         </main>
-        <SurveysFooterReveal />
+        <AgreementFooter />
       </div>
     );
   }
@@ -240,7 +270,7 @@ const AgreementPage = () => {
         )}
       </main>
 
-      <SurveysFooterReveal />
+      <AgreementFooter />
     </div>
   );
 };
