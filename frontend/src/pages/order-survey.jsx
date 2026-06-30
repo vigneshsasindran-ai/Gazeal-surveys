@@ -205,13 +205,13 @@ const OrderSurveyPage = () => {
                   Before you start
                 </h2>
                 <p className="font-outfit text-[14px] leading-relaxed text-white/65 mb-4">
-                  This sends your seller an invite from RPSA to arrange their
+                  This sends your seller an invite to arrange their
                   survey. Here is how it works:
                 </p>
                 <ul className="space-y-2.5">
                   {[
                     "You add your details, your seller's details and the property listing below.",
-                    "RPSA emails your seller an invite to book their survey with an accredited surveyor.",
+                    "We email your seller an invite to book their survey with an accredited surveyor.",
                     "Your seller books directly. They pay nothing now. The fee is settled only when the sale completes, and if the sale falls through unreasonably, they pay nothing at all.",
                   ].map((line, i) => (
                     <li
