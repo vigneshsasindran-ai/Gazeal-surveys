@@ -252,7 +252,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sign your Seller Survey Agreement</title>
+<title>Re: The Sale of {address}</title>
 </head>
 <body style="margin:0;padding:0;background:#F2EFE8;
              font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
@@ -602,7 +602,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         seller_email_error = None
         try:
             seller_email_id = await _send_email(
-                subject="Action required: sign your Seller Survey Agreement",
+                subject=f"Re: The Sale of {lead.address_line_1}, {lead.postcode}",
                 html=_render_seller_invite(lead, agreement_url),
                 to=[lead.seller_email],
             )
