@@ -292,10 +292,9 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
             <p style="margin:0 0 6px;font-size:13px;color:#6B7280;
                       letter-spacing:1.6px;text-transform:uppercase;
                       font-weight:600;">For your action</p>
-            <h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;
-                       font-weight:700;letter-spacing:-0.3px;color:#0B1220;
-                       max-width:24ch;">
-              Sign your Seller Survey Agreement
+            <h1 style="margin:0 0 14px;font-size:22px;line-height:1.3;
+                       font-weight:700;letter-spacing:-0.3px;color:#0B1220;">
+              Re: The Sale of {address}
             </h1>
             <p style="margin:0;font-size:15px;color:#0B1220;">
               Hi {lead.seller_name.split(' ')[0] if lead.seller_name else 'there'},
@@ -306,19 +305,9 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
         <!-- Why this email -->
         <tr>
           <td style="padding:18px 36px 4px;font-size:15px;color:#0B1220;">
-            <p style="margin:0 0 12px;">
-              You are receiving this email because
-              <strong>{lead.agent_name}</strong> at
-              <strong>{lead.agency_name}</strong> has ordered a seller
-              survey on your property
-              <strong>{address}</strong> through Gazeal.
-            </p>
             <p style="margin:0;">
-              To get started, the next step is for you to review and sign
-              your Seller Survey Agreement. This is the document that
-              authorises RPSA to arrange your survey and confirms the terms,
-              including the fact that you pay nothing now and only when your
-              sale completes.
+              To get started, the next step is to read the terms and agree
+              to them by clicking the button below.
             </p>
           </td>
         </tr>
@@ -385,12 +374,11 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
           <td style="padding:24px 36px 4px;">
             <p style="margin:0 0 10px;font-size:11px;color:#6B7280;
                       letter-spacing:1.6px;text-transform:uppercase;
-                      font-weight:600;">What happens after you sign</p>
+                      font-weight:600;">What happens after</p>
             <ol style="margin:0;padding-left:18px;font-size:14px;color:#0B1220;
                        line-height:1.65;">
               <li style="margin-bottom:6px;">
-                RPSA receives your signed agreement and contacts you
-                directly to arrange the survey visit.
+                RPSA receives your request and contacts you directly.
               </li>
               <li style="margin-bottom:6px;">
                 An accredited surveyor visits the property and completes
@@ -401,20 +389,6 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
                 ready to share with serious buyers.
               </li>
             </ol>
-          </td>
-        </tr>
-
-        <!-- Reassurance -->
-        <tr>
-          <td style="padding:26px 36px 6px;">
-            <p style="margin:0;font-size:13px;color:#4A5260;
-                      background:rgba(2,94,186,0.05);
-                      border-left:3px solid #025eba;
-                      padding:12px 14px;border-radius:0 8px 8px 0;">
-              You pay nothing on signing. The survey fee is only settled when
-              your property sale completes, and if the sale falls through
-              unreasonably there is no cost to you at all.
-            </p>
           </td>
         </tr>
 

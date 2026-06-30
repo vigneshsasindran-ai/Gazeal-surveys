@@ -55,6 +55,8 @@ def public_context(agreement: dict) -> dict:
         },
         "accepted_at": agreement.get("accepted_at"),
         "declined_at": agreement.get("declined_at"),
+        "reservation_interest": bool(agreement.get("reservation_interest")),
+        "reservation_interest_at": agreement.get("reservation_interest_at"),
     }
 
 
@@ -216,5 +218,49 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             logger.exception("Decline notify failed")
 
         return {"status": "declined", "declined_at": now}
+
+    @router.post("/{token}/express-interest")
+    async def express_interest(token: str):
+        """Seller indicates interest in learning more about Gazeal Reservation
+        Agreements from the agreement page. Idempotent — sets a flag on the
+        agreement doc and emails Gazeal so an agent can follow up."""
+        doc = await db.agreements.find_one({"token": token})
+        if not doc:
+            raise HTTPException(404, "Agreement not found")
+        if doc.get("reservation_interest"):
+            return {"status": "already_expressed"}
+
+        now = datetime.now(timezone.utc).isoformat()
+        await db.agreements.update_one(
+            {"token": token},
+            {"$set": {"reservation_interest": True, "reservation_interest_at": now}},
+        )
+        seller_name = doc.get("seller_name") or "the seller"
+        seller_email = doc.get("seller_email") or "(no email)"
+        address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
+        try:
+            await _send(
+                subject=f"Reservation Agreement interest — {seller_name} ({address})",
+                to=[NOTIFY_EMAIL],
+                html=f"""
+                <h2 style="font-family:Arial,sans-serif;color:#025eba;">Seller is interested in a Reservation Agreement</h2>
+                <p style="font-family:Arial,sans-serif;font-size:14px;color:#0B1220;line-height:1.6;">
+                  <strong>{seller_name}</strong> ({seller_email}) — selling <strong>{address}</strong> —
+                  has asked to learn more about how a Gazeal Reservation Agreement could protect their sale.
+                </p>
+                <p style="font-family:Arial,sans-serif;font-size:14px;color:#0B1220;line-height:1.6;">
+                  Listing agent: <strong>{doc.get('agent_name','')}</strong> &middot;
+                  {doc.get('agency_name','')} &middot;
+                  <a href="mailto:{doc.get('agent_email','')}">{doc.get('agent_email','')}</a>
+                </p>
+                <p style="font-family:Arial,sans-serif;font-size:13px;color:#4A5260;">
+                  Please follow up directly with the seller and brief the agent.
+                </p>
+                """,
+            )
+        except Exception:
+            logger.exception("Reservation interest notify failed")
+
+        return {"status": "expressed", "reservation_interest_at": now}
 
     return router

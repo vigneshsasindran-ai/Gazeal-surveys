@@ -19,12 +19,12 @@ const STEPS = [
   {
     icon: ClipboardList,
     title: "Order the survey",
-    body: "Request a survey through Gazeal. We pass the property details across to RPSA, who match the property with an accredited surveyor that has the earliest availability.",
+    body: "Submit the property details and request a survey using Gazeal — it takes a couple of minutes.",
   },
   {
     icon: Send,
     title: "We invite the seller",
-    body: "RPSA contacts your seller directly, arranges a convenient time and carries out the survey at the property. Once the report is ready, it comes back to you and your seller.",
+    body: "Gazeal finds an accredited surveyor, contacts your seller and arranges a convenient visit. Once the report is ready, it comes back to you and your seller.",
   },
   {
     icon: FileCheck,
@@ -36,38 +36,38 @@ const STEPS = [
 const SELLER_BENEFITS = [
   {
     title: "Nothing to pay up front",
-    body: "Your seller does not pay anything when they list. The survey is arranged at the start of the marketing and only settles when the sale actually completes, so the biggest reason sellers say no to ordering a survey early simply disappears.",
+    body: "The survey only settles when the sale completes.",
   },
   {
     title: "No cost if the sale falls through",
-    body: "If the buyer walks away unreasonably, your seller does not pay for the survey. They keep the same report on file for the next interested buyer, with no new spend and no fresh paperwork.",
+    body: "If the buyer walks unreasonably, the seller pays nothing.",
   },
   {
     title: "Fewer last-minute renegotiations",
-    body: "Because the condition of the home is on the table before any offer is made, the buyer cannot use a late survey as a haggling tool. Everything they need to know is already in front of them.",
+    body: "Condition is known before offers — no late survey haggling.",
   },
   {
     title: "A sale that actually completes",
-    body: "Survey surprises at week six are one of the biggest reasons English sales fall apart. Booking the survey when the property goes live takes that risk off the table, so the offer you agreed in spring is the one that completes.",
+    body: "Survey surprises don't kill the deal at week six.",
   },
 ];
 
 const BUYER_BENEFITS = [
   {
     title: "Stop paying for homes you never buy",
-    body: "Buyers in England often spend hundreds of pounds surveying a property they never end up purchasing. With Gazeal Surveys the report is already attached to the listing, so you can read it before you offer and only spend money on the home you actually buy.",
+    body: "The report is attached to the listing — read before you offer.",
   },
   {
     title: "Offer with confidence, not nerves",
-    body: "An independent condition survey is in your hands before you make a bid. You know what you are buying, you know what to expect from it, and you can offer with real conviction instead of crossing your fingers.",
+    body: "An independent condition survey is already in your hands.",
   },
   {
     title: "An independent surveyor, not the seller's pick",
-    body: "Surveys are carried out by accredited surveyors from the Residential Property Surveyors Association. They are appointed independently of the seller and the agent, so the report you read is one you can genuinely trust.",
+    body: "Accredited RPSA surveyors, appointed independently of the seller and agent.",
   },
   {
     title: "A simpler path to completion",
-    body: "With the condition of the home already known, there is less for your solicitor and lender to chase later in the process. The journey from offer accepted to keys in hand becomes calmer, shorter and a lot more predictable.",
+    body: "Less for solicitors and lenders to chase. Faster to keys in hand.",
   },
 ];
 

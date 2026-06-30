@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Check, X, ChevronDown, ArrowUpRight, Mail } from "lucide-react";
 import SurveysHeader from "@/components/ui/surveys-header";
+import ReservationExplainer from "@/components/ui/reservation-explainer";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -228,6 +229,15 @@ const AgreementPage = () => {
           <p className="mt-10 font-outfit text-[12px] text-white/40">
             Reference: <span className="font-mono text-white/60">{data.token}</span> · This link is unique to your property submission and remains live for your records.
           </p>
+
+          {/* Reservation Agreement explainer + interest checkbox */}
+          <div className="mt-16 lg:mt-20">
+            <ReservationExplainer
+              variant="seller"
+              token={data.token}
+              initialInterest={!!data.reservation_interest}
+            />
+          </div>
         </div>
 
         {/* Sticky action bar — only shown while pending */}
