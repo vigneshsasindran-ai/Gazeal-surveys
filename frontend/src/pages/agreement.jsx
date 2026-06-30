@@ -166,15 +166,20 @@ const AgreementPage = () => {
         <div className={`relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40 ${pending ? "pb-44" : "pb-24"}`}>
           {/* Status banner */}
           {accepted && (
-            <div className="mb-8 rounded-2xl border border-[#4FB6FF]/35 bg-gradient-to-br from-[#4FB6FF]/[0.12] to-[#025eba]/[0.06] p-5 flex items-center gap-4"
+            <div className="mb-8 rounded-2xl border border-[#4FB6FF]/35 bg-gradient-to-br from-[#4FB6FF]/[0.12] to-[#025eba]/[0.06] p-5 flex items-start gap-4"
                  data-testid="agreement-status-accepted">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full shrink-0"
                     style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}>
                 <Check className="w-5 h-5 text-white" strokeWidth={3} />
               </span>
-              <div>
+              <div className="min-w-0">
                 <p className="font-archivo font-bold text-[15px] text-white">Seller has agreed to the terms</p>
                 <p className="font-outfit text-[13px] text-white/70 mt-0.5">Accepted on {stampDate}. This page remains live for your reference.</p>
+                {data.accepted_ip && (
+                  <p className="font-outfit text-[12px] text-white/55 mt-1.5" data-testid="agreement-accepted-ip">
+                    Recorded from IP <span className="font-mono text-white/75">{data.accepted_ip}</span> &middot; Token <span className="font-mono text-white/75">{data.token}</span>
+                  </p>
+                )}
               </div>
             </div>
           )}

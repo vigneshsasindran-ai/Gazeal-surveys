@@ -55,6 +55,7 @@ def public_context(agreement: dict) -> dict:
             "postcode": agreement.get("postcode"),
         },
         "accepted_at": agreement.get("accepted_at"),
+        "accepted_ip": agreement.get("accepted_ip"),
         "declined_at": agreement.get("declined_at"),
         "reservation_interest": bool(agreement.get("reservation_interest")),
         "reservation_interest_at": agreement.get("reservation_interest_at"),
@@ -156,6 +157,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                   for <strong>{address}</strong> has been recorded on {now}.
                   RPSA will be in touch shortly to arrange your survey.
                 </p>
+                <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;line-height:1.6;">
+                  For your records, this acceptance was made from IP address
+                  <code>{ip or 'unknown'}</code>.<br/>
+                  Reference: <code>{token}</code>
+                </p>
                 <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">
                   You can revisit your agreement at any time using your original link.
                 </p>
@@ -183,7 +189,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_at": now,
         }
         await fan_out(db, "agreement.signed", fanout_doc)
-        notify_agreement_accepted({**doc, "token": token})
+        notify_agreement_accepted({**doc, "token": token, "accepted_ip": ip, "accepted_at": now})
 
         return {"status": "accepted", "accepted_at": now}
 

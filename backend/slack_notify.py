@@ -100,6 +100,8 @@ def notify_agreement_accepted(doc: dict[str, Any]) -> None:
                 _field("Seller", f"{doc.get('seller_name','')}\n{doc.get('seller_email','')}"),
                 _field("Listing agent", f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"),
                 _field("Token", f"`{doc.get('token','')}`"),
+                _field("Accepted at", doc.get("accepted_at") or "—"),
+                _field("IP address", f"`{doc.get('accepted_ip') or 'unknown'}`"),
             ],
         },
     ]
