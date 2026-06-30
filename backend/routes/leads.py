@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import secrets
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -234,16 +235,13 @@ def _render_learn_more(lead: LearnMoreLead) -> str:
     )
 
 
-def _render_seller_invite(lead: OrderSurveyLead) -> str:
+def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
     """Branded, application-style email to the seller with the agreement link.
 
     Layout principles: clear sender, factual subject line, a single primary
     action, an unmistakable explanation of why the email arrived. No icons,
     no decorative emoji, no marketing fluff.
     """
-    agreement_url = (
-        "https://eform.pandadoc.com/?eform=869a7851-dfff-46b0-9d1e-f643bba5905a"
-    )
     address = lead.address_line_1
     if lead.postcode:
         address = f"{address}, {lead.postcode}"
@@ -577,6 +575,30 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
 
+        # Mint a unique agreement token + persist the agreement record so the
+        # seller can accept the terms via a branded, permanent link.
+        agreement_token = secrets.token_urlsafe(8)
+        agreement_url = (
+            f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{agreement_token}"
+        )
+        await db.agreements.insert_one(
+            {
+                "token": agreement_token,
+                "lead_id": doc["id"],
+                "status": "pending",
+                "created_at": doc["created_at"],
+                "agent_name": lead.agent_name,
+                "agency_name": lead.agency_name,
+                "branch": lead.branch,
+                "agent_email": lead.email,
+                "agent_phone": lead.phone,
+                "seller_name": lead.seller_name,
+                "seller_email": lead.seller_email,
+                "address_line_1": lead.address_line_1,
+                "postcode": lead.postcode,
+            }
+        )
+
         email_id = None
         email_error = None
         try:
@@ -593,7 +615,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         try:
             seller_email_id = await _send_email(
                 subject="Action required: sign your Seller Survey Agreement",
-                html=_render_seller_invite(lead),
+                html=_render_seller_invite(lead, agreement_url),
                 to=[lead.seller_email],
             )
         except Exception as exc:

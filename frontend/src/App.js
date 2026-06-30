@@ -10,6 +10,7 @@ import SurveysFAQ from "@/components/ui/surveys-faq";
 import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
 import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
 import OrderSurveyPage from "@/pages/order-survey";
+import AgreementPage from "@/pages/agreement";
 
 const SurveysLanding = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SurveysLanding />} />
         <Route path="/order-survey" element={<OrderSurveyPage />} />
+        <Route path="/agreement/:token" element={<AgreementPage />} />
       </Routes>
     </BrowserRouter>
   );
