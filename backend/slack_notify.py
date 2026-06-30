@@ -44,8 +44,31 @@ def _field(label: str, value: str) -> dict[str, Any]:
     return {"type": "mrkdwn", "text": f"*{label}*\n{value or '—'}"}
 
 
+def _email_status_block(label_to_status: list[tuple[str, str | None, str | None]]) -> dict[str, Any]:
+    """Build a 'Notifications sent' status block. Each tuple is (label, email_id, error)."""
+    lines: list[str] = []
+    for label, email_id, err in label_to_status:
+        if email_id:
+            lines.append(f":white_check_mark: *{label}* sent ({email_id})")
+        elif err:
+            lines.append(f":x: *{label}* failed — `{err}`")
+        else:
+            lines.append(f":grey_question: *{label}* — not attempted")
+    return {
+        "type": "section",
+        "text": {"type": "mrkdwn", "text": "*Email status*\n" + "\n".join(lines)},
+    }
+
+
 # ---------- public API ----------
-def notify_order_submitted(lead: dict[str, Any]) -> None:
+def notify_order_submitted(
+    lead: dict[str, Any],
+    *,
+    agent_email_id: str | None = None,
+    agent_email_error: str | None = None,
+    seller_email_id: str | None = None,
+    seller_email_error: str | None = None,
+) -> None:
     """Agent submitted the Order Survey form."""
     address = ", ".join(
         x for x in (lead.get("address_line_1"), lead.get("postcode")) if x
@@ -77,10 +100,21 @@ def notify_order_submitted(lead: dict[str, Any]) -> None:
             "type": "section",
             "text": {"type": "mrkdwn", "text": f":link: <{lead['listing_url']}|View listing>"},
         })
+    blocks.append(_email_status_block([
+        ("Agent notification", agent_email_id, agent_email_error),
+        ("Seller invite", seller_email_id, seller_email_error),
+    ]))
     _bg(_post(blocks, f"New Order Survey from {lead.get('agency_name','')}"))
 
 
-def notify_agreement_accepted(doc: dict[str, Any]) -> None:
+def notify_agreement_accepted(
+    doc: dict[str, Any],
+    *,
+    gazeal_email_id: str | None = None,
+    gazeal_email_error: str | None = None,
+    seller_email_id: str | None = None,
+    seller_email_error: str | None = None,
+) -> None:
     """Seller accepted the Seller Survey Agreement."""
     address = ", ".join(
         x for x in (doc.get("address_line_1"), doc.get("postcode")) if x
@@ -111,10 +145,19 @@ def notify_agreement_accepted(doc: dict[str, Any]) -> None:
             "type": "section",
             "text": {"type": "mrkdwn", "text": f":memo: <{doc['agreement_url']}|Open signed agreement>"},
         })
+    blocks.append(_email_status_block([
+        ("Gazeal notification", gazeal_email_id, gazeal_email_error),
+        ("Seller confirmation", seller_email_id, seller_email_error),
+    ]))
     _bg(_post(blocks, f"Seller agreement accepted — {doc.get('seller_name','')}"))
 
 
-def notify_reservation_interest(doc: dict[str, Any]) -> None:
+def notify_reservation_interest(
+    doc: dict[str, Any],
+    *,
+    gazeal_email_id: str | None = None,
+    gazeal_email_error: str | None = None,
+) -> None:
     """Seller ticked the Reservation Agreement interest checkbox."""
     address = ", ".join(
         x for x in (doc.get("address_line_1"), doc.get("postcode")) if x
@@ -148,4 +191,7 @@ def notify_reservation_interest(doc: dict[str, Any]) -> None:
             ],
         },
     ]
+    blocks.append(_email_status_block([
+        ("Gazeal notification", gazeal_email_id, gazeal_email_error),
+    ]))
     _bg(_post(blocks, f"Reservation interest from {doc.get('seller_name','')}"))

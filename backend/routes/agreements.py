@@ -122,8 +122,10 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         agent_label = f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"
 
         # Notify Gazeal
+        gazeal_email_id: Optional[str] = None
+        gazeal_email_error: Optional[str] = None
         try:
-            await _send(
+            gazeal_email_id = await _send(
                 subject=f"Seller agreement ACCEPTED — {seller_name} ({address})",
                 to=[NOTIFY_EMAIL],
                 html=f"""
@@ -141,12 +143,15 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">Reference: <code>{token}</code></p>
                 """,
             )
-        except Exception:
+        except Exception as exc:
+            gazeal_email_error = str(exc)
             logger.exception("Gazeal notify email failed")
 
         # Confirmation to the seller
+        seller_email_id: Optional[str] = None
+        seller_email_error: Optional[str] = None
         try:
-            await _send(
+            seller_email_id = await _send(
                 subject="Your Seller Survey Agreement is accepted",
                 to=[doc.get("seller_email")],
                 html=f"""
@@ -168,7 +173,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 </p>
                 """,
             )
-        except Exception:
+        except Exception as exc:
+            seller_email_error = str(exc)
             logger.exception("Seller confirmation email failed")
 
         # Webhook fan-out to RPSA
@@ -190,7 +196,13 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_at": now,
         }
         await fan_out(db, "agreement.signed", fanout_doc)
-        notify_agreement_accepted({**doc, "token": token, "accepted_ip": ip, "accepted_at": now})
+        notify_agreement_accepted(
+            {**doc, "token": token, "accepted_ip": ip, "accepted_at": now},
+            gazeal_email_id=gazeal_email_id,
+            gazeal_email_error=gazeal_email_error,
+            seller_email_id=seller_email_id,
+            seller_email_error=seller_email_error,
+        )
 
         return {"status": "accepted", "accepted_at": now}
 
@@ -247,8 +259,10 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         seller_name = doc.get("seller_name") or "the seller"
         seller_email = doc.get("seller_email") or "(no email)"
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
+        gazeal_email_id: Optional[str] = None
+        gazeal_email_error: Optional[str] = None
         try:
-            await _send(
+            gazeal_email_id = await _send(
                 subject=f"Reservation Agreement interest — {seller_name} ({address})",
                 to=[NOTIFY_EMAIL],
                 html=f"""
@@ -267,10 +281,15 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 </p>
                 """,
             )
-        except Exception:
+        except Exception as exc:
+            gazeal_email_error = str(exc)
             logger.exception("Reservation interest notify failed")
 
-        notify_reservation_interest({**doc, "token": token})
+        notify_reservation_interest(
+            {**doc, "token": token},
+            gazeal_email_id=gazeal_email_id,
+            gazeal_email_error=gazeal_email_error,
+        )
 
         return {"status": "expressed", "reservation_interest_at": now}
 

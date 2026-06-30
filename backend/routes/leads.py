@@ -558,7 +558,6 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         }
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
-        notify_order_submitted(doc)
 
         # Persist the agreement record so the seller can accept the terms
         # via a branded, permanent link. Derive the public base URL from the
@@ -621,6 +620,16 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             )
         except Exception as exc:
             seller_email_error = str(exc)
+
+        # Fire the Slack ping AFTER both email attempts so we can surface
+        # delivery status (quota / domain errors land visibly in Slack).
+        notify_order_submitted(
+            doc,
+            agent_email_id=email_id,
+            agent_email_error=email_error,
+            seller_email_id=seller_email_id,
+            seller_email_error=seller_email_error,
+        )
 
         return {
             "id": doc["id"],

@@ -1,0 +1,31 @@
+{
+  "summary": "Backend regression + new Slack email-status notification tests. Added /app/backend/tests/test_slack_email_status.py (9 tests). All 34 backend tests pass. Verified SENDER_EMAIL='info@gazeal.co.uk' is read from env in routes/leads.py, routes/agreements.py, and webhooks.py and passed as the 'from' field to resend.Emails.send. Verified the new _email_status_block in slack_notify.py renders :white_check_mark: with the email_id on success and :x: with the verbatim error string on failure, for all three event types (order submitted / agreement accepted / reservation interest). Verified the order-survey HTTP response carries email_id + email_error + seller_email_id + seller_email_error + reference_number keys. Slack notifier is a silent no-op when SLACK_WEBHOOK_URL is empty.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": [
+    "/app/backend/tests/test_slack_email_status.py",
+    "/app/backend/tests/test_agreements.py",
+    "/app/backend/tests/test_email_and_interest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "IMPORTANT (production): the user must set SENDER_EMAIL=info@gazeal.co.uk in the PRODUCTION deployment env vars (preview .env was already correct).",
+    "Frontend smoke testing was NOT executed in this iteration (review_request says testing_type=backend). Main agent may verify /agreement/<freshToken> dark theme + Agree button + green banner + interest checkbox auto-save via a quick manual UI check if desired."
+  ],
+  "critical_code_review_comments": [
+    "slack_notify._WEBHOOK is captured at module import time. Tests that need to flip the value must monkeypatch slack_notify._WEBHOOK (not just os.environ). Production behaviour is unaffected because the env is fixed.",
+    "Slack ping is fire-and-forget via asyncio.create_task. If the FastAPI worker process exits before the task drains (e.g., a crash mid-request) the Slack ping can be lost. Acceptable for this lead volume — flagged for awareness.",
+    "routes/agreements.py decline endpoint does NOT call any slack_notify.* function and does not surface the gazeal notify email status. Out of scope for this fix, but worth a follow-up if decline visibility is desired in Slack.",
+    "webhooks.py _send_failure_alert correctly reads SENDER_EMAIL from env at call time (good — no import-time freeze)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_slack_email_status.py (NEW)",
+    "/app/backend/pytest.ini (NEW — asyncio_mode=auto)"
+  ],
+  "success_rate": { "backend": "100% (34/34)", "frontend": "not tested (backend-only request)" },
+  "test_credentials": "Not required for endpoints under test",
+  "seed_data_creation": "Each test class creates fresh leads/agreements with TEST_ prefix and uuid suffixes. No cleanup performed (test data lingers in Mongo but is isolated by uuid).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend tests now live at /app/backend/tests/. pytest.ini at /app/backend/pytest.ini sets asyncio_mode=auto. Run with: cd /app/backend && python -m pytest tests/ -v. The Slack email-status assertions are UNIT-level (monkeypatched slack_notify._post + _bg) because motor's event-loop binding makes ASGI in-process tests fragile. HTTP layer is covered via the response-shape test that the order-survey endpoint always returns email_id/email_error/seller_email_id/seller_email_error keys."
+}
