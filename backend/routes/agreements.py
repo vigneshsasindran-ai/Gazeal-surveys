@@ -120,6 +120,15 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
         seller_name = doc.get("seller_name") or "the seller"
         agent_label = f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"
+        agreement_url = doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}"
+        link_block = (
+            f'<p style="font-family:Arial,sans-serif;font-size:13px;color:#0B1220;margin:18px 0 6px;">'
+            f'<strong>Sale room / agreement link:</strong><br/>'
+            f'<a href="{agreement_url}" style="color:#025eba;text-decoration:none;font-weight:600;">{agreement_url}</a>'
+            f'</p>'
+            f'<p style="font-family:Arial,sans-serif;font-size:11px;color:#6B7280;">'
+            f'This link is your transaction room for this sale — return here at any time to revisit the signed agreement and (soon) access more Gazeal features for this case.</p>'
+        )
 
         # Notify Gazeal
         gazeal_email_id: Optional[str] = None
@@ -141,11 +150,41 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                   <tr><td style="color:#6B7280;">IP / UA</td><td>{ip} &middot; <code style="font-size:11px;">{ua}</code></td></tr>
                 </table>
                 <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">Reference: <code>{token}</code></p>
+                {link_block}
                 """,
             )
         except Exception as exc:
             gazeal_email_error = str(exc)
             logger.exception("Gazeal notify email failed")
+
+        # Notify the listing agent
+        agent_email_id: Optional[str] = None
+        agent_email_error: Optional[str] = None
+        agent_email_addr = doc.get("agent_email")
+        if agent_email_addr:
+            try:
+                agent_email_id = await _send(
+                    subject=f"Seller has signed — {seller_name} ({address})",
+                    to=[agent_email_addr],
+                    html=f"""
+                    <p style="font-family:Arial,sans-serif;font-size:14px;color:#0B1220;">
+                      Hi {doc.get('agent_name','').split(' ')[0] or 'there'},
+                    </p>
+                    <p style="font-family:Arial,sans-serif;font-size:14px;color:#0B1220;line-height:1.6;">
+                      <strong>{seller_name}</strong> has accepted the Seller Survey
+                      Agreement for <strong>{address}</strong>. RPSA will be in
+                      touch with the seller directly to arrange the survey visit.
+                    </p>
+                    <p style="font-family:Arial,sans-serif;font-size:13px;color:#0B1220;line-height:1.6;">
+                      Accepted on {now}{f' from IP <code>{ip}</code>' if ip else ''}.
+                    </p>
+                    <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">Reference: <code>{token}</code></p>
+                    {link_block}
+                    """,
+                )
+            except Exception as exc:
+                agent_email_error = str(exc)
+                logger.exception("Agent notify email failed")
 
         # Confirmation to the seller
         seller_email_id: Optional[str] = None
@@ -168,9 +207,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                   <code>{ip or 'unknown'}</code>.<br/>
                   Reference: <code>{token}</code>
                 </p>
-                <p style="font-family:Arial,sans-serif;font-size:12px;color:#6B7280;">
-                  You can revisit your agreement at any time using your original link.
-                </p>
+                {link_block}
                 """,
             )
         except Exception as exc:
@@ -200,6 +237,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             {**doc, "token": token, "accepted_ip": ip, "accepted_at": now},
             gazeal_email_id=gazeal_email_id,
             gazeal_email_error=gazeal_email_error,
+            agent_email_id=agent_email_id,
+            agent_email_error=agent_email_error,
             seller_email_id=seller_email_id,
             seller_email_error=seller_email_error,
         )
@@ -259,6 +298,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         seller_name = doc.get("seller_name") or "the seller"
         seller_email = doc.get("seller_email") or "(no email)"
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
+        agreement_url = doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}"
         gazeal_email_id: Optional[str] = None
         gazeal_email_error: Optional[str] = None
         try:
@@ -276,6 +316,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                   {doc.get('agency_name','')} &middot;
                   <a href="mailto:{doc.get('agent_email','')}">{doc.get('agent_email','')}</a>
                 </p>
+                <p style="font-family:Arial,sans-serif;font-size:13px;color:#0B1220;line-height:1.6;margin-top:18px;">
+                  <strong>Sale room / agreement link:</strong><br/>
+                  <a href="{agreement_url}" style="color:#025eba;text-decoration:none;font-weight:600;">{agreement_url}</a>
+                </p>
+                <p style="font-family:Arial,sans-serif;font-size:11px;color:#6B7280;">Reference: <code>{token}</code></p>
                 <p style="font-family:Arial,sans-serif;font-size:13px;color:#4A5260;">
                   Please follow up directly with the seller and brief the agent.
                 </p>

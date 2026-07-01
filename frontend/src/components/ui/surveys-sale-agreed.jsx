@@ -12,7 +12,7 @@ import { ChevronRight } from "lucide-react";
  */
 
 const SCENE_IMAGE =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/s7e4jhr2_DESIGN%20ELEMENTS%20%20%2819%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/noswvm6s_Gazeal%20Linkedin%20Post%20%288%29.png";
 
 const SurveysSaleAgreed = ({ onOrderSurvey }) => {
   return (

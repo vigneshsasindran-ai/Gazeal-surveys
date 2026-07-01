@@ -100,6 +100,11 @@ def notify_order_submitted(
             "type": "section",
             "text": {"type": "mrkdwn", "text": f":link: <{lead['listing_url']}|View listing>"},
         })
+    if lead.get("agreement_url"):
+        blocks.append({
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Sale room / agreement link:* <{lead['agreement_url']}|{lead['agreement_url']}>"},
+        })
     blocks.append(_email_status_block([
         ("Agent notification", agent_email_id, agent_email_error),
         ("Seller invite", seller_email_id, seller_email_error),
@@ -112,6 +117,8 @@ def notify_agreement_accepted(
     *,
     gazeal_email_id: str | None = None,
     gazeal_email_error: str | None = None,
+    agent_email_id: str | None = None,
+    agent_email_error: str | None = None,
     seller_email_id: str | None = None,
     seller_email_error: str | None = None,
 ) -> None:
@@ -147,6 +154,7 @@ def notify_agreement_accepted(
         })
     blocks.append(_email_status_block([
         ("Gazeal notification", gazeal_email_id, gazeal_email_error),
+        ("Agent notification", agent_email_id, agent_email_error),
         ("Seller confirmation", seller_email_id, seller_email_error),
     ]))
     _bg(_post(blocks, f"Seller agreement accepted — {doc.get('seller_name','')}"))
@@ -184,6 +192,7 @@ def notify_reservation_interest(
         {
             "type": "section",
             "fields": [
+                _field("Reference", f"`{doc.get('reference_number') or doc.get('token','')}`"),
                 _field("Property", address),
                 _field("Seller email", doc.get("seller_email", "")),
                 _field("Listing agent", f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"),
@@ -191,6 +200,11 @@ def notify_reservation_interest(
             ],
         },
     ]
+    if doc.get("agreement_url"):
+        blocks.append({
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Sale room / agreement link:* <{doc['agreement_url']}|{doc['agreement_url']}>"},
+        })
     blocks.append(_email_status_block([
         ("Gazeal notification", gazeal_email_id, gazeal_email_error),
     ]))

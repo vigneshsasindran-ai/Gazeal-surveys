@@ -427,7 +427,8 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
 """
 
 
-def _render_order_survey(lead: OrderSurveyLead) -> str:
+def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
+    reference = agreement_url.rstrip("/").split("/")[-1] if agreement_url else ""
     contact_pieces = [
         f"{lead.agent_name}",
         f"{lead.agency_name}",
@@ -480,6 +481,17 @@ def _render_order_survey(lead: OrderSurveyLead) -> str:
             'confirmation checkbox was not ticked.</span>'
         )
         + '</p>'
+        + (
+            _section_title("Sale room")
+            + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
+              'A unique transaction room (also the seller agreement link) has been generated. '
+              'Use this link to track the case and access future Gazeal features for this sale.'
+              '</p>'
+              f'<p style="margin:10px 0 0;font-size:13px;line-height:1.6;">'
+              f'<a href="{agreement_url}" style="color:#025eba;text-decoration:none;font-weight:600;">{agreement_url}</a></p>'
+              f'<p style="margin:8px 0 0;font-size:12px;color:#6B7280;">Reference: <code>{reference}</code></p>'
+            if agreement_url else ""
+        )
     )
     return _EMAIL_WRAPPER.format(
         title="New survey order from an agent",
@@ -604,7 +616,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         try:
             email_id = await _send_email(
                 subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
-                html=_render_order_survey(lead),
+                html=_render_order_survey(lead, agreement_url),
             )
         except Exception as exc:
             email_error = str(exc)
