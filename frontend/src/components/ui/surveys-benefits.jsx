@@ -34,10 +34,10 @@ const STEPS = [
 ];
 
 const SELLER_COPY =
-  "An upfront survey shows the world your home is sale ready, and it puts none of your money at risk to do it. You pay nothing when the survey is carried out, because the fee only settles once the sale completes, and if the buyer walks away without good reason, you pay nothing at all. The real gain comes later. When buyers can see the condition of your home before they offer, they stop trying to chip the price with a late survey, and the report that usually derails a sale around week six holds no surprises. Your home reaches completion because the thing that breaks most sales has already been dealt with in the open.";
+  "When used with a Gazeal Reservation Agreement, the seller can order an upfront survey without paying on day one. The survey is paid for only when the sale completes. If the buyer pulls out unreasonably, or if either party withdraws for a valid reason under the agreement, the seller does not pay. The buyer gets the condition information before they offer, which means fewer late surprises, less renegotiation, and a sale that has a much better chance of completing.";
 
 const BUYER_COPY =
-  "An upfront survey lets you see the true condition of a home before you spend a penny on it. The report is attached to the listing, so you read it before you offer rather than paying for a survey on a house you may never buy. That means you can offer with a clear head instead of crossed fingers, because an independent assessment is already in your hands. It is carried out by an accredited RPSA surveyor appointed independently of the seller and the agent, so the view you get is honest rather than the seller's own pick. With the condition known from the start, there is far less for solicitors and lenders to chase, and you reach the keys sooner.";
+  "An upfront survey gives the buyer key condition information before they make an offer. Instead of waiting weeks and then discovering a problem later, they can see the report at the start and offer with more confidence. The survey is carried out by an accredited RPSA surveyor, so the buyer gets a clearer view of the property before committing to the sale. With the condition known upfront, there are fewer surprises, less back and forth, and a much smoother route to completion.";
 
 const StepCard = ({ index, icon: Icon, title, body }) => (
   <div
