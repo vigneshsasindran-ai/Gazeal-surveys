@@ -18,9 +18,10 @@ import ReservationExplainer from "@/components/ui/reservation-explainer";
  * so the seller understands *when* the survey fee is due in each scenario.
  */
 
-// ---- Pricing model (matches PDF exactly, no margin/net exposed) ----
-const BASE = 646.88;
-const STEP = 191.67;
+// Pricing lookup by combined-tier level (propTier + bedTier + listedTier).
+// Values taken verbatim from the source pricing spec (no computed floats,
+// so we never get 1-penny rounding drift on tier=3 combos).
+const PRICE_BY_TIER = [646.88, 838.55, 1030.22, 1221.88, 1413.55];
 
 const PROP_BANDS = [
   { label: "Up to £999,999", min: 0, max: 999_999, tier: 0 },
@@ -57,7 +58,7 @@ function priceFor({ value, beds, listed }) {
   if (propBand.tier == null || bedOpt.tier == null || listedOpt.tier == null) {
     return { quote: true, band: propBand.label };
   }
-  const total = BASE + STEP * (propBand.tier + bedOpt.tier + listedOpt.tier);
+  const total = PRICE_BY_TIER[propBand.tier + bedOpt.tier + listedOpt.tier];
   return { quote: false, price: total, band: propBand.label };
 }
 
