@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Check, X, ChevronDown, ArrowUpRight, Mail } from "lucide-react";
 import SurveysHeader from "@/components/ui/surveys-header";
 import ReservationExplainer from "@/components/ui/reservation-explainer";
+import PricingCalculator from "@/components/ui/pricing-calculator";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -242,6 +243,21 @@ const AgreementPage = () => {
               token={data.token}
               initialInterest={!!data.reservation_interest}
             />
+          </div>
+
+          {/* Pricing calculator — placed at the end so the seller can
+              quickly check the fee for their property before deciding. */}
+          <div className="mt-16 lg:mt-20">
+            <div className="max-w-2xl mb-8">
+              <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-3">Check the fee</p>
+              <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
+                See exactly what your survey costs.
+              </h2>
+              <p className="mt-3 font-outfit text-[15px] text-white/60 leading-relaxed">
+                A quick guide to the fee based on your property. Payable only when the sale completes.
+              </p>
+            </div>
+            <PricingCalculator testidPrefix="agreement-pricing" />
           </div>
         </div>
 
