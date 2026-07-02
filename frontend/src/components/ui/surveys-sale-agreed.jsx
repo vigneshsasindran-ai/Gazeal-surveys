@@ -76,7 +76,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
               <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-4 sm:p-6">
                 <img
                   src={SCENE_IMAGE}
-                  alt="A 3D illustration of a small house standing next to a survey clipboard with green ticks and a pencil."
+                  alt="A 3D illustration of a blue and white house with a magnifying glass held up to the front door and a 'Transparency' label alongside."
                   className="w-full h-auto rounded-xl object-contain surveys-bento-icon"
                   loading="lazy"
                   style={{
