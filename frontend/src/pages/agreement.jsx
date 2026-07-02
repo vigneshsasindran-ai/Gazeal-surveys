@@ -73,6 +73,7 @@ const AgreementPage = () => {
   const [unlocked, setUnlocked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [actionErr, setActionErr] = useState("");
+  const [pricingSnapshot, setPricingSnapshot] = useState(null);
   const sentinelRef = useRef(null);
 
   useEffect(() => {
@@ -107,7 +108,11 @@ const AgreementPage = () => {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/${action}`,
-        { method: "POST" }
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(action === "accept" && pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}),
+        }
       );
       if (!res.ok) {
         if (res.status === 409) {
@@ -181,6 +186,32 @@ const AgreementPage = () => {
                     Recorded from IP <span className="font-mono text-white/75">{data.accepted_ip}</span> &middot; Reference <span className="font-mono text-white/75">{data.reference_number || data.token}</span>
                   </p>
                 )}
+                {data.pricing_snapshot && (
+                  <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 font-outfit text-[12px]"
+                       data-testid="agreement-pricing-snapshot">
+                    <div>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Property value</p>
+                      <p className="text-white font-semibold">
+                        {new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(data.pricing_snapshot.property_value || 0)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Bedrooms</p>
+                      <p className="text-white font-semibold">{data.pricing_snapshot.bedrooms || "-"}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Listed status</p>
+                      <p className="text-white font-semibold">{data.pricing_snapshot.listed_status || "-"}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Estimated fee</p>
+                      <p className="text-white font-semibold">
+                        {data.pricing_snapshot.quote ? "Bespoke quote" :
+                          new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(data.pricing_snapshot.price || 0)}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -225,7 +256,7 @@ const AgreementPage = () => {
               </section>
             ))}
             <p className="font-outfit text-[12px] text-white/45 pl-8 pt-2 border-t border-white/[0.06]">
-              Summary for convenience only. The full signed agreement and the RPSA Service Terms govern in the event of any difference. By accepting, you confirm you have read and agree to those terms.
+              By accepting, you confirm you have read and agree to the terms above.
             </p>
             {/* Sentinel for the unlock observer */}
             <div ref={sentinelRef} data-testid="agreement-sentinel" className="h-1 w-full" />
@@ -235,30 +266,31 @@ const AgreementPage = () => {
           <p className="mt-10 font-outfit text-[12px] text-white/40">
             Reference: <span className="font-mono text-white/60">{data.reference_number || data.token}</span> · This link is unique to your property submission and remains live for your records.
           </p>
+        </div>
 
-          {/* Reservation Agreement explainer + interest checkbox */}
-          <div className="mt-16 lg:mt-20">
-            <ReservationExplainer
-              variant="seller"
-              token={data.token}
-              initialInterest={!!data.reservation_interest}
-            />
+        {/* Pricing calculator (wider container so the £ figure never crops) */}
+        <div className="relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20">
+          <div className="max-w-2xl mb-8">
+            <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
+              See what your survey costs.
+            </h2>
           </div>
+          <PricingCalculator
+            testidPrefix="agreement-pricing"
+            initialValue={data.pricing_snapshot?.property_value || 600_000}
+            initialBeds={data.pricing_snapshot?.bedrooms || undefined}
+            initialListed={data.pricing_snapshot?.listed_status || undefined}
+            onChange={setPricingSnapshot}
+          />
+        </div>
 
-          {/* Pricing calculator — placed at the end so the seller can
-              quickly check the fee for their property before deciding. */}
-          <div className="mt-16 lg:mt-20">
-            <div className="max-w-2xl mb-8">
-              <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-3">Check the fee</p>
-              <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-                See exactly what your survey costs.
-              </h2>
-              <p className="mt-3 font-outfit text-[15px] text-white/60 leading-relaxed">
-                A quick guide to the fee based on your property. Payable only when the sale completes.
-              </p>
-            </div>
-            <PricingCalculator testidPrefix="agreement-pricing" />
-          </div>
+        {/* Reservation Agreement explainer + interest checkbox */}
+        <div className={`relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
+          <ReservationExplainer
+            variant="seller"
+            token={data.token}
+            initialInterest={!!data.reservation_interest}
+          />
         </div>
 
         {/* Sticky action bar — only shown while pending */}

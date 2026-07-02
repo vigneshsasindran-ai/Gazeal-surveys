@@ -60,6 +60,7 @@ def public_context(agreement: dict) -> dict:
         "declined_at": agreement.get("declined_at"),
         "reservation_interest": bool(agreement.get("reservation_interest")),
         "reservation_interest_at": agreement.get("reservation_interest_at"),
+        "pricing_snapshot": agreement.get("pricing_snapshot"),
     }
 
 
@@ -99,23 +100,38 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         if doc.get("status") == "declined":
             raise HTTPException(409, "Agreement already declined")
 
+        # Optional pricing snapshot captured from the calculator on the page.
+        pricing_snapshot: Optional[dict] = None
+        try:
+            body = await request.json()
+            snap = body.get("pricing_snapshot") if isinstance(body, dict) else None
+            if isinstance(snap, dict):
+                pricing_snapshot = {
+                    "property_value": snap.get("property_value"),
+                    "bedrooms": snap.get("bedrooms"),
+                    "listed_status": snap.get("listed_status"),
+                    "band": snap.get("band"),
+                    "price": snap.get("price"),
+                    "quote": bool(snap.get("quote")),
+                }
+        except Exception:
+            pricing_snapshot = None
+
         now = datetime.now(timezone.utc).isoformat()
         ip = (
             request.headers.get("x-forwarded-for", "").split(",")[0].strip()
             or (request.client.host if request.client else "")
         )
         ua = request.headers.get("user-agent", "")
-        await db.agreements.update_one(
-            {"token": token},
-            {
-                "$set": {
-                    "status": "accepted",
-                    "accepted_at": now,
-                    "accepted_ip": ip,
-                    "accepted_ua": ua,
-                }
-            },
-        )
+        update_set = {
+            "status": "accepted",
+            "accepted_at": now,
+            "accepted_ip": ip,
+            "accepted_ua": ua,
+        }
+        if pricing_snapshot is not None:
+            update_set["pricing_snapshot"] = pricing_snapshot
+        await db.agreements.update_one({"token": token}, {"$set": update_set})
 
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
         seller_name = doc.get("seller_name") or "the seller"
@@ -213,6 +229,57 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         except Exception as exc:
             seller_email_error = str(exc)
             logger.exception("Seller confirmation email failed")
+
+        # Build the sale-room JSON package (transaction payload) — a single
+        # source of truth combining the agent's original order, the seller's
+        # acceptance, and the pricing snapshot. Persisted on the agreement
+        # doc and emitted to the backend log. The user will provide the
+        # downstream destination (partner API) in a future step.
+        lead_doc = None
+        if doc.get("lead_id"):
+            lead_doc = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
+        sale_room_package = {
+            "reference_number": doc.get("reference_number") or token,
+            "sale_room_url": agreement_url,
+            "status": "seller_signed",
+            "created_at": doc.get("created_at"),
+            "signed_at": now,
+            "agent": {
+                "name": doc.get("agent_name"),
+                "agency": doc.get("agency_name"),
+                "branch": doc.get("branch"),
+                "email": doc.get("agent_email"),
+                "phone": (lead_doc or {}).get("phone"),
+            },
+            "seller": {
+                "name": doc.get("seller_name"),
+                "email": doc.get("seller_email"),
+                "phone": (lead_doc or {}).get("seller_phone"),
+            },
+            "property": {
+                "address_line_1": doc.get("address_line_1"),
+                "postcode": doc.get("postcode"),
+                "listing_url": (lead_doc or {}).get("listing_url"),
+                "asking_price": (lead_doc or {}).get("asking_price"),
+            },
+            "agreement": {
+                "reference_number": doc.get("reference_number") or token,
+                "url": agreement_url,
+                "accepted_at": now,
+                "accepted_ip": ip,
+                "accepted_user_agent": ua,
+            },
+            "pricing_snapshot": pricing_snapshot,
+            "reservation_interest": bool(doc.get("reservation_interest")),
+        }
+        await db.agreements.update_one(
+            {"token": token}, {"$set": {"sale_room_package": sale_room_package}}
+        )
+        try:
+            import json as _json
+            logger.info("SALE_ROOM_PACKAGE %s", _json.dumps(sale_room_package))
+        except Exception:
+            pass
 
         # Webhook fan-out to RPSA
         fanout_doc = {
@@ -337,5 +404,17 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         )
 
         return {"status": "expressed", "reservation_interest_at": now}
+
+    @router.get("/{token}/package")
+    async def get_sale_room_package(token: str, request: Request):
+        """Admin-guarded fetch of the sale-room JSON package."""
+        admin_token = os.environ.get("ADMIN_TOKEN", "")
+        provided = request.headers.get("x-admin-token", "")
+        if not admin_token or provided != admin_token:
+            raise HTTPException(401, "Unauthorized")
+        doc = await db.agreements.find_one({"token": token}, {"_id": 0})
+        if not doc:
+            raise HTTPException(404, "Agreement not found")
+        return doc.get("sale_room_package") or {"status": "not_yet_signed", "token": token}
 
     return router

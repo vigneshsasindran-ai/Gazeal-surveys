@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 /*
  * Reusable pricing calculator — used on /pricing and on the seller
@@ -99,6 +99,7 @@ const PricingCalculator = ({
   initialListed = LISTED_OPTS[0].label,
   variant = "default",
   testidPrefix = "pricing",
+  onChange,
 }) => {
   const [value, setValue] = useState(initialValue);
   const [beds, setBeds] = useState(initialBeds);
@@ -123,6 +124,20 @@ const PricingCalculator = ({
 
   const result = useMemo(() => priceFor({ value, beds, listed }), [value, beds, listed]);
   const sliderPct = Math.max(0, Math.min(100, ((Math.min(value, SLIDER_MAX) - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100));
+
+  useEffect(() => {
+    if (typeof onChange === "function") {
+      onChange({
+        property_value: value,
+        bedrooms: beds,
+        listed_status: listed,
+        band: result.band || null,
+        price: result.quote ? null : result.price,
+        quote: !!result.quote,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, beds, listed]);
 
   const controlsCard = (
     <div

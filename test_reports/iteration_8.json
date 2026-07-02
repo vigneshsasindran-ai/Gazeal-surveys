@@ -1,0 +1,29 @@
+{
+  "summary": "Verified pricing_snapshot capture + sale_room_package + admin /package endpoint (backend) and full seller agreement UI restructure (frontend). Backend: 50/51 tests pass; 1 pre-existing failure in test_sale_room_link (order-survey Slack sale room section) unrelated to this iteration. Frontend: all copy, layout, DOM order, container width, calculator onChange → snapshot persistence, and reload persistence verified end-to-end on a fresh token.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "notify_order_submitted (Slack payload for order-survey)", "issue": "Slack message from POST /api/leads/order-survey does not include the 'Sale room / agreement link' section — pre-existing; unchanged this iteration. Accept-path Slack correctly includes it."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_pricing_snapshot_and_package.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: The task spec listed the expected fee for (value=£1,620,000, beds=4-5, Not listed) as £1,030.22, but the actual calculator computes £1,221.88 (tiers 2+1+0 → PRICE_BY_TIER[3]=1221.88). The app is consistent with /pricing; the spec figure appears to be wrong. No code change needed unless main agent intended a different pricing table.",
+    "OPTIONAL: Fix pre-existing test_slack_contains_sale_room_section — order-survey Slack payload missing 'Sale room / agreement link' section."
+  ],
+  "critical_code_review_comments": [
+    "pricing-calculator.jsx onChange effect depends on [value, beds, listed] but reads result.band/price/quote — because result is memoized on the same deps, this is fine, but the eslint disable is a smell. Consider including `result` in the deps.",
+    "agreements.py accept() is >200 lines — consider extracting the sale_room_package builder + email fan-out into helpers for readability.",
+    "public_context exposes pricing_snapshot which contains price data — fine for the seller's own token but bear in mind it's public via GET /api/agreements/{token} if the token leaks."
+  ],
+  "updated_files": ["/app/backend/tests/test_pricing_snapshot_and_package.py"],
+  "success_rate": {"backend": "98% (50/51)", "frontend": "100%"},
+  "seed_data_creation": "Created several TEST_ leads via /api/leads/order-survey for accept/decline/package flows; one fresh token RBnk9R_HlvA used for the E2E frontend run (now accepted with pricing_snapshot={1620000, '4 to 5', 'Not listed', £1,221.88}).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "New backend suite at /app/backend/tests/test_pricing_snapshot_and_package.py covers: accept with/without pricing_snapshot body, idempotency after snapshot, sale_room_package shape+persistence, /package endpoint auth (401 without/wrong header, 200 with correct ADMIN_TOKEN, not_yet_signed stub). ADMIN_TOKEN read from /app/backend/.env at test time. Demo QoXJAX-4L2Q package endpoint verified live. SALE_ROOM_PACKAGE log line confirmed in /var/log/supervisor/backend.err.log. Frontend restructure fully verified — DOM order calc(y=4213) < reservation(y=4701); no summary card clipping; all copy strings correct; snapshot grid persists across reload."
+}
