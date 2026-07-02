@@ -155,3 +155,56 @@ html {
         border-bottom-color: inherit;
     }
 }
+
+/* Pricing calculator range slider — dark theme, brand blue thumb */
+.pricing-slider {
+    background: transparent;
+    z-index: 2;
+}
+.pricing-slider::-webkit-slider-runnable-track {
+    background: transparent;
+    height: 6px;
+    border-radius: 999px;
+}
+.pricing-slider::-moz-range-track {
+    background: transparent;
+    height: 6px;
+    border-radius: 999px;
+}
+.pricing-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 3px solid #025eba;
+    box-shadow: 0 6px 22px rgba(2, 94, 186, 0.55), 0 0 0 6px rgba(79, 182, 255, 0.08);
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    margin-top: -8px;
+}
+.pricing-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 28px rgba(2, 94, 186, 0.65), 0 0 0 8px rgba(79, 182, 255, 0.12);
+}
+.pricing-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.04);
+}
+.pricing-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 3px solid #025eba;
+    box-shadow: 0 6px 22px rgba(2, 94, 186, 0.55);
+    cursor: grab;
+}
+.pricing-slider:focus-visible {
+    outline: none;
+}
+.pricing-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 6px 22px rgba(2, 94, 186, 0.55), 0 0 0 6px rgba(79, 182, 255, 0.35);
+}
+
