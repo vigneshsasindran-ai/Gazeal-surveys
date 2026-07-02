@@ -1,6 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 import SurveysHeader from "@/components/ui/surveys-header";
 import ReservationExplainer from "@/components/ui/reservation-explainer";
 
@@ -43,7 +41,8 @@ const LISTED_OPTS = [
 
 const SLIDER_MIN = 100_000;
 const SLIDER_MAX = 2_500_000;
-const SLIDER_STEP = 25_000;
+const SLIDER_STEP = 1_000;
+const VALUE_HARD_MAX = 100_000_000; // typed values allowed above slider max (kicks in "quote")
 
 const formatMoney = (n) =>
   new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
@@ -104,13 +103,33 @@ const Field = ({ label, hint, children }) => (
 
 // ---- Page ----
 const PricingPage = () => {
-  const navigate = useNavigate();
   const [value, setValue] = useState(600_000);
   const [beds, setBeds] = useState(BED_OPTS[0].label);
   const [listed, setListed] = useState(LISTED_OPTS[0].label);
+  const [inputText, setInputText] = useState(formatMoney(600_000));
+
+  const setValueFromNumber = (n) => {
+    const clamped = Math.max(0, Math.min(VALUE_HARD_MAX, Math.round(n || 0)));
+    setValue(clamped);
+    setInputText(formatMoney(clamped));
+  };
+
+  const onTextChange = (e) => {
+    // Allow the user to type freely; only sync the slider when we can parse a number.
+    const raw = e.target.value;
+    setInputText(raw);
+    const digits = raw.replace(/[^0-9]/g, "");
+    if (digits.length === 0) return;
+    const n = parseInt(digits, 10);
+    if (Number.isFinite(n)) setValue(Math.min(VALUE_HARD_MAX, n));
+  };
+
+  const onTextBlur = () => setInputText(formatMoney(value));
+
+  const onSliderChange = (e) => setValueFromNumber(Number(e.target.value));
 
   const result = useMemo(() => priceFor({ value, beds, listed }), [value, beds, listed]);
-  const sliderPct = ((value - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
+  const sliderPct = Math.max(0, Math.min(100, ((Math.min(value, SLIDER_MAX) - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100));
 
   return (
     <div className="min-h-screen bg-black text-white" data-testid="pricing-page">
@@ -123,7 +142,6 @@ const PricingPage = () => {
         <div className="relative max-w-3xl lg:max-w-6xl mx-auto px-6">
           {/* Hero */}
           <div className="max-w-2xl">
-            <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">Transparent pricing</p>
             <h1 className="font-archivo font-bold text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.025em] text-white">
               Know the price of your survey{" "}
               <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">before you order.</span>
@@ -138,20 +156,28 @@ const PricingPage = () => {
             {/* Controls card */}
             <div className="lg:col-span-3 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-6 sm:p-8" data-testid="pricing-controls">
               <div className="space-y-8">
-                {/* Property value slider */}
+                {/* Property value: text input + slider */}
                 <Field label="Property value" hint={result.band || "\u00A0"}>
-                  <div className="flex items-baseline justify-between mb-3">
-                    <span className="font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em]" data-testid="pricing-value-label">
-                      {formatMoney(value)}
-                    </span>
-                    <span className="font-outfit text-[12px] text-white/45">up to £2.5M+</span>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] shrink-0">£</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={inputText.startsWith("£") ? inputText.slice(1).trim() : inputText}
+                      onChange={onTextChange}
+                      onBlur={onTextBlur}
+                      className="w-full bg-transparent font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] border-b border-white/10 focus:border-[#4FB6FF] focus:outline-none pb-1 transition-colors"
+                      aria-label="Property value in GBP"
+                      data-testid="pricing-value-input"
+                    />
+                    <span className="font-outfit text-[12px] text-white/45 whitespace-nowrap">up to £2.5M+</span>
                   </div>
-                  <div className="relative">
+                  <div className="relative h-6">
                     <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-white/10 pointer-events-none" />
                     <div
                       className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full pointer-events-none"
                       style={{
-                        width: `${Math.max(0, Math.min(100, sliderPct))}%`,
+                        width: `${sliderPct}%`,
                         background: "linear-gradient(90deg,#4FB6FF 0%,#025eba 100%)",
                       }}
                     />
@@ -160,9 +186,9 @@ const PricingPage = () => {
                       min={SLIDER_MIN}
                       max={SLIDER_MAX}
                       step={SLIDER_STEP}
-                      value={value}
-                      onChange={(e) => setValue(Number(e.target.value))}
-                      className="pricing-slider relative w-full appearance-none bg-transparent cursor-pointer h-6"
+                      value={Math.min(value, SLIDER_MAX)}
+                      onChange={onSliderChange}
+                      className="pricing-slider absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer"
                       data-testid="pricing-value-slider"
                     />
                   </div>
@@ -208,28 +234,16 @@ const PricingPage = () => {
                     {formatFee(result.price)}
                   </p>
                   <p className="relative mt-3 font-outfit text-[13px] text-white/75">
-                    Payable only when the sale completes — nothing on the day.
+                    Payable only when the sale completes. Nothing on the day.
                   </p>
                 </>
               )}
 
               <div className="relative mt-6 pt-5 border-t border-white/15 space-y-2 font-outfit text-[13px] text-white/85">
-                <div className="flex justify-between"><span>Value band</span><span className="font-semibold">{result.band || "—"}</span></div>
+                <div className="flex justify-between"><span>Value band</span><span className="font-semibold">{result.band || "-"}</span></div>
                 <div className="flex justify-between"><span>Bedrooms</span><span className="font-semibold">{beds}</span></div>
                 <div className="flex justify-between"><span>Listed status</span><span className="font-semibold">{listed}</span></div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => navigate("/order-survey")}
-                className="relative mt-7 w-full inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] px-6 py-3 font-outfit font-semibold text-[14px] hover:bg-white/95 transition-colors"
-                data-testid="pricing-cta"
-              >
-                {result.quote ? "Request a bespoke quote" : "Order this survey"} <ChevronRight className="w-4 h-4" />
-              </button>
-              <p className="relative mt-3 font-outfit text-[11px] text-white/60 text-center">
-                No card required. You only pay when the sale completes.
-              </p>
             </div>
           </div>
 
@@ -237,11 +251,8 @@ const PricingPage = () => {
           <div className="mt-20 lg:mt-24 max-w-2xl">
             <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-3">When the fee is due</p>
             <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-              Two ways to protect the survey fee.
+              Only Pay If the Sale Completes.
             </h2>
-            <p className="mt-4 font-outfit text-[15px] sm:text-[16px] text-white/65 leading-relaxed">
-              The same survey. Two different ways the fee behaves — depending on whether the sale is protected by a Gazeal Reservation Agreement.
-            </p>
           </div>
           <div className="mt-10">
             <ReservationExplainer variant="agent" />
