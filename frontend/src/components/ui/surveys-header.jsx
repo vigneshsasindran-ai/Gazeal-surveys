@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ChevronRight } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 /*
  * Gazeal Surveys Header — fixed, translucent, liquid glass on scroll.
@@ -20,6 +21,9 @@ const LOGO_SRC =
 const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -38,22 +42,33 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
     if (href === "#") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (isHome) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/");
+      }
       return;
     }
-    const el = document.getElementById(href.slice(1));
-    if (!el) return;
-    const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    const id = href.slice(1);
+    if (isHome) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    } else {
+      navigate(`/#${id}`);
+    }
   };
 
   const handleOrderSurvey = () => {
     setIsMobileMenuOpen(false);
-    if (onOrderSurvey) onOrderSurvey();
+    if (onOrderSurvey) return onOrderSurvey();
+    navigate("/order-survey");
   };
   const handleLearnMore = () => {
     setIsMobileMenuOpen(false);
-    if (onLearnMore) onLearnMore();
+    if (onLearnMore) return onLearnMore();
+    navigate("/?learn=1");
   };
 
   return (

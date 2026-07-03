@@ -73,7 +73,7 @@ const SurveysBento = () => {
             <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
               <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
-                No upfront cost
+                No upfront cost<span className="text-[#4FB6FF]">*</span>
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
                 Your seller does not have to pay anything when the survey is
@@ -84,6 +84,12 @@ const SurveysBento = () => {
                 ordering a survey early simply disappears, and you can offer
                 better upfront information without asking your seller to
                 spend a penny before they have sold their home.
+              </p>
+              <p
+                className="mt-auto pt-5 text-[12px] text-white/50 font-outfit italic leading-relaxed"
+                data-testid="surveys-card-no-upfront-cost-footnote"
+              >
+                *Under the terms of a Reservation Agreement
               </p>
             </CardContent>
           </SurveysCard>
@@ -100,11 +106,11 @@ const SurveysBento = () => {
                 Critical property information
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
-                Buyers often have to make offers before they know enough
-                about the condition of the home, and that creates real risk
-                later in the process when something unexpected turns up.
-                Gazeal Surveys puts the key property information in front of
-                buyers before they offer, so they can make a clearer, more
+                Buyers have to make offers before they know enough about the
+                condition of the home, and that creates real risk later in
+                the process when something unexpected turns up. The Gazeal
+                Survey puts the key property information in front of buyers
+                before they offer, so they can make a clearer, more
                 confident decision from the start. That tends to mean fewer
                 late surprises, fewer renegotiations and a stronger sale
                 from the moment the offer is made.
@@ -137,6 +143,41 @@ const SurveysBento = () => {
                 seller the strongest possible chance of completing, with
                 success rates reaching up to 98%.
               </p>
+            </CardContent>
+          </SurveysCard>
+        </div>
+
+        {/* Horizontal indemnification row */}
+        <div
+          className="relative z-10 mt-4 sm:mt-5"
+          data-testid="surveys-indemnifies-row"
+        >
+          <SurveysCard>
+            <CardContent className="pt-8 pb-8 px-6 sm:px-10">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
+                <h3
+                  className="md:col-span-5 text-3xl sm:text-4xl lg:text-[42px] font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white"
+                  data-testid="surveys-indemnifies-heading"
+                >
+                  Indemnifies both{" "}
+                  <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                    seller and buyer.
+                  </span>
+                </h3>
+                <p
+                  className="md:col-span-7 text-sm sm:text-[15px] text-white/75 font-outfit leading-relaxed"
+                  data-testid="surveys-indemnifies-copy"
+                >
+                  The survey indemnifies both the seller and the buyer. The
+                  seller is protected on what they disclose, and the buyer
+                  can rely on the findings with confidence. Neither side
+                  carries the risk alone, so buyers trust the survey instead
+                  of commissioning their own, and sellers share information
+                  without fear of comeback. This gives agents fewer
+                  renegotiations, fewer late surprises, and a sale both
+                  sides are committed to from day one.
+                </p>
+              </div>
             </CardContent>
           </SurveysCard>
         </div>

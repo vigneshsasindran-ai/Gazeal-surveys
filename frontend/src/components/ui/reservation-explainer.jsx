@@ -21,7 +21,7 @@ const WITH_ITEMS = [
 ];
 
 const WITH_FEE_NOTE =
-  "Sellers do not pay survey fees if the buyer pulls out unreasonably, or if the sale ends for a fair reason by both parties under the terms of the agreement. The seller only pays on completion, or when they pull out of the sale unreasonably.";
+  "Sellers do not pay survey fees if the buyer pulls out or if the sale ends for a fair reason by both parties under the terms of the agreement. The seller only pays on completion, or if they pull out of the sale unreasonably.";
 
 const WITHOUT_ITEMS = [
   "Buyer may not be committed to the sale",

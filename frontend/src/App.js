@@ -1,6 +1,6 @@
 import "@/App.css";
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import SurveysHeader from "@/components/ui/surveys-header";
 import SurveysHero from "@/components/ui/surveys-hero";
 import SurveysBento from "@/components/ui/surveys-bento";
@@ -16,10 +16,37 @@ import PricingPage from "@/pages/pricing";
 
 const SurveysLanding = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   const handleOrderSurvey = () => navigate("/order-survey");
   const handleLearnMore = () => setLearnMoreOpen(true);
+
+  // Handle hash-based navigation from other pages (e.g. /#faq)
+  // and `?learn=1` query flag to auto-open the Learn More modal.
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      // Delay to allow sections to mount before scrolling.
+      const t = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("learn") === "1") {
+      setLearnMoreOpen(true);
+      // Clean the URL so re-opening the modal is possible after closing.
+      navigate("/", { replace: true });
+    }
+  }, [location.search, navigate]);
 
   return (
     <div className="App min-h-screen bg-black">

@@ -27,7 +27,7 @@ const BED_OPTS = [
   { label: "6+", tier: null },
 ];
 const LISTED_OPTS = [
-  { label: "Not listed", tier: 0 },
+  { label: "Not applicable", tier: 0 },
   { label: "Grade 2 or 2*", tier: 1 },
   { label: "Grade 1", tier: null },
 ];
@@ -192,7 +192,7 @@ const PricingCalculator = ({
           <Segmented options={BED_OPTS} value={beds} onChange={setBeds} testid={`${testidPrefix}-beds`} />
         </Field>
 
-        <Field label="Listed status">
+        <Field label="Registered Listed Building">
           <Segmented options={LISTED_OPTS} value={listed} onChange={setListed} testid={`${testidPrefix}-listed`} />
         </Field>
       </div>
@@ -231,7 +231,15 @@ const PricingCalculator = ({
       <div className="relative mt-6 pt-5 border-t border-white/15 space-y-2 font-outfit text-[13px] text-white/85">
         <div className="flex justify-between"><span>Value band</span><span className="font-semibold">{result.band || "-"}</span></div>
         <div className="flex justify-between"><span>Bedrooms</span><span className="font-semibold">{beds}</span></div>
-        <div className="flex justify-between"><span>Listed status</span><span className="font-semibold">{listed}</span></div>
+        <div className="flex justify-between"><span>Registered Listed Building</span><span className="font-semibold">{listed}</span></div>
+      </div>
+
+      <div
+        className="relative mt-5 pt-4 border-t border-white/10 space-y-1.5 font-outfit text-[11.5px] leading-[1.55] text-white/60"
+        data-testid={`${testidPrefix}-disclaimers`}
+      >
+        <p>This price is based on the information you have provided.</p>
+        <p>The Estate Agent sets the valuation price, not the surveyor.</p>
       </div>
     </div>
   );
