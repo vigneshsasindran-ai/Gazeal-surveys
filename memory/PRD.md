@@ -102,6 +102,31 @@ Production requirements added during the build:
   (logo + Main Site / Elite / email links + copyright) so the clauses
   remain visible at every scroll position.
 
+### 2026-02-03 — Nav bug fix + copy updates + price rounding
+- Header nav bug fixed: `surveys-header.jsx` now uses
+  `useLocation`/`useNavigate`. Anchor links from `/pricing` and
+  `/agreement/:token` navigate to `/#<section-id>`; landing page has a
+  `useEffect` on `location.hash` to scroll after mount. Header CTAs
+  fall back to routing: Order Survey → `/order-survey`, Learn More →
+  `/?learn=1` which the landing page consumes to auto-open the modal.
+- surveys-bento Card 1: title `No upfront cost*` + footnote
+  `*Under the terms of a Reservation Agreement`.
+- surveys-bento Card 2: paragraph rewritten (Gazeal Survey wording).
+- surveys-bento: new horizontal indemnification row added below the
+  three cards with heading `Indemnifies both seller and buyer.` and
+  matching paragraph.
+- reservation-explainer: WITH_FEE_NOTE copy updated (removed
+  `unreasonably` qualifier on buyer pull-out; changed `when` → `if`).
+- pricing-calculator: `Listed status` → `Registered Listed Building`;
+  `Not listed` option → `Not applicable`; added disclaimers block
+  (`This price is based on the information you have provided.` +
+  `The Estate Agent sets the valuation price, not the surveyor.`);
+  all prices now rounded to whole GBP (`£647` instead of `£646.88`).
+  Same rounding applied to `pricing_snapshot` display on
+  `/agreement/:token`.
+- Testing agent iteration_9 — 17/17 checks PASS.
+
+
 ## Backlog
 ### P1
 - Admin Dashboard integration (Pattern 2): wire user's external admin app

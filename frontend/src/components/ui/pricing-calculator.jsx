@@ -40,7 +40,7 @@ const VALUE_HARD_MAX = 100_000_000;
 const formatMoney = (n) =>
   new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
 const formatFee = (n) =>
-  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(n));
 
 function priceFor({ value, beds, listed }) {
   const propBand = PROP_BANDS.find((b) => value >= b.min && value <= b.max);

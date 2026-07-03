@@ -200,14 +200,14 @@ const AgreementPage = () => {
                       <p className="text-white font-semibold">{data.pricing_snapshot.bedrooms || "-"}</p>
                     </div>
                     <div>
-                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Listed status</p>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Registered Listed Building</p>
                       <p className="text-white font-semibold">{data.pricing_snapshot.listed_status || "-"}</p>
                     </div>
                     <div>
                       <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Estimated fee</p>
                       <p className="text-white font-semibold">
                         {data.pricing_snapshot.quote ? "Bespoke quote" :
-                          new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(data.pricing_snapshot.price || 0)}
+                          new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(data.pricing_snapshot.price || 0))}
                       </p>
                     </div>
                   </div>
