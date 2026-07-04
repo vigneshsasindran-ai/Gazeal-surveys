@@ -1,5 +1,11 @@
 # Gazeal Surveys — PRD
 
+> **⚠️ CROSS-APP INTEGRATION WORK:** If this session mentions the Gazeal
+> mobile/admin app, RPSA, sales-room fan-out, CRM push, or webhook
+> consumers, read **`/app/memory/GAZEAL_ECOSYSTEM_HANDOFF.md`** FIRST.
+> That document holds the sibling-app architecture, future plans, user
+> learnings, and rules for cross-app work.
+
 ## Problem Statement (original)
 Dark-themed, highly polished landing page for Gazeal Surveys (agents
 ordering RPSA surveys for their sellers). Mimic the Gazeal Elite brand:
