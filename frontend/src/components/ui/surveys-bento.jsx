@@ -89,7 +89,7 @@ const SurveysBento = () => {
                 className="mt-auto pt-5 text-[12px] text-white/50 font-outfit italic leading-relaxed"
                 data-testid="surveys-card-no-upfront-cost-footnote"
               >
-                *Under the terms of a Reservation Agreement
+                *When using a Gazeal Reservation Agreement
               </p>
             </CardContent>
           </SurveysCard>
