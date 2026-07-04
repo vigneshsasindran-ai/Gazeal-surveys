@@ -27,7 +27,7 @@ const BED_OPTS = [
   { label: "6+", tier: null },
 ];
 const LISTED_OPTS = [
-  { label: "Not applicable", tier: 0 },
+  { label: "N/A", tier: 0 },
   { label: "Grade 2 or 2*", tier: 1 },
   { label: "Grade 1", tier: null },
 ];

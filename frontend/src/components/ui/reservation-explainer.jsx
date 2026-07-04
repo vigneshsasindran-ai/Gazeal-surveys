@@ -15,17 +15,17 @@ import { Check, X, ShieldCheck, AlertTriangle } from "lucide-react";
  */
 
 const WITH_ITEMS = [
-  "Buyer is committed to the sale",
-  "No gazundering or late price renegotiations",
-  "Compensation guaranteed by Gazeal if the buyer pulls out unreasonably",
+  "Both parties committed to the sale",
+  "No gazundering or last-minute renegotiations",
+  "Compensation guaranteed by Gazeal if either party pulls out unreasonably",
 ];
 
 const WITH_FEE_NOTE =
   "Sellers do not pay survey fees if the buyer pulls out or if the sale ends for a fair reason by both parties under the terms of the agreement. The seller only pays on completion, or if they pull out of the sale unreasonably.";
 
 const WITHOUT_ITEMS = [
-  "Buyer may not be committed to the sale",
-  "Gazundering and price renegotiations at any point",
+  "Neither party committed to the sale",
+  "Gazumping or gazundering at any point",
   "No compensation if the sale falls through",
 ];
 
@@ -52,8 +52,8 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
         </div>
       )}
 
-      <div className="flex items-start justify-between mb-6">
-        <h3 className="font-archivo font-bold text-white text-[20px] sm:text-[22px] leading-[1.2] tracking-[-0.015em] max-w-[22ch]">
+      <div className="flex items-start justify-between mb-6 gap-4">
+        <h3 className="font-archivo font-bold text-white text-[26px] sm:text-[30px] lg:text-[34px] leading-[1.08] tracking-[-0.025em] max-w-[16ch]">
           {title}
         </h3>
         {isPositive && (

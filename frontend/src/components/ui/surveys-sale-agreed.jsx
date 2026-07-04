@@ -44,10 +44,10 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
               className="mt-6 text-base sm:text-lg text-white/65 font-outfit leading-relaxed max-w-xl"
               data-testid="sale-agreed-body"
             >
-              A survey gives the buyer confidence in the property before
-              they offer. A Gazeal Reservation Agreement gives the seller
-              confidence in the buyer once the offer is accepted. Put the
-              two together and the sale becomes far more certain.
+              A survey gives both parties confidence in the property,
+              and the Gazeal Reservation Agreement gives both parties
+              confidence in each other. Put the two together and the
+              sale becomes far more certain.
             </p>
 
             <div className="mt-8">

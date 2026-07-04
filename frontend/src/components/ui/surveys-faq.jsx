@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "Who pays for the survey, the seller or the buyer?",
     answer:
-      "The seller, and only on completion. They never pay up front, and if the sale collapses because the buyer pulls out unreasonably, they pay nothing at all.",
+      "The seller, and only on completion. They never pay up front, and if the sale collapses because the buyer pulls out, they pay nothing at all.",
   },
   {
     question: "Does it cost me anything as an agent to offer this?",
@@ -38,7 +38,7 @@ const FAQ_ITEMS = [
   {
     question: "What type of survey is it?",
     answer:
-      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association. It gives buyers a clear, independent view of the property before they offer.",
+      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association \u2014 similar to a Level 2 or Level 3 survey. It gives buyers a clear, independent view of the property before they offer.",
   },
   {
     question: "Can buyers rely on the report?",
@@ -49,26 +49,6 @@ const FAQ_ITEMS = [
     question: "Does the buyer still need their own survey or mortgage valuation?",
     answer:
       "A lender's mortgage valuation is a separate process and the buyer's lender will still run their own. The Gazeal Survey gives the buyer the condition information up front, so in most cases they have what they need to offer with confidence without commissioning a second survey.",
-  },
-  {
-    question: "What does \u201Cfalls through unreasonably\u201D mean?",
-    answer:
-      "It covers a buyer walking away without a fair reason, the kind of collapse the survey and the Reservation Agreement are built to stop. If a sale ends for a legitimate reason, that is handled fairly. The exact terms are set out in the agreement so both sides know where they stand.",
-  },
-  {
-    question: "What does the seller actually have to do?",
-    answer:
-      "Very little. They agree to the survey at listing and arrange access for the surveyor. Gazeal and the surveyor handle the rest.",
-  },
-  {
-    question: "What does \u201Cindemnifies both seller and buyer\u201D mean in plain terms?",
-    answer:
-      "It means the report is backed professionally, so neither your seller nor the buyer is left exposed by relying on it. Both parties are covered.",
-  },
-  {
-    question: "How do I explain the cost to a hesitant seller?",
-    answer:
-      "Keep it simple. They pay nothing now. The fee only comes out of the sale when it completes, and if the buyer walks away unreasonably, they pay nothing at all. No risk to them, and a far stronger chance of completing.",
   },
   {
     question: "How do I introduce Gazeal Surveys to win the instruction?",

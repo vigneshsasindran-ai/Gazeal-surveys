@@ -73,7 +73,7 @@ const SurveysBento = () => {
             <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
               <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
-                No upfront cost<span className="text-[#4FB6FF]">*</span>
+                No upfront cost<span className="text-white/45 font-outfit text-[0.55em] align-super ml-0.5">*</span>
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
                 Your seller does not have to pay anything when the survey is
@@ -159,23 +159,24 @@ const SurveysBento = () => {
                   className="md:col-span-5 text-3xl sm:text-4xl lg:text-[42px] font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-white"
                   data-testid="surveys-indemnifies-heading"
                 >
-                  Indemnifies both{" "}
+                  Professional Indemnity{" "}
                   <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
-                    seller and buyer.
+                    protects both seller and buyer.
                   </span>
                 </h3>
                 <p
                   className="md:col-span-7 text-sm sm:text-[15px] text-white/75 font-outfit leading-relaxed"
                   data-testid="surveys-indemnifies-copy"
                 >
-                  The survey indemnifies both the seller and the buyer. The
-                  seller is protected on what they disclose, and the buyer
-                  can rely on the findings with confidence. Neither side
-                  carries the risk alone, so buyers trust the survey instead
-                  of commissioning their own, and sellers share information
-                  without fear of comeback. This gives agents fewer
-                  renegotiations, fewer late surprises, and a sale both
-                  sides are committed to from day one.
+                  The surveyor&apos;s indemnity covers both the buyer and
+                  the seller. The seller is protected on what they
+                  disclose, and the buyer can rely on the findings with
+                  confidence. Neither side carries the risk alone, so
+                  buyers trust the survey instead of commissioning their
+                  own, and sellers share information without fear of
+                  comeback. This gives agents fewer renegotiations, fewer
+                  late surprises, and a sale both sides are committed to
+                  from day one.
                 </p>
               </div>
             </CardContent>

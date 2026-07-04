@@ -124,6 +124,33 @@ Production requirements added during the build:
   all prices now rounded to whole GBP (`£647` instead of `£646.88`).
   Same rounding applied to `pricing_snapshot` display on
   `/agreement/:token`.
+
+### 2026-02-04 — Second copy/design pass
+- Card 1 asterisk restyled to subtle (small superscript, white/45)
+  rather than large blue.
+- Indemnifies row heading changed to
+  `Professional Indemnity protects both seller and buyer.` and
+  paragraph opener changed to
+  `The surveyor's indemnity covers both the buyer and the seller.`.
+- Survey-it-reserve-it body copy rewritten:
+  `A survey gives both parties confidence in the property, and the
+  Gazeal Reservation Agreement gives both parties confidence in each
+  other. Put the two together and the sale becomes far more certain.`
+- Reservation explainer: bullet points 1-3 rewritten on both boxes
+  (both parties committed, gazundering/gazumping wording, either party
+  compensation). Titles bumped to `text-[26px] sm:text-[30px]
+  lg:text-[34px]` to match the indemnifies row weight.
+- Benefits headline updated to `See the condition before you make an offer.`
+- FAQ trimmed by four Qs (falls-through-unreasonably,
+  seller-actually-does, indemnifies-plain-terms, cost-hesitant-seller);
+  FAQ 1 answer stripped of `unreasonably`; FAQ "What type of survey"
+  now includes `similar to a Level 2 or Level 3 survey`.
+- Pricing calculator listed-building option label `Not applicable` → `N/A`.
+- Bento icon float animation switched to `translate3d` with
+  `backface-visibility: hidden` and `transform-style: preserve-3d` for
+  GPU compositing (fixes the jittery drift on the sale-agreed
+  transparency image).
+
 - Testing agent iteration_9 — 17/17 checks PASS.
 
 

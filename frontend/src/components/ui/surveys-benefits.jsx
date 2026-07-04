@@ -218,7 +218,7 @@ const SurveysBenefits = () => {
           />
           <BenefitColumn
             audience="Buyers"
-            headline="See the condition before you spend a penny."
+            headline="See the condition before you make an offer."
             body={BUYER_COPY}
           />
         </div>
