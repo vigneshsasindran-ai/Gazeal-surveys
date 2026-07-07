@@ -18,14 +18,14 @@ const PricingPage = () => (
 
     <main className="relative pt-32 lg:pt-40 pb-24">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
-           style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(2,94,186,0.25) 0%, rgba(2,94,186,0) 60%)" }} />
+           style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(var(--brand-primary-dark-rgb),0.25) 0%, rgba(var(--brand-primary-dark-rgb),0) 60%)" }} />
 
       <div className="relative max-w-3xl lg:max-w-6xl mx-auto px-6">
         {/* Hero */}
         <div className="max-w-2xl">
           <h1 className="font-archivo font-bold text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.025em] text-white">
             Know the price of your survey{" "}
-            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">before you order.</span>
+            <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">before you order.</span>
           </h1>
           <p className="mt-5 font-outfit text-base sm:text-lg text-white/65 leading-relaxed max-w-xl">
             Slide the property value, choose the bedrooms and listed status, and see the survey fee update live. No hidden extras.
@@ -39,7 +39,7 @@ const PricingPage = () => (
 
         {/* Fee-due explainer */}
         <div className="mt-20 lg:mt-24 max-w-2xl">
-          <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-3">When the fee is due</p>
+          <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[color:var(--brand-primary)] mb-3">When the fee is due</p>
           <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
             Only Pay If the Sale Completes.
           </h2>

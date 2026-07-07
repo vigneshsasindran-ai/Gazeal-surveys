@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useBrand, brandPath } from "@/brand/BrandContext";
 
 /*
  * Gazeal Surveys Header — fixed, translucent, liquid glass on scroll.
  * Ported from the Gazeal Elite header pattern and rebranded with the
- * Surveys blue gradient (#025eba → #4FB6FF) instead of gold.
+ * Surveys blue gradient (var(--brand-primary-dark) → var(--brand-primary)) instead of gold.
  */
 
 const NAV_LINKS = [
@@ -23,7 +24,9 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isHome = location.pathname === "/";
+  const brand = useBrand();
+  const brandHome = brandPath(brand, "/");
+  const isHome = location.pathname === brandHome;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -45,7 +48,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
       if (isHome) {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        navigate("/");
+        navigate(brandHome);
       }
       return;
     }
@@ -56,19 +59,19 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
       const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
       window.scrollTo({ top: y, behavior: "smooth" });
     } else {
-      navigate(`/#${id}`);
+      navigate(`${brandHome === "/" ? "" : brandHome}/#${id}`.replace("//#", "/#"));
     }
   };
 
   const handleOrderSurvey = () => {
     setIsMobileMenuOpen(false);
     if (onOrderSurvey) return onOrderSurvey();
-    navigate("/order-survey");
+    navigate(brandPath(brand, "/order-survey"));
   };
   const handleLearnMore = () => {
     setIsMobileMenuOpen(false);
     if (onLearnMore) return onLearnMore();
-    navigate("/?learn=1");
+    navigate(`${brandHome}${brandHome === "/" ? "?" : "?"}learn=1`);
   };
 
   return (
@@ -113,7 +116,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               <a
                 href="#"
                 onClick={(e) => handleNav(e, "#")}
-                className="flex items-center z-10"
+                className="flex items-center gap-3 z-10"
                 data-testid="surveys-logo-link"
               >
                 <img
@@ -124,6 +127,24 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                   } w-auto`}
                   data-testid="surveys-logo-img"
                 />
+                {brand.partnerLogo && (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className={`inline-block w-px bg-white/25 transition-all duration-500 ${
+                        isScrolled ? "h-6 md:h-7" : "h-7 md:h-9"
+                      }`}
+                    />
+                    <img
+                      src={brand.partnerLogo}
+                      alt={brand.partnerLabel || "Partner"}
+                      className={`transition-all duration-500 ${
+                        isScrolled ? "h-7 md:h-8" : "h-9 md:h-11"
+                      } w-auto rounded-[3px]`}
+                      data-testid="surveys-partner-logo-img"
+                    />
+                  </>
+                )}
               </a>
 
               {/* Desktop Nav */}
@@ -139,7 +160,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                       .replace(/\s+/g, "-")}`}
                   >
                     {link.name}
-                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-[#4FB6FF] to-[#025eba] transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] transition-all duration-300 group-hover:w-full" />
                   </a>
                 ))}
               </nav>
@@ -157,7 +178,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={handleOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(2,94,186,0.35)]"
+                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(var(--brand-primary-dark-rgb),0.35)]"
                   data-testid="surveys-nav-order-survey"
                 >
                   Order Survey
@@ -168,7 +189,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               {/* Mobile toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden relative z-50 p-2 text-white hover:text-[#4FB6FF] transition-colors"
+                className="lg:hidden relative z-50 p-2 text-white hover:text-[color:var(--brand-primary)] transition-colors"
                 data-testid="surveys-mobile-menu-button"
                 aria-label="Toggle menu"
               >
@@ -223,8 +244,8 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 "0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.2)",
             }}
           >
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#025eba]/25 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#4FB6FF]/15 rounded-full blur-3xl" />
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[color:var(--brand-primary-dark)]/25 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[color:var(--brand-primary)]/15 rounded-full blur-3xl" />
 
             <div className="relative p-6">
               <div className="space-y-2 mb-6">
@@ -263,7 +284,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               <button
                 type="button"
                 onClick={handleOrderSurvey}
-                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(2,94,186,0.4)] font-outfit"
+                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(var(--brand-primary-dark-rgb),0.4)] font-outfit"
                 data-testid="surveys-mobile-order-survey"
               >
                 Order Survey

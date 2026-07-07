@@ -13,13 +13,15 @@ import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
 import OrderSurveyPage from "@/pages/order-survey";
 import AgreementPage from "@/pages/agreement";
 import PricingPage from "@/pages/pricing";
+import { BrandProvider, useBrand, brandPath } from "@/brand/BrandContext";
 
 const SurveysLanding = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const brand = useBrand();
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
-  const handleOrderSurvey = () => navigate("/order-survey");
+  const handleOrderSurvey = () => navigate(brandPath(brand, "/order-survey"));
   const handleLearnMore = () => setLearnMoreOpen(true);
 
   // Handle hash-based navigation from other pages (e.g. /#faq)
@@ -27,7 +29,6 @@ const SurveysLanding = () => {
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.slice(1);
-      // Delay to allow sections to mount before scrolling.
       const t = setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
@@ -43,10 +44,10 @@ const SurveysLanding = () => {
     const params = new URLSearchParams(location.search);
     if (params.get("learn") === "1") {
       setLearnMoreOpen(true);
-      // Clean the URL so re-opening the modal is possible after closing.
-      navigate("/", { replace: true });
+      navigate(brandPath(brand, "/"), { replace: true });
     }
-  }, [location.search, navigate]);
+    // brandPath is derived from `brand` so we scope it as a dep.
+  }, [location.search, navigate, brand]);
 
   return (
     <div className="App min-h-screen bg-black">
@@ -87,14 +88,27 @@ const SurveysLanding = () => {
   );
 };
 
+// Wrap page routes in <BrandProvider brand="..."> so all downstream
+// components (header, hero, forms, calculator) pick up the correct
+// theme class + partner logo automatically.
+const G = ({ children }) => <BrandProvider brand="gazeal">{children}</BrandProvider>;
+const B = ({ children }) => <BrandProvider brand="balgores">{children}</BrandProvider>;
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<SurveysLanding />} />
-        <Route path="/order-survey" element={<OrderSurveyPage />} />
-        <Route path="/agreement/:token" element={<AgreementPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
+        {/* Gazeal (default) */}
+        <Route path="/" element={<G><SurveysLanding /></G>} />
+        <Route path="/order-survey" element={<G><OrderSurveyPage /></G>} />
+        <Route path="/agreement/:token" element={<G><AgreementPage /></G>} />
+        <Route path="/pricing" element={<G><PricingPage /></G>} />
+
+        {/* Balgores */}
+        <Route path="/balgores" element={<B><SurveysLanding /></B>} />
+        <Route path="/balgores/order-survey" element={<B><OrderSurveyPage /></B>} />
+        <Route path="/balgores/agreement/:token" element={<B><AgreementPage /></B>} />
+        <Route path="/balgores/pricing" element={<B><PricingPage /></B>} />
       </Routes>
     </BrowserRouter>
   );

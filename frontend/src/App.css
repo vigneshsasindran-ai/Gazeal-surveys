@@ -1,5 +1,34 @@
 /* Gazeal Surveys landing styles */
 
+/* -------------------------------------------------------------------------
+ * Brand tokens (CSS variables)
+ *
+ * Default (root) = Gazeal — blue.
+ * `.brand-balgores` wrapper — deep-purple + warm-sand gold.
+ *
+ * Components read these through `var(...)` (either in inline styles or via
+ * Tailwind arbitrary values like `bg-[color:var(--brand-primary)]`).
+ * ---------------------------------------------------------------------- */
+:root {
+  --brand-primary:          #4FB6FF;
+  --brand-primary-dark:     #025eba;
+  --brand-primary-rgb:      79, 182, 255;
+  --brand-primary-dark-rgb: 2, 94, 186;
+  --brand-hero-bg:          #025eba;
+  --brand-hero-cta-text:    #025eba;
+  --brand-check:            #025eba;
+}
+
+.brand-balgores {
+  --brand-primary:          #B8AB84;
+  --brand-primary-dark:     #1A1434;
+  --brand-primary-rgb:      184, 171, 132;
+  --brand-primary-dark-rgb: 26, 20, 52;
+  --brand-hero-bg:          #1A1434;
+  --brand-hero-cta-text:    #1A1434;
+  --brand-check:            #1A1434;
+}
+
 .App {
   min-height: 100vh;
   background-color: #050505;

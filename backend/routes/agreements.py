@@ -61,6 +61,7 @@ def public_context(agreement: dict) -> dict:
         "reservation_interest": bool(agreement.get("reservation_interest")),
         "reservation_interest_at": agreement.get("reservation_interest_at"),
         "pricing_snapshot": agreement.get("pricing_snapshot"),
+        "brand": agreement.get("brand") or "gazeal",
     }
 
 

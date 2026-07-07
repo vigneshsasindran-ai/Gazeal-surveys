@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 /*
  * Gazeal Surveys — Features Bento
  * Three dark glassmorphic cards, ported from the Elite bento pattern,
- * rebranded with the Surveys blue gradient (#025eba → #4FB6FF) and the
+ * rebranded with the Surveys blue gradient (var(--brand-primary-dark) → var(--brand-primary)) and the
  * three 3D illustrations supplied with the flyer.
  */
 
@@ -24,7 +24,7 @@ const Visual = ({ src, alt, delay = "0s" }) => (
       className="surveys-bento-icon m-auto h-[78%] w-[78%] object-contain select-none"
       style={{
         animationDelay: delay,
-        filter: "drop-shadow(0 12px 30px rgba(2,94,186,0.35))",
+        filter: "drop-shadow(0 12px 30px rgba(var(--brand-primary-dark-rgb),0.35))",
       }}
     />
   </div>
@@ -32,10 +32,10 @@ const Visual = ({ src, alt, delay = "0s" }) => (
 
 const SurveysCard = ({ children, className = "", ...props }) => (
   <Card
-    className={`relative overflow-hidden border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm hover:border-[#4FB6FF]/30 transition-colors duration-300 ${className}`}
+    className={`relative overflow-hidden border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm hover:border-[color:var(--brand-primary)]/30 transition-colors duration-300 ${className}`}
     {...props}
   >
-    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4FB6FF]/40 to-transparent pointer-events-none" />
+    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-primary)]/40 to-transparent pointer-events-none" />
     {children}
   </Card>
 );
@@ -48,14 +48,14 @@ const SurveysBento = () => {
       data-testid="surveys-bento-section"
     >
       {/* Ambient blue backdrop */}
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[400px] w-[600px] bg-gradient-to-b from-[#025eba]/20 to-transparent blur-3xl pointer-events-none opacity-50" />
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[400px] w-[600px] bg-gradient-to-b from-[color:var(--brand-primary-dark)]/20 to-transparent blur-3xl pointer-events-none opacity-50" />
 
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
         {/* Heading */}
         <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.18]">
             <span className="text-white">Fix survey problems </span>
-            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
               before they break the sale.
             </span>
           </h2>
@@ -128,7 +128,7 @@ const SurveysBento = () => {
               />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 Up to{" "}
-                <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
                   98%
                 </span>{" "}
                 sale success
@@ -160,7 +160,7 @@ const SurveysBento = () => {
                   data-testid="surveys-indemnifies-heading"
                 >
                   Professional Indemnity{" "}
-                  <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
                     protects both seller and buyer.
                   </span>
                 </h3>

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Send,
 } from "lucide-react";
+import { useBrand, brandPath } from "@/brand/BrandContext";
 
 /*
  * /order-survey — "Invite your seller to book a survey"
@@ -35,7 +36,7 @@ const STEPS = [
 ];
 
 const inputCls =
-  "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors";
+  "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[color:var(--brand-primary)]/60 transition-colors";
 
 const labelCls =
   "block text-sm text-white/65 mb-2 font-outfit";
@@ -44,6 +45,8 @@ const errorCls = "text-[#FF6B6B] text-xs mt-1 font-outfit";
 
 const OrderSurveyPage = () => {
   const navigate = useNavigate();
+  const brand = useBrand();
+  const brandHome = brandPath(brand, "/");
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -137,6 +140,7 @@ const OrderSurveyPage = () => {
             listing_url: formData.listingUrl,
             asking_price: formData.askingPrice,
             confirmation: formData.confirmation,
+            brand: brand.id,
           }),
         }
       );
@@ -160,7 +164,7 @@ const OrderSurveyPage = () => {
       <header className="w-full">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
           <Link
-            to="/"
+            to={brandHome}
             className="flex items-center gap-3"
             data-testid="order-survey-back-home"
           >
@@ -168,7 +172,7 @@ const OrderSurveyPage = () => {
           </Link>
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(brandHome)}
             className="inline-flex items-center gap-1.5 font-outfit text-[13px] font-medium text-white/60 hover:text-white transition-colors"
             data-testid="order-survey-cancel"
           >
@@ -183,12 +187,12 @@ const OrderSurveyPage = () => {
         <div className="max-w-[860px] mx-auto px-6">
           {/* Title */}
           <div className="text-center mb-10">
-            <p className="font-outfit text-[12px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">
+            <p className="font-outfit text-[12px] font-semibold tracking-[0.22em] uppercase text-[color:var(--brand-primary)] mb-4">
               Order survey
             </p>
             <h1 className="text-3xl md:text-[42px] font-archivo font-bold tracking-[-0.025em] text-white leading-[1.12]">
               Invite your seller{" "}
-              <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
                 to book a survey
               </span>
             </h1>
@@ -222,7 +226,7 @@ const OrderSurveyPage = () => {
                         className="mt-[2px] inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0"
                         style={{
                           background:
-                            "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                            "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
                         }}
                       >
                         <Check className="w-3 h-3 text-white" strokeWidth={3} />
@@ -251,23 +255,23 @@ const OrderSurveyPage = () => {
                             isActive
                               ? "border-transparent"
                               : isComplete
-                              ? "border-[#4FB6FF]/40 bg-white/[0.04]"
+                              ? "border-[color:var(--brand-primary)]/40 bg-white/[0.04]"
                               : "border-white/15 bg-white/[0.02]"
                           }`}
                           style={
                             isActive
                               ? {
                                   background:
-                                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                                    "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
                                   boxShadow:
-                                    "0 0 18px rgba(79,182,255,0.45)",
+                                    "0 0 18px rgba(var(--brand-primary-rgb),0.45)",
                                 }
                               : {}
                           }
                           data-testid={`order-step-indicator-${s.number}`}
                         >
                           {isComplete ? (
-                            <Check className="w-4 h-4 text-[#4FB6FF]" strokeWidth={3} />
+                            <Check className="w-4 h-4 text-[color:var(--brand-primary)]" strokeWidth={3} />
                           ) : (
                             <Icon
                               className={`w-4 h-4 ${
@@ -282,7 +286,7 @@ const OrderSurveyPage = () => {
                             isActive
                               ? "text-white"
                               : isComplete
-                              ? "text-[#4FB6FF]"
+                              ? "text-[color:var(--brand-primary)]"
                               : "text-white/40"
                           }`}
                         >
@@ -295,7 +299,7 @@ const OrderSurveyPage = () => {
                           style={{
                             background:
                               currentStep > s.number
-                                ? "linear-gradient(90deg, #4FB6FF, #025eba)"
+                                ? "linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark))"
                                 : "rgba(255,255,255,0.10)",
                           }}
                         />
@@ -310,7 +314,7 @@ const OrderSurveyPage = () => {
                 className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm p-7 md:p-10 relative overflow-hidden"
                 data-testid="order-survey-form"
               >
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4FB6FF]/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-primary)]/40 to-transparent pointer-events-none" />
 
                 {/* Step 1 */}
                 {currentStep === 1 && (
@@ -582,7 +586,7 @@ const OrderSurveyPage = () => {
                     </div>
 
                     <label
-                      className="flex items-start gap-4 cursor-pointer p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-[#4FB6FF]/30 transition-colors"
+                      className="flex items-start gap-4 cursor-pointer p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-[color:var(--brand-primary)]/30 transition-colors"
                       data-testid="order-confirmation-checkbox"
                     >
                       <input
@@ -601,7 +605,7 @@ const OrderSurveyPage = () => {
                           formData.confirmation
                             ? {
                                 background:
-                                  "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                                  "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
                               }
                             : {}
                         }
@@ -653,8 +657,8 @@ const OrderSurveyPage = () => {
                       className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90"
                       style={{
                         background:
-                          "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                        boxShadow: "0 6px 20px rgba(2,94,186,0.4)",
+                          "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+                        boxShadow: "0 6px 20px rgba(var(--brand-primary-dark-rgb),0.4)",
                       }}
                       data-testid="order-survey-next"
                     >
@@ -669,8 +673,8 @@ const OrderSurveyPage = () => {
                       className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         background:
-                          "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                        boxShadow: "0 6px 20px rgba(2,94,186,0.4)",
+                          "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+                        boxShadow: "0 6px 20px rgba(var(--brand-primary-dark-rgb),0.4)",
                       }}
                       data-testid="order-survey-submit"
                     >
@@ -702,15 +706,15 @@ const OrderSurveyPage = () => {
                 className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-6"
                 style={{
                   background:
-                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                  boxShadow: "0 8px 30px rgba(79,182,255,0.4)",
+                    "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+                  boxShadow: "0 8px 30px rgba(var(--brand-primary-rgb),0.4)",
                 }}
               >
                 <Check className="w-6 h-6 text-white" strokeWidth={3} />
               </div>
               <h2 className="font-archivo font-bold tracking-[-0.025em] text-[30px] text-white mb-3">
                 Invite on its way to{" "}
-                <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
                   {formData.sellerName.split(" ")[0] || "your seller"}
                 </span>
               </h2>
@@ -722,12 +726,12 @@ const OrderSurveyPage = () => {
               </p>
               <button
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={() => navigate(brandHome)}
                 className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
                 style={{
                   background:
-                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-                  boxShadow: "0 6px 20px rgba(2,94,186,0.4)",
+                    "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+                  boxShadow: "0 6px 20px rgba(var(--brand-primary-dark-rgb),0.4)",
                 }}
                 data-testid="order-survey-return-home"
               >

@@ -3,7 +3,7 @@ import { ChevronRight, BadgeCheck } from "lucide-react";
 
 /*
  * Gazeal Surveys Hero (Section 1)
- * - Solid primary blue (#025eba) background
+ * - Solid primary blue (var(--brand-primary-dark)) background
  * - Left: Archivo headline (3 lines), Outfit sub-copy, dual CTAs
  * - Right: Scottish kilted-cottage illustration with 4 floating "CHECKED"
  *   survey badges (roof, structural, damp, electrical) positioned around the
@@ -31,9 +31,11 @@ const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
     <BadgeCheck
       className="w-4 h-4 sm:w-5 sm:h-5 lg:w-7 lg:h-7 shrink-0"
       strokeWidth={2.4}
-      style={{ color: "#025eba" }}
-      fill="#025eba"
-      stroke="#ffffff"
+      style={{
+        color: "var(--brand-check)",
+        fill: "var(--brand-check)",
+        stroke: "#ffffff",
+      }}
     />
     <div className="flex flex-col leading-tight">
       <span className="font-outfit font-semibold text-[9px] sm:text-[11px] lg:text-[13px] text-slate-900 whitespace-nowrap">
@@ -48,7 +50,7 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
     <section
       id="hero"
       className="relative w-full overflow-hidden"
-      style={{ backgroundColor: "#025eba" }}
+      style={{ backgroundColor: "var(--brand-hero-bg)" }}
       data-testid="surveys-hero"
     >
       {/* Subtle depth: soft radial wash + faint grain (no dark gradients on blue) */}
@@ -151,7 +153,7 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
               onClick={() =>
                 onOrderSurvey ? onOrderSurvey() : scrollToId("features")
               }
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[color:var(--brand-primary-dark)] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300"
               data-testid="surveys-hero-cta-primary"
             >
               Order Survey

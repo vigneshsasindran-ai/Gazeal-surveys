@@ -45,20 +45,20 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
     data-testid={`how-step-${index + 1}`}
   >
     <div
-      className="relative h-full rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm p-7 sm:p-8 overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-[#4FB6FF]/35"
+      className="relative h-full rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm p-7 sm:p-8 overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-[color:var(--brand-primary)]/35"
       style={{
-        boxShadow: "0 0 0 rgba(2,94,186,0)",
+        boxShadow: "0 0 0 rgba(var(--brand-primary-dark-rgb),0)",
       }}
     >
       {/* Top hairline shimmer */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4FB6FF]/40 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-primary)]/40 to-transparent pointer-events-none" />
 
       {/* Hover glow */}
       <div
         className="pointer-events-none absolute -inset-12 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         style={{
           background:
-            "radial-gradient(40% 40% at 30% 0%, rgba(79,182,255,0.18) 0%, rgba(2,94,186,0) 70%)",
+            "radial-gradient(40% 40% at 30% 0%, rgba(var(--brand-primary-rgb),0.18) 0%, rgba(var(--brand-primary-dark-rgb),0) 70%)",
         }}
       />
 
@@ -67,16 +67,16 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
         <span
           className="font-archivo font-bold text-[44px] leading-none tracking-[-0.04em] bg-clip-text text-transparent transition-all duration-500"
           style={{
-            backgroundImage: "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+            backgroundImage: "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
           }}
         >
           {String(index + 1).padStart(2, "0")}
         </span>
         <span
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-[#4FB6FF]/40 group-hover:bg-[#4FB6FF]/[0.08] group-hover:-rotate-6"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:border-[color:var(--brand-primary)]/40 group-hover:bg-[color:var(--brand-primary)]/[0.08] group-hover:-rotate-6"
         >
           <Icon
-            className="w-5 h-5 text-[#4FB6FF]"
+            className="w-5 h-5 text-[color:var(--brand-primary)]"
             strokeWidth={2.2}
           />
         </span>
@@ -94,12 +94,12 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
         <div
           className="absolute inset-y-0 left-0 w-0 group-hover:w-full transition-all duration-700 ease-out"
           style={{
-            background: "linear-gradient(90deg, #4FB6FF 0%, #025eba 100%)",
+            background: "linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
           }}
         />
       </div>
 
-      <div className="relative mt-3 flex items-center gap-1.5 text-[12px] font-outfit font-semibold tracking-[0.08em] uppercase text-white/40 group-hover:text-[#4FB6FF] transition-colors duration-500">
+      <div className="relative mt-3 flex items-center gap-1.5 text-[12px] font-outfit font-semibold tracking-[0.08em] uppercase text-white/40 group-hover:text-[color:var(--brand-primary)] transition-colors duration-500">
         Step {String(index + 1).padStart(2, "0")}
         <ArrowRight className="w-3 h-3 transition-transform duration-500 group-hover:translate-x-0.5" />
       </div>
@@ -118,8 +118,8 @@ const SegmentedLabel = ({ audience }) => (
     <span
       className="rounded-full px-3 py-1 text-[11px] tracking-[0.12em] uppercase text-white font-outfit font-semibold"
       style={{
-        background: "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
-        boxShadow: "0 4px 14px rgba(2,94,186,0.35)",
+        background: "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+        boxShadow: "0 4px 14px rgba(var(--brand-primary-dark-rgb),0.35)",
       }}
     >
       {audience}
@@ -136,7 +136,7 @@ const BenefitColumn = ({ audience, headline, body }) => (
       className="absolute inset-x-0 top-0 h-px pointer-events-none"
       style={{
         background:
-          "linear-gradient(90deg, transparent 0%, rgba(79,182,255,0.4) 50%, transparent 100%)",
+          "linear-gradient(90deg, transparent 0%, rgba(var(--brand-primary-rgb),0.4) 50%, transparent 100%)",
       }}
     />
 
@@ -164,8 +164,8 @@ const SurveysBenefits = () => {
       className="relative bg-black pt-4 pb-20 md:pt-6 md:pb-28 overflow-hidden"
       data-testid="surveys-benefits-section"
     >
-      <div className="pointer-events-none absolute -right-32 top-1/4 h-[420px] w-[420px] rounded-full bg-[#025eba]/12 blur-3xl opacity-60" />
-      <div className="pointer-events-none absolute left-0 bottom-1/4 h-[360px] w-[360px] rounded-full bg-[#4FB6FF]/8 blur-3xl opacity-50" />
+      <div className="pointer-events-none absolute -right-32 top-1/4 h-[420px] w-[420px] rounded-full bg-[color:var(--brand-primary-dark)]/12 blur-3xl opacity-60" />
+      <div className="pointer-events-none absolute left-0 bottom-1/4 h-[360px] w-[360px] rounded-full bg-[color:var(--brand-primary)]/8 blur-3xl opacity-50" />
 
       <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
         {/* Heading */}
@@ -175,7 +175,7 @@ const SurveysBenefits = () => {
             data-testid="benefits-headline"
           >
             <span className="text-white">Here&apos;s </span>
-            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">
               how it works.
             </span>
           </h2>
@@ -188,7 +188,7 @@ const SurveysBenefits = () => {
             className="hidden lg:block absolute top-[92px] left-[16%] right-[16%] h-px"
             style={{
               background:
-                "linear-gradient(90deg, transparent 0%, rgba(79,182,255,0.25) 20%, rgba(2,94,186,0.25) 80%, transparent 100%)",
+                "linear-gradient(90deg, transparent 0%, rgba(var(--brand-primary-rgb),0.25) 20%, rgba(var(--brand-primary-dark-rgb),0.25) 80%, transparent 100%)",
             }}
             aria-hidden="true"
           />
@@ -225,11 +225,11 @@ const SurveysBenefits = () => {
 
         {/* Indemnity footer — RPSA logo */}
         <div
-          className="mt-8 lg:mt-10 rounded-2xl border border-[#4FB6FF]/20 bg-gradient-to-br from-[#4FB6FF]/[0.06] to-[#025eba]/[0.03] px-7 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center"
+          className="mt-8 lg:mt-10 rounded-2xl border border-[color:var(--brand-primary)]/20 bg-gradient-to-br from-[color:var(--brand-primary)]/[0.06] to-[color:var(--brand-primary-dark)]/[0.03] px-7 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center"
           data-testid="benefits-indemnity"
         >
           <div>
-            <p className="font-archivo font-bold text-[11px] tracking-[0.22em] uppercase text-[#4FB6FF] mb-2">
+            <p className="font-archivo font-bold text-[11px] tracking-[0.22em] uppercase text-[color:var(--brand-primary)] mb-2">
               Indemnified both sides
             </p>
             <p className="font-outfit text-[14px] sm:text-[15px] text-white/80 leading-[1.65] max-w-[68ch]">

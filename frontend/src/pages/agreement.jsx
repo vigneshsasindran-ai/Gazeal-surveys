@@ -29,15 +29,15 @@ const AgreementFooter = () => (
       <img src={LOGO_SRC} alt="Gazeal Surveys" className="h-10 w-auto opacity-70" />
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-outfit text-[13px]">
         <a href="https://gazeal.co.uk" target="_blank" rel="noopener noreferrer"
-           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+           className="text-white/55 hover:text-[color:var(--brand-primary)] transition-colors inline-flex items-center gap-1">
           Gazeal Main Site <ArrowUpRight className="w-3 h-3" />
         </a>
         <a href="https://elite.gazeal.co.uk" target="_blank" rel="noopener noreferrer"
-           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+           className="text-white/55 hover:text-[color:var(--brand-primary)] transition-colors inline-flex items-center gap-1">
           Gazeal Elite <ArrowUpRight className="w-3 h-3" />
         </a>
         <a href="mailto:info@gazeal.co.uk"
-           className="text-white/55 hover:text-[#4FB6FF] transition-colors inline-flex items-center gap-1">
+           className="text-white/55 hover:text-[color:var(--brand-primary)] transition-colors inline-flex items-center gap-1">
           <Mail className="w-3.5 h-3.5" /> info@gazeal.co.uk
         </a>
       </div>
@@ -167,15 +167,15 @@ const AgreementPage = () => {
 
       <main className="relative">
         <div className="absolute inset-x-0 top-0 h-[480px] pointer-events-none"
-             style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(2,94,186,0.22) 0%, rgba(2,94,186,0) 60%)" }} />
+             style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(var(--brand-primary-dark-rgb),0.22) 0%, rgba(var(--brand-primary-dark-rgb),0) 60%)" }} />
 
         <div className={`relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40 ${pending ? "pb-44" : "pb-24"}`}>
           {/* Status banner */}
           {accepted && (
-            <div className="mb-8 rounded-2xl border border-[#4FB6FF]/35 bg-gradient-to-br from-[#4FB6FF]/[0.12] to-[#025eba]/[0.06] p-5 flex items-start gap-4"
+            <div className="mb-8 rounded-2xl border border-[color:var(--brand-primary)]/35 bg-gradient-to-br from-[color:var(--brand-primary)]/[0.12] to-[color:var(--brand-primary-dark)]/[0.06] p-5 flex items-start gap-4"
                  data-testid="agreement-status-accepted">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full shrink-0"
-                    style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}>
+                    style={{ background: "linear-gradient(135deg,var(--brand-primary),var(--brand-primary-dark))" }}>
                 <Check className="w-5 h-5 text-white" strokeWidth={3} />
               </span>
               <div className="min-w-0">
@@ -223,10 +223,10 @@ const AgreementPage = () => {
             </div>
           )}
 
-          <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF] mb-4">Seller Survey Agreement</p>
+          <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[color:var(--brand-primary)] mb-4">Seller Survey Agreement</p>
           <h1 className="font-archivo font-bold text-3xl sm:text-4xl lg:text-[44px] leading-[1.1] tracking-[-0.025em] text-white">
             <span className="text-white">Your agreement, </span>
-            <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">in plain English.</span>
+            <span className="bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] bg-clip-text text-transparent">in plain English.</span>
           </h1>
 
           {/* Hi panel */}
@@ -249,7 +249,7 @@ const AgreementPage = () => {
               <section key={c.no} data-testid={`agreement-clause-${c.no}`}
                        className="rounded-xl border border-white/[0.06] bg-white/[0.015] p-5 sm:p-6">
                 <h2 className="flex items-baseline gap-3 mb-2">
-                  <span className="font-archivo font-bold text-[#4FB6FF] text-[14px]">{c.no}</span>
+                  <span className="font-archivo font-bold text-[color:var(--brand-primary)] text-[14px]">{c.no}</span>
                   <span className="font-archivo font-bold text-white text-[16px] tracking-[-0.01em]">{c.title}</span>
                 </h2>
                 <p className="font-outfit text-[14px] leading-[1.7] text-white/70 pl-8">{c.body}</p>
@@ -301,7 +301,7 @@ const AgreementPage = () => {
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
                      data-testid="agreement-scroll-hint">
                   {unlocked ? (
-                    <span className="text-[#4FB6FF]">Thank you — you're ready to confirm.</span>
+                    <span className="text-[color:var(--brand-primary)]">Thank you — you're ready to confirm.</span>
                   ) : (
                     <>
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -317,7 +317,7 @@ const AgreementPage = () => {
                   </button>
                   <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
-                          style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
+                          style={{ background: "linear-gradient(135deg,var(--brand-primary),var(--brand-primary-dark))", boxShadow: "0 6px 22px rgba(var(--brand-primary-dark-rgb),0.4)" }}
                           data-testid="agreement-accept">
                     <Check className="w-4 h-4" /> Agree to the terms
                   </button>
