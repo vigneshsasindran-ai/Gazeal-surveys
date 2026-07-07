@@ -57,10 +57,10 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
       >
         {/* Neon blue glow strip at top */}
         <div
-          className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[color:var(--brand-primary)] via-[color:var(--brand-primary-dark)] to-[color:var(--brand-primary)]"
+          className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#4FB6FF] via-[#025eba] to-[#4FB6FF]"
           style={{
             boxShadow:
-              "0 0 60px 20px rgba(var(--brand-primary-dark-rgb),0.55), 0 0 100px 40px rgba(var(--brand-primary-rgb),0.30)",
+              "0 0 60px 20px rgba(2,94,186,0.55), 0 0 100px 40px rgba(79,182,255,0.30)",
             opacity: scrollProgress,
           }}
         />
@@ -75,7 +75,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
               opacity: scrollProgress,
               transform: `scale(${0.8 + scrollProgress * 0.2})`,
               transition: "transform 0.3s ease-out",
-              filter: "drop-shadow(0 0 40px rgba(var(--brand-primary-rgb),0.45))",
+              filter: "drop-shadow(0 0 40px rgba(79,182,255,0.45))",
             }}
           />
         </div>
@@ -92,7 +92,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <a
                   href="#features"
                   onClick={(e) => handleNav(e, "features")}
-                  className="text-white/60 hover:text-[color:var(--brand-primary)] transition-colors text-sm flex items-center gap-1"
+                  className="text-white/60 hover:text-[#4FB6FF] transition-colors text-sm flex items-center gap-1"
                   data-testid="footer-nav-features"
                 >
                   Transparency <ArrowUpRight className="w-3 h-3" />
@@ -100,7 +100,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <a
                   href="#faq"
                   onClick={(e) => handleNav(e, "faq")}
-                  className="text-white/60 hover:text-[color:var(--brand-primary)] transition-colors text-sm flex items-center gap-1"
+                  className="text-white/60 hover:text-[#4FB6FF] transition-colors text-sm flex items-center gap-1"
                   data-testid="footer-nav-faq"
                 >
                   FAQ <ArrowUpRight className="w-3 h-3" />
@@ -109,7 +109,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                   href="https://gazeal.co.uk"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/60 hover:text-[color:var(--brand-primary)] transition-colors text-sm flex items-center gap-1"
+                  className="text-white/60 hover:text-[#4FB6FF] transition-colors text-sm flex items-center gap-1"
                   data-testid="footer-nav-gazeal"
                 >
                   Gazeal Main Site <ArrowUpRight className="w-3 h-3" />
@@ -118,7 +118,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                   href="https://elite.gazeal.co.uk"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/60 hover:text-[color:var(--brand-primary)] transition-colors text-sm flex items-center gap-1"
+                  className="text-white/60 hover:text-[#4FB6FF] transition-colors text-sm flex items-center gap-1"
                   data-testid="footer-nav-elite"
                 >
                   Gazeal Elite <ArrowUpRight className="w-3 h-3" />
@@ -138,7 +138,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={onOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(var(--brand-primary-dark-rgb),0.4)]"
+                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#4FB6FF] to-[#025eba] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(2,94,186,0.4)]"
                   data-testid="surveys-footer-cta"
                 >
                   Order Survey

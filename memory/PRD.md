@@ -157,6 +157,50 @@ Production requirements added during the build:
   GPU compositing (fixes the jittery drift on the sale-agreed
   transparency image).
 
+
+### 2026-02-07 — Balgores co-brand funnel (fully separate)
+- Added a second, fully-duplicated funnel at `/balgores/*` while
+  leaving the Gazeal (default) funnel untouched.
+- Routes: `/balgores`, `/balgores/order-survey`, `/balgores/pricing`,
+  `/balgores/agreement/:token`.
+- Duplicated component tree lives at:
+  - `frontend/src/components/ui/balgores/*-balgores.jsx` (10 files)
+  - `frontend/src/pages/balgores/*-balgores.jsx` (3 files)
+  - No shared UI code with Gazeal — any future copy change to the base
+    site must be manually applied to the Balgores copies too.
+- Palette: `#1A1434` (deep navy-purple) for the hero background,
+  primary CTA text, and floating-box check marks. `#B8AB84` (warm
+  sand) for accents, gradient highlights, icons, headings emphasis
+  and CTA gradients. All previous Gazeal blues (`#4FB6FF`, `#025eba`,
+  plus their rgba tuples `2,94,186` and `79,182,255`) were swapped
+  file-by-file inside the `balgores/` subfolders only.
+- Header: Balgores `B` logo rendered next to Gazeal Surveys mark with
+  a thin white/25 divider between them (both `/balgores` scrolled and
+  unscrolled states). Balgores logo asset:
+  `https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/mtuv9mso_download%20%281%29.webp`.
+- Backend: `POST /api/leads/order-survey` and `POST /api/leads/learn-more`
+  now accept `brand: "gazeal" | "balgores"` (defaults to gazeal). The
+  Balgores order form + Learn More modal hardcode `brand: "balgores"`.
+- Agreement URL: backend picks the route prefix from
+  `BRAND_TOKENS[brand]["route_prefix"]` — Balgores agreements resolve
+  to `/balgores/agreement/{token}`, Gazeal remains `/agreement/{token}`.
+- Emails: `_EMAIL_WRAPPER` (used by the agent + Learn-More notifications)
+  and the seller-invite template both accept brand tokens (`primary`,
+  `primary_dark`, `primary_grad`, `brand_label`, `partner_logo_html`).
+  Balgores sends: `#1A1434` header, gold gradient CTA button, Gazeal
+  Surveys logo + Balgores swatch in the header bar, footer reads
+  "Gazeal Surveys × Balgores".
+- Pricing calculator summary-card gradient hand-tuned for Balgores
+  (`#0d0921 → #1A1434 → #2a2246`) since the generic sed left the
+  darker blue-only stops (`#0f2f5c`, `#0a4a9a`) unchanged.
+- Nav: header nav on `/balgores/*` routes uses `/balgores#{section}`
+  hashes so "Seller Surveys", "How it works", "FAQ" all scroll to the
+  Balgores landing (not the Gazeal one).
+- Verified end-to-end via curl: `POST /api/leads/order-survey` with
+  `brand: "balgores"` returns
+  `agreement_url = ".../balgores/agreement/{token}"`, both agent + seller
+  emails delivered without error.
+
 - Testing agent iteration_9 — 17/17 checks PASS.
 
 

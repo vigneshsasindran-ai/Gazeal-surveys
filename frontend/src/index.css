@@ -62,7 +62,7 @@ code {
 
 /* Selection */
 ::selection {
-    background: rgba(var(--brand-primary-dark-rgb), 0.45);
+    background: rgba(2,94,186, 0.45);
     color: #ffffff;
 }
 
@@ -79,11 +79,11 @@ html {
     background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, var(--brand-primary-dark), var(--brand-primary));
+    background: linear-gradient(to bottom, #025eba, #4FB6FF);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, var(--brand-primary), var(--brand-primary-dark));
+    background: linear-gradient(to bottom, #4FB6FF, #025eba);
 }
 
 @layer base {
@@ -178,15 +178,15 @@ html {
     height: 22px;
     border-radius: 999px;
     background: #ffffff;
-    border: 3px solid var(--brand-primary-dark);
-    box-shadow: 0 6px 22px rgba(var(--brand-primary-dark-rgb), 0.55), 0 0 0 6px rgba(var(--brand-primary-rgb), 0.08);
+    border: 3px solid #025eba;
+    box-shadow: 0 6px 22px rgba(2,94,186, 0.55), 0 0 0 6px rgba(79,182,255, 0.08);
     cursor: grab;
     transition: transform 0.15s ease, box-shadow 0.2s ease;
     margin-top: -8px;
 }
 .pricing-slider::-webkit-slider-thumb:hover {
     transform: scale(1.08);
-    box-shadow: 0 8px 28px rgba(var(--brand-primary-dark-rgb), 0.65), 0 0 0 8px rgba(var(--brand-primary-rgb), 0.12);
+    box-shadow: 0 8px 28px rgba(2,94,186, 0.65), 0 0 0 8px rgba(79,182,255, 0.12);
 }
 .pricing-slider::-webkit-slider-thumb:active {
     cursor: grabbing;
@@ -197,14 +197,14 @@ html {
     height: 22px;
     border-radius: 999px;
     background: #ffffff;
-    border: 3px solid var(--brand-primary-dark);
-    box-shadow: 0 6px 22px rgba(var(--brand-primary-dark-rgb), 0.55);
+    border: 3px solid #025eba;
+    box-shadow: 0 6px 22px rgba(2,94,186, 0.55);
     cursor: grab;
 }
 .pricing-slider:focus-visible {
     outline: none;
 }
 .pricing-slider:focus-visible::-webkit-slider-thumb {
-    box-shadow: 0 6px 22px rgba(var(--brand-primary-dark-rgb), 0.55), 0 0 0 6px rgba(var(--brand-primary-rgb), 0.35);
+    box-shadow: 0 6px 22px rgba(2,94,186, 0.55), 0 0 0 6px rgba(79,182,255, 0.35);
 }
 

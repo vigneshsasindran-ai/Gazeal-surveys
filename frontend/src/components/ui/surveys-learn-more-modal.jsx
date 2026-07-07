@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X, Check, ArrowRight } from "lucide-react";
-import { useBrand } from "@/brand/BrandContext";
 
 /*
  * "Learn More" modal — ported from the Gazeal Elite StandardModal pattern.
@@ -64,7 +63,6 @@ const HubSpotMeetingsEmbed = ({ formData = {} }) => {
 };
 
 const SurveysLearnMoreModal = ({ open, onClose }) => {
-  const brand = useBrand();
   const [formData, setFormData] = useState({
     fullName: "",
     agency: "",
@@ -108,7 +106,6 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
             full_name: formData.fullName,
             agency: formData.agency,
             email: formData.email,
-            brand: brand.id,
           }),
         }
       );
@@ -148,7 +145,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
           isSuccess ? "max-w-3xl" : "max-w-lg"
         } bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto`}
       >
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--brand-primary)]/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#4FB6FF]/40 to-transparent pointer-events-none" />
 
         <button
           onClick={handleClose}
@@ -166,11 +163,11 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(var(--brand-primary-rgb),0.18) 0%, rgba(var(--brand-primary-dark-rgb),0.12) 100%)",
-                  border: "1px solid rgba(var(--brand-primary-rgb),0.25)",
+                    "linear-gradient(135deg, rgba(79,182,255,0.18) 0%, rgba(2,94,186,0.12) 100%)",
+                  border: "1px solid rgba(79,182,255,0.25)",
                 }}
               >
-                <Check className="h-6 w-6 text-[color:var(--brand-primary)]" strokeWidth={2.4} />
+                <Check className="h-6 w-6 text-[#4FB6FF]" strokeWidth={2.4} />
               </div>
               <h2 className="text-2xl sm:text-[28px] font-archivo font-bold tracking-[-0.025em] mb-2 text-white">
                 Learn more about Gazeal Surveys
@@ -193,7 +190,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, fullName: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[color:var(--brand-primary)]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="Enter your full name"
                   data-testid="learn-more-input-name"
                 />
@@ -209,7 +206,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, agency: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[color:var(--brand-primary)]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="Enter your agency name"
                   data-testid="learn-more-input-agency"
                 />
@@ -225,7 +222,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[color:var(--brand-primary)]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
                   placeholder="you@agency.co.uk"
                   data-testid="learn-more-input-email"
                 />
@@ -236,8 +233,8 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 className="w-full mt-6 px-6 py-3.5 rounded-full font-outfit font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
-                  boxShadow: "0 6px 20px rgba(var(--brand-primary-dark-rgb),0.4)",
+                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
+                  boxShadow: "0 6px 20px rgba(2,94,186,0.4)",
                 }}
                 data-testid="learn-more-submit"
               >
@@ -276,7 +273,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3"
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%)",
+                    "linear-gradient(135deg, #4FB6FF 0%, #025eba 100%)",
                 }}
               >
                 <Check className="h-5 w-5 text-white" strokeWidth={3} />

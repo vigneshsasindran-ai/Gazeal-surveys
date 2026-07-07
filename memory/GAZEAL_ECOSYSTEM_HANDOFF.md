@@ -308,6 +308,7 @@ past entries.
 | 2026-02-04 | User paused the RPSA webhook build. |
 | 2026-02-04 | User confirmed the sales-room hybrid direction (Path C) is *acceptable* but is not commissioning it yet. |
 | 2026-02-04 | User provided the Gazeal repo URL and asked for cross-app thinking. Asked to store all plans in this doc and pause cross-app work. |
+| 2026-02-07 | User chose **Option B (full duplication)** for the Balgores co-brand rather than the shared-theme approach. Balgores funnel now lives at `/balgores/*` with its own duplicated component tree at `frontend/src/{components/ui,pages}/balgores/`. No shared UI code with Gazeal — future copy changes to the base site must be re-applied to the Balgores copies. Backend accepts `brand: "gazeal"\|"balgores"` on `/api/leads/order-survey` and `/api/leads/learn-more`; agreement URLs auto-prefix with `/balgores` when `brand=balgores`; email templates render dual-logo + `#1A1434` header for Balgores sends. |
 
 ---
 

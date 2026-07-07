@@ -69,8 +69,8 @@ const Segmented = ({ options, value, onChange, testid }) => (
               : "text-white/70 border-white/10 bg-white/[0.03] hover:border-white/25 hover:text-white"
           }`}
           style={active ? {
-            background: "linear-gradient(135deg,var(--brand-primary),var(--brand-primary-dark))",
-            boxShadow: "0 6px 22px rgba(var(--brand-primary-dark-rgb),0.4)",
+            background: "linear-gradient(135deg,#4FB6FF,#025eba)",
+            boxShadow: "0 6px 22px rgba(2,94,186,0.4)",
           } : undefined}
           data-testid={`${testid}-opt-${o.label.replace(/\s+/g,"-").toLowerCase()}`}
         >
@@ -154,7 +154,7 @@ const PricingCalculator = ({
               value={inputText.startsWith("£") ? inputText.slice(1).trim() : inputText}
               onChange={onTextChange}
               onBlur={onTextBlur}
-              className="w-full bg-transparent font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] border-b border-white/10 focus:border-[color:var(--brand-primary)] focus:outline-none pb-1 transition-colors"
+              className="w-full bg-transparent font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] border-b border-white/10 focus:border-[#4FB6FF] focus:outline-none pb-1 transition-colors"
               aria-label="Property value in GBP"
               data-testid={`${testidPrefix}-value-input`}
             />
@@ -166,7 +166,7 @@ const PricingCalculator = ({
               className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full pointer-events-none"
               style={{
                 width: `${sliderPct}%`,
-                background: "linear-gradient(90deg,var(--brand-primary) 0%,var(--brand-primary-dark) 100%)",
+                background: "linear-gradient(90deg,#4FB6FF 0%,#025eba 100%)",
               }}
             />
             <input
@@ -202,10 +202,10 @@ const PricingCalculator = ({
   const summaryCard = (
     <div
       className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
-      style={{ background: "linear-gradient(160deg,#0f2f5c 0%,var(--brand-primary-dark) 55%,#0a4a9a 100%)" }}
+      style={{ background: "linear-gradient(160deg,#0f2f5c 0%,#025eba 55%,#0a4a9a 100%)" }}
       data-testid={`${testidPrefix}-summary`}
     >
-      <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[color:var(--brand-primary)]/25 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#4FB6FF]/25 blur-3xl" />
       <p className="relative font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/70">Your survey fee</p>
 
       {result.quote ? (

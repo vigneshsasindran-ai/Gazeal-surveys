@@ -38,7 +38,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
     <div
       className={`relative rounded-2xl border p-7 sm:p-8 backdrop-blur-sm transition-all duration-500 ${
         isPositive
-          ? "border-[color:var(--brand-primary)]/35 bg-gradient-to-b from-[color:var(--brand-primary)]/[0.08] to-[color:var(--brand-primary-dark)]/[0.02] hover:border-[color:var(--brand-primary)]/55"
+          ? "border-[#4FB6FF]/35 bg-gradient-to-b from-[#4FB6FF]/[0.08] to-[#025eba]/[0.02] hover:border-[#4FB6FF]/55"
           : "border-white/10 bg-white/[0.02] hover:border-white/20"
       }`}
       data-testid={testid}
@@ -46,7 +46,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
       {isPositive && (
         <div
           className="absolute -top-3 left-7 px-2.5 py-1 rounded-full text-[10px] tracking-[0.18em] uppercase font-outfit font-bold text-white"
-          style={{ background: "linear-gradient(135deg,var(--brand-primary),var(--brand-primary-dark))" }}
+          style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}
         >
           Recommended
         </div>
@@ -58,7 +58,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
         </h3>
         {isPositive && (
           <span
-            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)] shadow-[0_6px_22px_rgba(var(--brand-primary-dark-rgb),0.4)]"
+            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#4FB6FF] to-[#025eba] shadow-[0_6px_22px_rgba(2,94,186,0.4)]"
           >
             <Icon className="w-5 h-5 text-white" strokeWidth={2.2} />
           </span>
@@ -70,12 +70,12 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
           <li key={b} className="flex items-start gap-2.5">
             <span
               className={`mt-0.5 inline-flex items-center justify-center rounded-full shrink-0 ${
-                isPositive ? "bg-[color:var(--brand-primary)]/15" : "bg-white/[0.06]"
+                isPositive ? "bg-[#4FB6FF]/15" : "bg-white/[0.06]"
               }`}
               style={{ height: 20, width: 20 }}
             >
               {isPositive ? (
-                <Check className="w-3 h-3 text-[color:var(--brand-primary)]" strokeWidth={3} />
+                <Check className="w-3 h-3 text-[#4FB6FF]" strokeWidth={3} />
               ) : (
                 <X className="w-3 h-3 text-white/45" strokeWidth={3} />
               )}
@@ -89,7 +89,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
       <div
         className={`mt-5 rounded-xl p-4 sm:p-5 ${
           isPositive
-            ? "border border-[color:var(--brand-primary)]/45 bg-gradient-to-br from-[color:var(--brand-primary)]/[0.14] to-[color:var(--brand-primary-dark)]/[0.06]"
+            ? "border border-[#4FB6FF]/45 bg-gradient-to-br from-[#4FB6FF]/[0.14] to-[#025eba]/[0.06]"
             : "border border-white/15 bg-white/[0.04]"
         }`}
         data-testid={`${testid}-note`}
@@ -98,7 +98,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
           <span
             className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0 ${
               isPositive
-                ? "bg-gradient-to-br from-[color:var(--brand-primary)] to-[color:var(--brand-primary-dark)]"
+                ? "bg-gradient-to-br from-[#4FB6FF] to-[#025eba]"
                 : "bg-white/[0.08] border border-white/15"
             }`}
           >
@@ -111,7 +111,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
           <div>
             <p
               className={`font-archivo font-bold text-[11px] tracking-[0.18em] uppercase mb-1.5 ${
-                isPositive ? "text-[color:var(--brand-primary)]" : "text-white/55"
+                isPositive ? "text-[#4FB6FF]" : "text-white/55"
               }`}
             >
               Survey fee
@@ -174,10 +174,10 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
 
       {isSeller && token && (
         <div
-          className="mt-8 rounded-2xl border border-[color:var(--brand-primary)]/25 bg-[color:var(--brand-primary)]/[0.04] p-6 sm:p-7"
+          className="mt-8 rounded-2xl border border-[#4FB6FF]/25 bg-[#4FB6FF]/[0.04] p-6 sm:p-7"
           data-testid="re-interest-card"
         >
-          <p className="font-outfit text-[12px] tracking-[0.22em] uppercase font-semibold text-[color:var(--brand-primary)] mb-3"
+          <p className="font-outfit text-[12px] tracking-[0.22em] uppercase font-semibold text-[#4FB6FF] mb-3"
              data-testid="re-interest-eyebrow">
             Want to think about it?
           </p>
@@ -192,7 +192,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
             <div className="flex items-start gap-3" data-testid="re-interest-submitted">
               <span
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                style={{ background: "linear-gradient(135deg,var(--brand-primary),var(--brand-primary-dark))" }}
+                style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}
               >
                 <Check className="w-4 h-4 text-white" strokeWidth={3} />
               </span>
@@ -216,7 +216,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                   checked={interested}
                   onChange={(e) => toggleInterest(e.target.checked)}
                   disabled={submitting}
-                  className="mt-1 h-4 w-4 rounded border-white/30 bg-white/[0.06] accent-[color:var(--brand-primary-dark)] cursor-pointer disabled:opacity-60"
+                  className="mt-1 h-4 w-4 rounded border-white/30 bg-white/[0.06] accent-[#025eba] cursor-pointer disabled:opacity-60"
                   data-testid="re-interest-checkbox"
                 />
                 <span>
@@ -227,7 +227,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                     Tick this box and Gazeal will email you details on how a
                     Reservation Agreement could help protect your sale.
                     {submitting && (
-                      <span className="ml-1 text-[color:var(--brand-primary)]">Saving…</span>
+                      <span className="ml-1 text-[#4FB6FF]">Saving…</span>
                     )}
                   </span>
                 </span>
