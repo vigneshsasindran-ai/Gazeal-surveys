@@ -67,7 +67,7 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
         <span
           className="font-archivo font-bold text-[44px] leading-none tracking-[-0.04em] bg-clip-text text-transparent transition-all duration-500"
           style={{
-            backgroundImage: "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+            backgroundImage: "#B8AB84",
           }}
         >
           {String(index + 1).padStart(2, "0")}
@@ -94,7 +94,7 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
         <div
           className="absolute inset-y-0 left-0 w-0 group-hover:w-full transition-all duration-700 ease-out"
           style={{
-            background: "linear-gradient(90deg, #B8AB84 0%, #1A1434 100%)",
+            background: "#B8AB84",
           }}
         />
       </div>
@@ -118,7 +118,7 @@ const SegmentedLabel = ({ audience }) => (
     <span
       className="rounded-full px-3 py-1 text-[11px] tracking-[0.12em] uppercase text-white font-outfit font-semibold"
       style={{
-        background: "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+        background: "#B8AB84",
         boxShadow: "0 4px 14px rgba(26,20,52,0.35)",
       }}
     >
@@ -175,7 +175,7 @@ const SurveysBenefits = () => {
             data-testid="benefits-headline"
           >
             <span className="text-white">Here&apos;s </span>
-            <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+            <span className="text-[#B8AB84]">
               how it works.
             </span>
           </h2>
@@ -225,7 +225,7 @@ const SurveysBenefits = () => {
 
         {/* Indemnity footer — RPSA logo */}
         <div
-          className="mt-8 lg:mt-10 rounded-2xl border border-[#B8AB84]/20 bg-gradient-to-br from-[#B8AB84]/[0.06] to-[#1A1434]/[0.03] px-7 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center"
+          className="mt-8 lg:mt-10 rounded-2xl border border-[#B8AB84]/20 bg-[#B8AB84]/[0.05] px-7 py-6 sm:py-7 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center"
           data-testid="benefits-indemnity"
         >
           <div>

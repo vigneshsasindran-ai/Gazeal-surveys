@@ -86,22 +86,32 @@ _BALGORES_LOGO_URL = (
 
 # Per-brand palette for HTML emails. Keep the shape identical so template
 # blocks can just `.format(**BRAND_TOKENS[brand])`.
+#
+# `hero_bg_image` — value for the hero band's `background-image` CSS.
+#   Set to `none` for flat brands (Balgores) so the `primary_dark` base
+#   colour shows through unaltered.
+# `cta_bg` — value for the reply-CTA button `background`.
+#   Balgores uses solid gold — no gradient with the purple.
 BRAND_TOKENS = {
     "gazeal": {
-        "primary":       "#4FB6FF",
-        "primary_dark":  "#025eba",
-        "primary_grad":  "linear-gradient(135deg,#4FB6FF 0%,#025eba 100%)",
-        "route_prefix":  "",           # /agreement/{token}
-        "brand_label":   "Gazeal Surveys",
-        "partner_logo":  "",           # rendered as a spacer when empty
+        "primary":        "#4FB6FF",
+        "primary_dark":   "#025eba",
+        "hero_bg_image":  "linear-gradient(135deg,#4FB6FF 0%,#025eba 100%)",
+        "cta_bg":         "#025eba",
+        "cta_bg_image":   "linear-gradient(135deg,#4FB6FF 0%,#025eba 100%)",
+        "route_prefix":   "",
+        "brand_label":    "Gazeal Surveys",
+        "partner_logo":   "",
     },
     "balgores": {
-        "primary":       "#B8AB84",
-        "primary_dark":  "#1A1434",
-        "primary_grad":  "linear-gradient(135deg,#B8AB84 0%,#1A1434 100%)",
-        "route_prefix":  "/balgores",  # /balgores/agreement/{token}
-        "brand_label":   "Gazeal Surveys × Balgores",
-        "partner_logo":  _BALGORES_LOGO_URL,
+        "primary":        "#B8AB84",
+        "primary_dark":   "#1A1434",
+        "hero_bg_image":  "none",
+        "cta_bg":         "#B8AB84",
+        "cta_bg_image":   "none",
+        "route_prefix":   "/balgores",
+        "brand_label":    "Gazeal Surveys × Balgores",
+        "partner_logo":   _BALGORES_LOGO_URL,
     },
 }
 
@@ -132,7 +142,7 @@ _EMAIL_WRAPPER = """\
           <!-- Hero band -->
           <tr>
             <td style="background:{primary_dark};
-                       background-image:{primary_grad};
+                       background-image:{hero_bg_image};
                        padding:32px 36px;color:#ffffff;">
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
@@ -180,8 +190,8 @@ _EMAIL_WRAPPER = """\
             <td style="padding:8px 36px 32px 36px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:{primary_dark};
-                             background-image:{primary_grad};
+                  <td style="background:{cta_bg};
+                             background-image:{cta_bg_image};
                              border-radius:999px;">
                     <a href="{cta_href}"
                        style="display:inline-block;padding:12px 22px;
@@ -302,7 +312,9 @@ def _render_learn_more(lead: LearnMoreLead) -> str:
         timestamp=datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
         primary=tokens["primary"],
         primary_dark=tokens["primary_dark"],
-        primary_grad=tokens["primary_grad"],
+        hero_bg_image=tokens["hero_bg_image"],
+        cta_bg=tokens["cta_bg"],
+        cta_bg_image=tokens["cta_bg_image"],
         brand_label=tokens["brand_label"],
         partner_logo_html=_partner_logo_html(tokens),
     )
@@ -449,7 +461,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
           <td style="padding:24px 36px 8px;">
             <table cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="background:{tokens['primary_dark']};border-radius:8px;">
+                <td style="background:{tokens['cta_bg']};border-radius:8px;">
                   <a href="{agreement_url}"
                      style="display:inline-block;padding:14px 26px;
                             font-size:15px;font-weight:600;color:#ffffff;
@@ -602,7 +614,9 @@ def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
         timestamp=datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
         primary=tokens["primary"],
         primary_dark=tokens["primary_dark"],
-        primary_grad=tokens["primary_grad"],
+        hero_bg_image=tokens["hero_bg_image"],
+        cta_bg=tokens["cta_bg"],
+        cta_bg_image=tokens["cta_bg_image"],
         brand_label=tokens["brand_label"],
         partner_logo_html=_partner_logo_html(tokens),
     )

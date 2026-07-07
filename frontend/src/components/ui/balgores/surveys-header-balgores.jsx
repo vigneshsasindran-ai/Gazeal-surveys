@@ -156,7 +156,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                       .replace(/\s+/g, "-")}`}
                   >
                     {link.name}
-                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-[#B8AB84] to-[#1A1434] transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#B8AB84] transition-all duration-300 group-hover:w-full" />
                   </a>
                 ))}
               </nav>
@@ -174,7 +174,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={handleOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#B8AB84] to-[#1A1434] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.35)]"
+                  className="text-[14px] px-5 py-2.5 flex items-center gap-2 font-semibold rounded-full bg-[#B8AB84] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.35)]"
                   data-testid="surveys-nav-order-survey"
                 >
                   Order Survey
@@ -280,7 +280,7 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
               <button
                 type="button"
                 onClick={handleOrderSurvey}
-                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-gradient-to-r from-[#B8AB84] to-[#1A1434] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(26,20,52,0.4)] font-outfit"
+                className="w-full text-center py-4 text-lg font-semibold rounded-2xl transition-all duration-300 bg-[#B8AB84] text-white hover:opacity-90 shadow-[0_8px_25px_rgba(26,20,52,0.4)] font-outfit"
                 data-testid="surveys-mobile-order-survey"
               >
                 Order Survey

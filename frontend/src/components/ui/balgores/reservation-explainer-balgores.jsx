@@ -38,7 +38,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
     <div
       className={`relative rounded-2xl border p-7 sm:p-8 backdrop-blur-sm transition-all duration-500 ${
         isPositive
-          ? "border-[#B8AB84]/35 bg-gradient-to-b from-[#B8AB84]/[0.08] to-[#1A1434]/[0.02] hover:border-[#B8AB84]/55"
+          ? "border-[#B8AB84]/35 bg-[#B8AB84]/[0.06] hover:border-[#B8AB84]/55"
           : "border-white/10 bg-white/[0.02] hover:border-white/20"
       }`}
       data-testid={testid}
@@ -46,7 +46,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
       {isPositive && (
         <div
           className="absolute -top-3 left-7 px-2.5 py-1 rounded-full text-[10px] tracking-[0.18em] uppercase font-outfit font-bold text-white"
-          style={{ background: "linear-gradient(135deg,#B8AB84,#1A1434)" }}
+          style={{ background: "#B8AB84" }}
         >
           Recommended
         </div>
@@ -58,7 +58,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
         </h3>
         {isPositive && (
           <span
-            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#B8AB84] to-[#1A1434] shadow-[0_6px_22px_rgba(26,20,52,0.4)]"
+            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#B8AB84] shadow-[0_6px_22px_rgba(26,20,52,0.4)]"
           >
             <Icon className="w-5 h-5 text-white" strokeWidth={2.2} />
           </span>
@@ -89,7 +89,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
       <div
         className={`mt-5 rounded-xl p-4 sm:p-5 ${
           isPositive
-            ? "border border-[#B8AB84]/45 bg-gradient-to-br from-[#B8AB84]/[0.14] to-[#1A1434]/[0.06]"
+            ? "border border-[#B8AB84]/45 bg-[#B8AB84]/[0.10]"
             : "border border-white/15 bg-white/[0.04]"
         }`}
         data-testid={`${testid}-note`}
@@ -98,7 +98,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
           <span
             className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0 ${
               isPositive
-                ? "bg-gradient-to-br from-[#B8AB84] to-[#1A1434]"
+                ? "bg-[#B8AB84]"
                 : "bg-white/[0.08] border border-white/15"
             }`}
           >
@@ -192,7 +192,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
             <div className="flex items-start gap-3" data-testid="re-interest-submitted">
               <span
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                style={{ background: "linear-gradient(135deg,#B8AB84,#1A1434)" }}
+                style={{ background: "#B8AB84" }}
               >
                 <Check className="w-4 h-4 text-white" strokeWidth={3} />
               </span>

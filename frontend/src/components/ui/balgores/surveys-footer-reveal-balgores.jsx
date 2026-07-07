@@ -57,7 +57,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
       >
         {/* Neon blue glow strip at top */}
         <div
-          className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#B8AB84] via-[#1A1434] to-[#B8AB84]"
+          className="absolute top-0 left-0 right-0 h-[3px] bg-[#B8AB84]"
           style={{
             boxShadow:
               "0 0 60px 20px rgba(26,20,52,0.55), 0 0 100px 40px rgba(184,171,132,0.30)",
@@ -138,7 +138,7 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 <button
                   type="button"
                   onClick={onOrderSurvey}
-                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-gradient-to-r from-[#B8AB84] to-[#1A1434] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.4)]"
+                  className="text-[14px] px-5 py-2.5 inline-flex items-center gap-2 font-semibold rounded-full bg-[#B8AB84] text-white hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.4)]"
                   data-testid="surveys-footer-cta"
                 >
                   Order Survey

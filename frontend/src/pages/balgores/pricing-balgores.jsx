@@ -25,7 +25,7 @@ const PricingPage = () => (
         <div className="max-w-2xl">
           <h1 className="font-archivo font-bold text-4xl sm:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.025em] text-white">
             Know the price of your survey{" "}
-            <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">before you order.</span>
+            <span className="text-[#B8AB84]">before you order.</span>
           </h1>
           <p className="mt-5 font-outfit text-base sm:text-lg text-white/65 leading-relaxed max-w-xl">
             Slide the property value, choose the bedrooms and listed status, and see the survey fee update live. No hidden extras.

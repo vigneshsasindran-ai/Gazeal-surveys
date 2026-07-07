@@ -55,7 +55,7 @@ const SurveysBento = () => {
         <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.18]">
             <span className="text-white">Fix survey problems </span>
-            <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+            <span className="text-[#B8AB84]">
               before they break the sale.
             </span>
           </h2>
@@ -128,7 +128,7 @@ const SurveysBento = () => {
               />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
                 Up to{" "}
-                <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+                <span className="text-[#B8AB84]">
                   98%
                 </span>{" "}
                 sale success
@@ -160,7 +160,7 @@ const SurveysBento = () => {
                   data-testid="surveys-indemnifies-heading"
                 >
                   Professional Indemnity{" "}
-                  <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+                  <span className="text-[#B8AB84]">
                     protects both seller and buyer.
                   </span>
                 </h3>

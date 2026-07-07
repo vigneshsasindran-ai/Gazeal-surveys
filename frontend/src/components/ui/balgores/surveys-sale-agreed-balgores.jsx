@@ -35,7 +35,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
             >
               Survey It. Reserve It.
               <br />
-              <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+              <span className="text-[#B8AB84]">
                 Now It&apos;s as Good as Sold.
               </span>
             </h2>
@@ -57,7 +57,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
                 className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
                 style={{
                   background:
-                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                    "#B8AB84",
                   boxShadow: "0 6px 22px rgba(26,20,52,0.4)",
                 }}
                 data-testid="sale-agreed-cta"
@@ -71,7 +71,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
           {/* Right — illustration */}
           <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[420px]">
-              <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-[#B8AB84]/15 via-transparent to-[#1A1434]/15 blur-2xl" />
+              <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[#B8AB84]/10 blur-2xl" />
 
               <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-4 sm:p-6">
                 <img

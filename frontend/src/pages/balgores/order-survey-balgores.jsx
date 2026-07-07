@@ -189,7 +189,7 @@ const OrderSurveyPage = () => {
             </p>
             <h1 className="text-3xl md:text-[42px] font-archivo font-bold tracking-[-0.025em] text-white leading-[1.12]">
               Invite your seller{" "}
-              <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+              <span className="text-[#B8AB84]">
                 to book a survey
               </span>
             </h1>
@@ -223,7 +223,7 @@ const OrderSurveyPage = () => {
                         className="mt-[2px] inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0"
                         style={{
                           background:
-                            "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                            "#B8AB84",
                         }}
                       >
                         <Check className="w-3 h-3 text-white" strokeWidth={3} />
@@ -259,7 +259,7 @@ const OrderSurveyPage = () => {
                             isActive
                               ? {
                                   background:
-                                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                                    "#B8AB84",
                                   boxShadow:
                                     "0 0 18px rgba(184,171,132,0.45)",
                                 }
@@ -296,7 +296,7 @@ const OrderSurveyPage = () => {
                           style={{
                             background:
                               currentStep > s.number
-                                ? "linear-gradient(90deg, #B8AB84, #1A1434)"
+                                ? "#B8AB84"
                                 : "rgba(255,255,255,0.10)",
                           }}
                         />
@@ -602,7 +602,7 @@ const OrderSurveyPage = () => {
                           formData.confirmation
                             ? {
                                 background:
-                                  "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                                  "#B8AB84",
                               }
                             : {}
                         }
@@ -654,7 +654,7 @@ const OrderSurveyPage = () => {
                       className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90"
                       style={{
                         background:
-                          "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                          "#B8AB84",
                         boxShadow: "0 6px 20px rgba(26,20,52,0.4)",
                       }}
                       data-testid="order-survey-next"
@@ -670,7 +670,7 @@ const OrderSurveyPage = () => {
                       className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         background:
-                          "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                          "#B8AB84",
                         boxShadow: "0 6px 20px rgba(26,20,52,0.4)",
                       }}
                       data-testid="order-survey-submit"
@@ -703,7 +703,7 @@ const OrderSurveyPage = () => {
                 className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-6"
                 style={{
                   background:
-                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                    "#B8AB84",
                   boxShadow: "0 8px 30px rgba(184,171,132,0.4)",
                 }}
               >
@@ -711,7 +711,7 @@ const OrderSurveyPage = () => {
               </div>
               <h2 className="font-archivo font-bold tracking-[-0.025em] text-[30px] text-white mb-3">
                 Invite on its way to{" "}
-                <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+                <span className="text-[#B8AB84]">
                   {formData.sellerName.split(" ")[0] || "your seller"}
                 </span>
               </h2>
@@ -727,7 +727,7 @@ const OrderSurveyPage = () => {
                 className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-white hover:opacity-90 transition-all"
                 style={{
                   background:
-                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                    "#B8AB84",
                   boxShadow: "0 6px 20px rgba(26,20,52,0.4)",
                 }}
                 data-testid="order-survey-return-home"

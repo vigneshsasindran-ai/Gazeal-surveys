@@ -80,7 +80,7 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
             <div className="lg:sticky lg:top-32">
               <h2 className="text-3xl md:text-4xl lg:text-[44px] font-archivo font-bold tracking-[-0.025em] leading-[1.15] mb-4">
                 <span className="text-white">Common </span>
-                <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">
+                <span className="text-[#B8AB84]">
                   Questions
                 </span>
               </h2>
@@ -90,13 +90,13 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
                 sits alongside your existing Gazeal Reservation.
               </p>
 
-              <div className="p-4 bg-gradient-to-br from-[#B8AB84]/[0.12] to-[#1A1434]/[0.05] border border-[#B8AB84]/25 rounded-xl">
+              <div className="p-4 bg-[#B8AB84]/[0.08] border border-[#B8AB84]/25 rounded-xl">
                 <p className="text-white/70 text-xs mb-1 font-outfit">
                   Still have questions?
                 </p>
                 <a
                   href="mailto:info@gazeal.co.uk"
-                  className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent font-semibold text-sm hover:opacity-80 font-outfit"
+                  className="text-[#B8AB84] font-semibold text-sm hover:opacity-80 font-outfit"
                   data-testid="surveys-faq-contact"
                 >
                   info@gazeal.co.uk →
@@ -112,7 +112,7 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="border border-white/[0.08] bg-white/[0.02] px-5 rounded-xl data-[state=open]:border-[#B8AB84]/30 data-[state=open]:bg-gradient-to-br data-[state=open]:from-[#B8AB84]/[0.06] data-[state=open]:to-transparent transition-all overflow-hidden"
+                  className="border border-white/[0.08] bg-white/[0.02] px-5 rounded-xl data-[state=open]:border-[#B8AB84]/30 data-[state=open]:bg-[#B8AB84]/[0.06] transition-all overflow-hidden"
                   data-testid={`surveys-faq-item-${index}`}
                 >
                   <AccordionTrigger className="text-left text-white hover:text-[#B8AB84] hover:no-underline py-4 text-[15px] font-medium font-outfit">
@@ -126,7 +126,7 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
 
               {/* Apply CTA — rendered as a card instead of a Q&A */}
               <div
-                className="border border-[#B8AB84]/25 bg-gradient-to-br from-[#B8AB84]/[0.08] to-[#1A1434]/[0.04] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                className="border border-[#B8AB84]/25 bg-[#B8AB84]/[0.06] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                 data-testid="surveys-faq-apply-card"
                 id="apply"
               >
@@ -150,7 +150,7 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
                   <button
                     type="button"
                     onClick={onOrderSurvey}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#B8AB84] to-[#1A1434] text-white font-semibold px-5 py-2.5 text-sm hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.4)] whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B8AB84] text-white font-semibold px-5 py-2.5 text-sm hover:opacity-90 transition-opacity font-outfit shadow-[0_4px_15px_rgba(26,20,52,0.4)] whitespace-nowrap"
                     data-testid="surveys-faq-order-survey"
                   >
                     Order Survey

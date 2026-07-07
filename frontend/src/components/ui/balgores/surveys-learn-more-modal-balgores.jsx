@@ -234,7 +234,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 className="w-full mt-6 px-6 py-3.5 rounded-full font-outfit font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 style={{
                   background:
-                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                    "#B8AB84",
                   boxShadow: "0 6px 20px rgba(26,20,52,0.4)",
                 }}
                 data-testid="learn-more-submit"
@@ -274,7 +274,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3"
                 style={{
                   background:
-                    "linear-gradient(135deg, #B8AB84 0%, #1A1434 100%)",
+                    "#B8AB84",
                 }}
               >
                 <Check className="h-5 w-5 text-white" strokeWidth={3} />

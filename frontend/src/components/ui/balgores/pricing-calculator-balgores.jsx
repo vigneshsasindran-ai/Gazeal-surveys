@@ -69,7 +69,7 @@ const Segmented = ({ options, value, onChange, testid }) => (
               : "text-white/70 border-white/10 bg-white/[0.03] hover:border-white/25 hover:text-white"
           }`}
           style={active ? {
-            background: "linear-gradient(135deg,#B8AB84,#1A1434)",
+            background: "#B8AB84",
             boxShadow: "0 6px 22px rgba(26,20,52,0.4)",
           } : undefined}
           data-testid={`${testid}-opt-${o.label.replace(/\s+/g,"-").toLowerCase()}`}
@@ -166,7 +166,7 @@ const PricingCalculator = ({
               className="absolute left-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full pointer-events-none"
               style={{
                 width: `${sliderPct}%`,
-                background: "linear-gradient(90deg,#B8AB84 0%,#1A1434 100%)",
+                background: "#B8AB84",
               }}
             />
             <input
@@ -202,7 +202,7 @@ const PricingCalculator = ({
   const summaryCard = (
     <div
       className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
-      style={{ background: "linear-gradient(160deg,#0d0921 0%,#1A1434 55%,#2a2246 100%)" }}
+      style={{ background: "#1A1434" }}
       data-testid={`${testidPrefix}-summary`}
     >
       <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#B8AB84]/25 blur-3xl" />

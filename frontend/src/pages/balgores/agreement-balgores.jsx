@@ -175,7 +175,7 @@ const AgreementPage = () => {
             <div className="mb-8 rounded-2xl border border-[#B8AB84]/35 bg-gradient-to-br from-[#B8AB84]/[0.12] to-[#1A1434]/[0.06] p-5 flex items-start gap-4"
                  data-testid="agreement-status-accepted">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full shrink-0"
-                    style={{ background: "linear-gradient(135deg,#B8AB84,#1A1434)" }}>
+                    style={{ background: "#B8AB84" }}>
                 <Check className="w-5 h-5 text-white" strokeWidth={3} />
               </span>
               <div className="min-w-0">
@@ -226,7 +226,7 @@ const AgreementPage = () => {
           <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84] mb-4">Seller Survey Agreement</p>
           <h1 className="font-archivo font-bold text-3xl sm:text-4xl lg:text-[44px] leading-[1.1] tracking-[-0.025em] text-white">
             <span className="text-white">Your agreement, </span>
-            <span className="bg-gradient-to-r from-[#B8AB84] to-[#1A1434] bg-clip-text text-transparent">in plain English.</span>
+            <span className="text-[#B8AB84]">in plain English.</span>
           </h1>
 
           {/* Hi panel */}
@@ -317,7 +317,7 @@ const AgreementPage = () => {
                   </button>
                   <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
-                          style={{ background: "linear-gradient(135deg,#B8AB84,#1A1434)", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
+                          style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                           data-testid="agreement-accept">
                     <Check className="w-4 h-4" /> Agree to the terms
                   </button>
