@@ -12,7 +12,7 @@ import { ChevronRight } from "lucide-react";
  */
 
 const SCENE_IMAGE =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/7vehcl9u_Gazeal%20Linkedin%20Post%20%2811%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/tgbgjbo6_House%20lens.png";
 
 const SurveysSaleAgreed = ({ onOrderSurvey }) => {
   return (
@@ -76,7 +76,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
               <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-4 sm:p-6">
                 <img
                   src={SCENE_IMAGE}
-                  alt="A 3D illustration of a blue and white house with a magnifying glass held up to the front door and a 'Transparency' label alongside."
+                  alt="A 3D illustration of a house with a magnifying lens revealing the front door — representing property transparency."
                   className="w-full h-auto rounded-xl object-contain surveys-bento-icon"
                   loading="lazy"
                   style={{

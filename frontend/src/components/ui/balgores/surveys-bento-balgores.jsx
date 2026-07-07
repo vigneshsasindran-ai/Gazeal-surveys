@@ -9,11 +9,11 @@ import { Card, CardContent } from "@/components/ui/card";
  */
 
 const ICON_LOCK =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/xebanqzg_DESIGN%20ELEMENTS%20%20%2821%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/uqsdzkqi_Lock.png";
 const ICON_CLIPBOARD =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/msgu0rm9_DESIGN%20ELEMENTS%20%20%2823%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/ygnrrekg_Magnifying%20lens.png";
 const ICON_SHIELD =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/pgz0h9t7_DESIGN%20ELEMENTS%20%20%2822%29.png";
+  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/1b7nhpqa_Shield.png";
 
 const Visual = ({ src, alt, delay = "0s" }) => (
   <div className="relative mx-auto flex aspect-square size-28 sm:size-32 rounded-full border border-white/10 before:absolute before:-inset-2 before:rounded-full before:border before:border-white/5 after:absolute after:-inset-5 after:rounded-full after:border after:border-white/[0.03]">
@@ -99,7 +99,7 @@ const SurveysBento = () => {
             <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
               <Visual
                 src={ICON_CLIPBOARD}
-                alt="House with a survey clipboard and pencil"
+                alt="Magnifying lens over property"
                 delay="0.8s"
               />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
