@@ -44,7 +44,7 @@ const SurveysBento = () => {
   return (
     <section
       id="features"
-      className="relative bg-black pt-16 md:pt-20 pb-8 md:pb-12"
+      className="relative bg-black pt-16 md:pt-20 pb-8 md:pb-12 overflow-hidden"
       data-testid="surveys-bento-section"
     >
       {/* Ambient blue backdrop */}
