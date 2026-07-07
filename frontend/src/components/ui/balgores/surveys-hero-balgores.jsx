@@ -76,11 +76,21 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
             className="order-1 lg:col-start-1 lg:col-span-7 lg:row-start-1 text-white"
             data-testid="surveys-hero-copy"
           >
+            <div
+              className="inline-flex items-center gap-2.5 mb-5 md:mb-6"
+              data-testid="surveys-hero-eyebrow"
+            >
+              <span className="h-[1px] w-8 bg-[#B8AB84]" aria-hidden="true" />
+              <span className="font-outfit font-semibold uppercase tracking-[0.22em] text-[12px] sm:text-[13px] text-[#B8AB84]">
+                Home Insights powered by Gazeal
+              </span>
+            </div>
+
             <h1
               className="font-archivo font-bold tracking-[-0.02em] leading-[1.05] text-white text-[36px] sm:text-[44px] lg:text-[52px] xl:text-[56px]"
               data-testid="surveys-hero-heading"
             >
-              England, meet
+              Essex, meet
               <br />
               how Scotland
               <br />

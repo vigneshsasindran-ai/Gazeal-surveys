@@ -15,9 +15,6 @@ const NAV_LINKS = [
   { name: "FAQ", href: "#faq" },
 ];
 
-const LOGO_SRC =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png";
-
 const BALGORES_LOGO =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/mtuv9mso_download%20%281%29.webp";
 
@@ -119,20 +116,16 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
                 className="flex items-center gap-3 z-10"
                 data-testid="surveys-logo-link"
               >
-                <img
-                  src={LOGO_SRC}
-                  alt="Gazeal Surveys"
-                  className={`transition-all duration-500 ${
-                    isScrolled ? "h-8 md:h-9" : "h-10 md:h-12"
-                  } w-auto`}
-                  data-testid="surveys-logo-img"
-                />
                 <span
-                  aria-hidden="true"
-                  className={`inline-block w-px bg-white/25 transition-all duration-500 ${
-                    isScrolled ? "h-6 md:h-7" : "h-7 md:h-9"
-                  }`}
-                />
+                  className={`font-outfit font-light text-[#B8AB84] whitespace-nowrap transition-all duration-500 ${
+                    isScrolled
+                      ? "text-[15px] md:text-[17px]"
+                      : "text-[17px] md:text-[20px]"
+                  } tracking-[0.02em]`}
+                  data-testid="surveys-partner-logo-text"
+                >
+                  Balgores Property Group
+                </span>
                 <img
                   src={BALGORES_LOGO}
                   alt="Balgores"
