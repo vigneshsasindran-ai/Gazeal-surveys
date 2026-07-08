@@ -37,7 +37,7 @@ const EmailCapture = () => {
           <Check className="w-3.5 h-3.5 text-[#025eba]" strokeWidth={3} />
         </span>
         <span className="font-outfit text-white text-[15px]">
-          Thanks — we&rsquo;ll be in touch shortly.
+          Thanks, we&rsquo;ll be in touch shortly.
         </span>
       </div>
     );
@@ -64,12 +64,12 @@ const EmailCapture = () => {
         className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300 disabled:opacity-60 whitespace-nowrap"
         data-testid="intro-email-submit"
       >
-        {state === "sending" ? "Sending…" : "Keep me posted"}
+        {state === "sending" ? "Sending…" : "Get on the waitlist"}
         <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
       </button>
       {state === "error" && (
         <p className="sm:hidden font-outfit text-white/80 text-[13px]" data-testid="intro-email-error">
-          Something went wrong — please try again.
+          Something went wrong. Please try again.
         </p>
       )}
     </form>
@@ -167,7 +167,7 @@ export default function IntroPage() {
                   <p className="font-outfit text-white/85 text-[13px] sm:text-[14px] leading-snug">
                     Featuring{" "}
                     <span className="text-white font-semibold">Alan Milstein</span>
-                    <span className="text-white/60"> — Director, Skyline Surveyors Ltd</span>
+                    <span className="text-white/60">, Director, Skyline Surveyors Ltd</span>
                   </p>
                   <span className="hidden sm:block font-outfit text-white/45 text-[12px] uppercase tracking-[0.16em] whitespace-nowrap">
                     Gazeal Surveys
@@ -207,7 +207,7 @@ export default function IntroPage() {
                 Every UK postcode
               </p>
               <p className="mt-4 font-outfit text-white/60 text-[15px] sm:text-[16px] leading-[1.55] max-w-[380px]">
-                Gazeal Surveys is available nationwide — wherever the property
+                Gazeal Surveys is available nationwide. Wherever the property
                 is, we can survey it.
               </p>
             </div>
