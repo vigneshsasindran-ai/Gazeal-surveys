@@ -15,6 +15,7 @@ import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
 import OrderSurveyPage from "@/pages/order-survey";
 import AgreementPage from "@/pages/agreement";
 import PricingPage from "@/pages/pricing";
+import IntroPage from "@/pages/intro";
 
 // ─── Balgores (co-brand) ────────────────────────────────────────────────────
 import BSurveysHeader from "@/components/ui/balgores/surveys-header-balgores";
@@ -152,6 +153,8 @@ function App() {
         <Route path="/order-survey" element={<OrderSurveyPage />} />
         <Route path="/agreement/:token" element={<AgreementPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        {/* Unlisted video intro page — not linked from the main nav */}
+        <Route path="/intro" element={<IntroPage />} />
 
         {/* Balgores (separate funnel — duplicated components) */}
         <Route path="/balgores" element={<SurveysLandingBalgores />} />

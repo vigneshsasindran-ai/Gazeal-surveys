@@ -48,6 +48,11 @@ class LearnMoreLead(BaseModel):
     brand: str = Field(default="gazeal", pattern="^(gazeal|balgores)$")
 
 
+class IntroEmailLead(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    email: EmailStr
+
+
 class OrderSurveyLead(BaseModel):
     model_config = ConfigDict(extra="ignore")
     # Agent
@@ -659,6 +664,44 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             email_id = await _send_email(
                 subject=f"Agent interested to know more about Seller Surveys — {lead.full_name}",
                 html=_render_learn_more(lead),
+            )
+        except Exception as exc:
+            email_error = str(exc)
+        return {
+            "id": doc["id"],
+            "email_id": email_id,
+            "email_error": email_error,
+            "status": "ok",
+        }
+
+    @router.post("/intro-email")
+    async def submit_intro_email(lead: IntroEmailLead):
+        doc = {
+            "id": str(uuid.uuid4()),
+            "kind": "intro_email",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "brand": "gazeal",
+            "source": "intro_page",
+            **lead.model_dump(),
+        }
+        await db.leads.insert_one(doc)
+        await fan_out(db, "intro_email.created", doc)
+        email_id = None
+        email_error = None
+        try:
+            email_id = await _send_email(
+                subject=f"New intro-page signup — {lead.email}",
+                html=(
+                    "<div style=\"font-family:Arial,Helvetica,sans-serif;max-width:520px;"
+                    "margin:0 auto;padding:24px;\">"
+                    "<h2 style=\"color:#025eba;margin:0 0 12px;\">New intro page signup</h2>"
+                    "<p style=\"color:#333;font-size:15px;line-height:1.6;margin:0 0 8px;\">"
+                    "Someone left their email on the Gazeal Surveys video intro page "
+                    "(<strong>/intro</strong>):</p>"
+                    f"<p style=\"font-size:16px;margin:0;\"><a href=\"mailto:{lead.email}\" "
+                    f"style=\"color:#025eba;\">{lead.email}</a></p>"
+                    "</div>"
+                ),
             )
         except Exception as exc:
             email_error = str(exc)
