@@ -6,7 +6,7 @@ import { X } from "lucide-react";
  * Reused on the home-page pricing table and the seller agreement page.
  */
 
-const GUIDE_PDF_URL = "/gazeal-surveys-summary.pdf";
+const GUIDE_PDF_URL = `${process.env.REACT_APP_BACKEND_URL}/api/assets/survey-guide.pdf`;
 
 export const SurveyGuideModal = ({ open, onClose }) => {
   useEffect(() => {

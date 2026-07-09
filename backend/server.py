@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -54,6 +55,17 @@ class StatusCheckCreate(BaseModel):
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+@api_router.get("/assets/survey-guide.pdf")
+async def survey_guide_pdf():
+    return FileResponse(
+        ROOT_DIR / "assets" / "gazeal-surveys-summary.pdf",
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": 'inline; filename="Gazeal Surveys summary.pdf"'
+        },
+    )
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
