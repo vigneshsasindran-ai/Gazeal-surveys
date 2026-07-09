@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 resend.api_key = os.environ["RESEND_API_KEY"]
 SENDER_EMAIL = os.environ["SENDER_EMAIL"]
 NOTIFY_EMAIL = os.environ["NOTIFY_EMAIL"]
+NOTIFY_CC = [e.strip() for e in os.environ.get("NOTIFY_CC", "").split(",") if e.strip()]
 
 
 # ---------------------------------------------------------------------------
@@ -422,8 +423,10 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
         <tr>
           <td style="padding:18px 36px 4px;font-size:15px;color:#0B1220;">
             <p style="margin:0;">
-              To get started, the next step is to read the terms and agree
-              to them by clicking the button below.
+              Your agent, <strong>{lead.agency_name}</strong>, has ordered a
+              Home Insights Survey powered by Gazeal for your property. To
+              move things forward, please review and accept the terms of the
+              agreement. Everything you need is on the page linked below.
             </p>
           </td>
         </tr>
@@ -471,7 +474,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
                      style="display:inline-block;padding:14px 26px;
                             font-size:15px;font-weight:600;color:#ffffff;
                             text-decoration:none;letter-spacing:0.2px;">
-                    Review &amp; sign agreement
+                    Get started
                   </a>
                 </td>
               </tr>
@@ -554,11 +557,15 @@ def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
     contact_line = " · ".join(contact_pieces)
 
     body = (
-        '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">'
-        f'An agent has submitted a new survey order request via '
-        f'<strong>{tokens["brand_label"]}</strong>. RPSA needs to '
-        'invite the seller and arrange the visit.'
+        f'<div style="background:#F0F6FD;border:1px solid {pd}44;border-radius:10px;'
+        'padding:14px 18px;margin:0 0 12px;">'
+        '<p style="margin:0;font-size:14px;color:#0B1220;line-height:1.65;">'
+        '<strong>The agent has ordered the survey.</strong> An email with the '
+        'terms of the Seller Survey Agreement has been sent to the seller. '
+        'Only after the seller agrees to the terms will these details be sent '
+        'to RPSA.'
         '</p>'
+        '</div>'
         + _section_title("The agent", pd)
         + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
         + _row("Agent", contact_line, primary_dark=pd)
@@ -594,10 +601,10 @@ def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
         )
         + '</p>'
         + (
-            _section_title("Sale room", pd)
+            _section_title("Seller survey agreement", pd)
             + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
-              'A unique transaction room (also the seller agreement link) has been generated. '
-              'Use this link to track the case and access future Gazeal features for this sale.'
+              'A unique seller survey agreement link has been generated. '
+              'Use this link to track the status of the agreement for this sale.'
               '</p>'
               f'<p style="margin:10px 0 0;font-size:13px;line-height:1.6;">'
               f'<a href="{agreement_url}" style="color:{pd};text-decoration:none;font-weight:600;">{agreement_url}</a></p>'
@@ -627,13 +634,16 @@ def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
     )
 
 
-async def _send_email(subject: str, html: str, to: Optional[List[str]] = None) -> Optional[str]:
+async def _send_email(subject: str, html: str, to: Optional[List[str]] = None,
+                      cc: Optional[List[str]] = None) -> Optional[str]:
     params = {
         "from": SENDER_EMAIL,
         "to": to if to else [NOTIFY_EMAIL],
         "subject": subject,
         "html": html,
     }
+    if cc:
+        params["cc"] = cc
     try:
         email = await asyncio.to_thread(resend.Emails.send, params)
         return email.get("id") if isinstance(email, dict) else None
@@ -702,6 +712,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
                     f"style=\"color:#025eba;\">{lead.email}</a></p>"
                     "</div>"
                 ),
+                cc=NOTIFY_CC,
             )
         except Exception as exc:
             email_error = str(exc)
@@ -778,6 +789,7 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             email_id = await _send_email(
                 subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
                 html=_render_order_survey(lead, agreement_url),
+                cc=NOTIFY_CC,
             )
         except Exception as exc:
             email_error = str(exc)

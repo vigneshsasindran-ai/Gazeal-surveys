@@ -1,4 +1,4 @@
-"""Tests for the new 'Sale room / agreement link' feature.
+"""Tests for the new 'Seller survey agreement' feature.
 
 Uses httpx.AsyncClient + ASGITransport against the FastAPI app so we can
 monkeypatch in-process resend.Emails.send and slack_notify._post / _bg.
@@ -168,9 +168,9 @@ class TestAcceptThreeEmails:
         seller = next(
             c for c in patched.emails if any(a.startswith("test_seller_") for a in c["to"])
         )
-        assert "Sale room / agreement link" in gz["html"]
+        assert "Seller survey agreement" in gz["html"]
         assert agreement_url in gz["html"]
-        assert "Sale room / agreement link" in seller["html"]
+        assert "Seller survey agreement" in seller["html"]
         assert agreement_url in seller["html"]
 
     async def test_slack_accept_three_rows_and_link(self, client, patched):
@@ -203,7 +203,7 @@ class TestOrderSurveySaleRoom:
         agreement_url = body["agreement_url"]
         gz = next(c for c in patched.emails if NOTIFY_EMAIL in c["to"])
         assert gz["subject"].startswith("New Seller Survey order — ")
-        assert "Sale room" in gz["html"]
+        assert "Seller survey agreement" in gz["html"]
         assert agreement_url in gz["html"]
         assert body["reference_number"] in gz["html"]
 
@@ -219,8 +219,8 @@ class TestOrderSurveySaleRoom:
         assert patched.slack
         text = _flatten(patched.slack[-1]["blocks"], patched.slack[-1]["fallback"])
         assert body["reference_number"] in text
-        assert "Sale room / agreement link" in text, (
-            "Sale room link missing from Slack — `doc` passed to "
+        assert "Seller survey agreement" in text, (
+            "Seller survey agreement link missing from Slack — `doc` passed to "
             f"notify_order_submitted lacks agreement_url. Text:\n{text}"
         )
         assert body["agreement_url"] in text
@@ -243,11 +243,11 @@ class TestExpressInterestSaleRoom:
         gz = next(c for c in patched.emails if NOTIFY_EMAIL in c["to"])
         assert agreement_url in gz["html"]
         assert token in gz["html"]
-        assert "Sale room / agreement link" in gz["html"]
+        assert "Seller survey agreement" in gz["html"]
 
         assert patched.slack
         text = _flatten(patched.slack[-1]["blocks"], patched.slack[-1]["fallback"])
-        assert "Sale room / agreement link" in text
+        assert "Seller survey agreement" in text
         assert agreement_url in text
         assert token in text
 

@@ -103,7 +103,7 @@ def notify_order_submitted(
     if lead.get("agreement_url"):
         blocks.append({
             "type": "section",
-            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Sale room / agreement link:* <{lead['agreement_url']}|{lead['agreement_url']}>"},
+            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Seller survey agreement link:* <{lead['agreement_url']}|{lead['agreement_url']}>"},
         })
     blocks.append(_email_status_block([
         ("Agent notification", agent_email_id, agent_email_error),
@@ -203,7 +203,7 @@ def notify_reservation_interest(
     if doc.get("agreement_url"):
         blocks.append({
             "type": "section",
-            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Sale room / agreement link:* <{doc['agreement_url']}|{doc['agreement_url']}>"},
+            "text": {"type": "mrkdwn", "text": f":house_with_garden: *Seller survey agreement link:* <{doc['agreement_url']}|{doc['agreement_url']}>"},
         })
     blocks.append(_email_status_block([
         ("Gazeal notification", gazeal_email_id, gazeal_email_error),

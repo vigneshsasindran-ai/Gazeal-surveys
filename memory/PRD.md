@@ -32,6 +32,21 @@ Parallel co-branded funnel for **Balgores** estate agents at `/balgores/*` with 
 - **NEW `/intro` page** (unlisted, Gazeal branding): hero copy + Vimeo embed (video 1208004372) replacing house image, "Featuring Alan Milstein — Director, Skyline Surveyors Ltd" caption, stat band ("Every UK postcode" / "1,000+ surveyors"), email capture CTA + Learn More → `/`
 - **NEW `POST /api/leads/intro-email`**: stores lead (kind=intro_email) in `leads` collection, fan_out `intro_email.created`, Resend notification to NOTIFY_EMAIL. Tested working.
 
+## Email Notification Matrix (June 2026 overhaul)
+All internal notifications: TO NOTIFY_EMAIL (vignesh.sasindran@gazeal.co.uk), CC NOTIFY_CC (erik.groen@gazeal.co.uk, survey@gazeal.co.uk) — set in backend/.env.
+1. Learn More lead → internal (branded)
+2. Intro page signup → internal
+3. Order survey → internal (branded, top note: details go to RPSA only after seller accepts; "Seller survey agreement" section)
+4. Seller invite → seller (branded, CTA "Get started", Home Insights Survey wording)
+5. (removed — replaced by CC on #6)
+6. Seller accepted → listing agent, CC internal (branded, acceptance record + agreement link)
+7. Seller accepted confirmation → seller (branded)
+8. Seller declined → internal
+9. Reservation interest → internal
+10. RPSA survey instruction → RPSA_EMAIL env (branded, full case: seller/property/agent/acceptance record). **RPSA_EMAIL currently = vignesh.sasindran@gazeal.co.uk for testing. MUST be switched to survey@rpsa.org.uk before real launch.**
+
+"Sale room" wording renamed to "Seller survey agreement" everywhere user-facing (emails + Slack). Internal `sale_room_package` JSON naming kept. **Sale room product = recorded FUTURE PROJECT** (transaction room UI inside agreement link).
+
 ## Backlog / Upcoming
 - **P0 — Task 1**: Legally self-contained package + PDF generation (Phase 1). Extend `sale_room_package` in `POST /api/agreements/{token}/accept` with `evidence` block (agreement_version, clickwrap_hash, accepted_at, accepted_ip, user_agent). Server-side signed PDF (weasyprint/reportlab), upload to object storage, include URL + SHA256 in package.
 - **P1 — Task 2**: Outbound webhook delivery of sale_room_package JSON (RPSA) on seller acceptance.
