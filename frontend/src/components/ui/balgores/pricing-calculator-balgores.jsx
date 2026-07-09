@@ -240,6 +240,7 @@ const PricingCalculator = ({
       >
         <p>This price is based on the information you have provided.</p>
         <p>The Estate Agent sets the valuation price, not the surveyor.</p>
+        <p>*VAT is added to the price.</p>
       </div>
     </div>
   );

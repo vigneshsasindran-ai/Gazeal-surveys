@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { name: "Home", href: "#" },
   { name: "Seller Surveys", href: "#features" },
   { name: "How it works", href: "#benefits" },
+  { name: "Pricing", href: "/pricing" },
   { name: "FAQ", href: "#faq" },
 ];
 
@@ -41,6 +42,10 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
   const handleNav = (e, href) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
     if (href === "#") {
       if (isHome) {
         window.scrollTo({ top: 0, behavior: "smooth" });

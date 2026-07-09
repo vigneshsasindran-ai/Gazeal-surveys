@@ -9,6 +9,7 @@ import SurveysBento from "@/components/ui/surveys-bento";
 import SurveysSaleAgreed from "@/components/ui/surveys-sale-agreed";
 import ReservationExplainer from "@/components/ui/reservation-explainer";
 import SurveysBenefits from "@/components/ui/surveys-benefits";
+import SurveyPricingTable from "@/components/ui/survey-pricing-table";
 import SurveysFAQ from "@/components/ui/surveys-faq";
 import SurveysFooterReveal from "@/components/ui/surveys-footer-reveal";
 import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
@@ -77,6 +78,7 @@ const SurveysLanding = () => {
           </div>
         </section>
         <SurveysBenefits />
+        <SurveyPricingTable />
         <SurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
       </main>
       <SurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />

@@ -111,30 +111,46 @@ export default function IntroPage() {
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-12 pt-32 pb-20 md:pt-36 md:pb-24 lg:pt-40 lg:pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 lg:items-center">
-            {/* Copy */}
-            <div className="order-1 lg:col-span-5 text-white" data-testid="intro-hero-copy">
-              <h1
-                className="font-archivo font-bold tracking-[-0.02em] leading-[1.05] text-white text-[36px] sm:text-[44px] lg:text-[48px] xl:text-[54px]"
-                data-testid="intro-hero-heading"
-              >
-                England, meet
-                <br />
-                how Scotland
-                <br />
-                sells homes.
-              </h1>
+            {/* Copy — quote from the film */}
+            <div className="order-1 lg:col-span-6 text-white" data-testid="intro-hero-copy">
+              <blockquote data-testid="intro-hero-heading">
+                <p className="font-archivo font-bold tracking-[-0.02em] leading-[1.18] text-white text-[27px] sm:text-[32px] lg:text-[34px] xl:text-[38px]">
+                  For every ten sales, three fall through and six get
+                  renegotiated. There&rsquo;s a problem with every sale{" "}
+                  <span className="text-[#9FDBFF]">except one in ten.</span>{" "}
+                  That&rsquo;s crazy.
+                </p>
+                <footer className="mt-5 font-outfit text-[14px]">
+                  <span className="text-white font-semibold">Bryan Mansell</span>
+                  <span className="text-white/60"> · Founder, Gazeal</span>
+                </footer>
+              </blockquote>
 
-              <p
-                className="mt-6 md:mt-7 font-outfit text-white/90 text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.55] max-w-[440px]"
+              <div
+                className="mt-8 md:mt-9 space-y-4 max-w-[500px]"
                 data-testid="intro-hero-subcopy"
               >
-                Gazeal has introduced upfront seller surveys inspired by the
-                Scottish model, so buyers know the condition before they offer.
-              </p>
+                <p className="font-outfit text-white/85 text-[15px] lg:text-[16px] leading-[1.6]">
+                  Too many sales fall through, and too many get renegotiated
+                  when the survey appears weeks into the process. The Home
+                  Insights Survey brings that information to the start, before
+                  the property is even marketed.
+                </p>
+                <p className="font-outfit text-white/85 text-[15px] lg:text-[16px] leading-[1.6]">
+                  It is a full Level 3 inspection by a qualified, insured RPSA
+                  surveyor, with nothing for the seller to pay upfront, and a
+                  report that can be relied on by the seller, buyer, agent, and
+                  conveyancer.
+                </p>
+                <p className="font-outfit text-white font-medium text-[15px] lg:text-[16px] leading-[1.6]">
+                  Watch Bryan Mansell and Alan Milstein explain how one upfront
+                  survey can remove the surprise that so often breaks the deal.
+                </p>
+              </div>
             </div>
 
             {/* Video */}
-            <div className="order-2 lg:col-span-7" data-testid="intro-video-wrap">
+            <div className="order-2 lg:col-span-6" data-testid="intro-video-wrap">
               <div className="group relative">
                 {/* Ambient glow behind the frame */}
                 <div className="absolute -inset-4 rounded-[28px] bg-white/[0.07] blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />

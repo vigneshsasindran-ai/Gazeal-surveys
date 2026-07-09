@@ -4,6 +4,7 @@ import { Check, X, ChevronDown, ArrowUpRight, Mail } from "lucide-react";
 import SurveysHeader from "@/components/ui/surveys-header";
 import ReservationExplainer from "@/components/ui/reservation-explainer";
 import PricingCalculator from "@/components/ui/pricing-calculator";
+import SurveyGuide from "@/components/ui/survey-guide";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -266,6 +267,11 @@ const AgreementPage = () => {
           <p className="mt-10 font-outfit text-[12px] text-white/40">
             Reference: <span className="font-mono text-white/60">{data.reference_number || data.token}</span> · This link is unique to your property submission and remains live for your records.
           </p>
+        </div>
+
+        {/* Survey guide (what the survey covers) */}
+        <div className="relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20">
+          <SurveyGuide testidPrefix="agreement-survey-guide" />
         </div>
 
         {/* Pricing calculator (wider container so the £ figure never crops) */}
