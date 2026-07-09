@@ -72,6 +72,15 @@ export const SurveyGuideModal = ({ open, onClose }) => {
 const SurveyGuide = ({ testidPrefix = "survey-guide" }) => {
   const [open, setOpen] = useState(false);
 
+  const handleOpen = () => {
+    // On mobile the embedded viewer is cramped; the native full-screen viewer is far more readable
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      window.open(GUIDE_PDF_URL, "_blank", "noopener");
+      return;
+    }
+    setOpen(true);
+  };
+
   return (
     <>
       <div
@@ -94,7 +103,7 @@ const SurveyGuide = ({ testidPrefix = "survey-guide" }) => {
           <div className="shrink-0">
             <button
               type="button"
-              onClick={() => setOpen(true)}
+              onClick={handleOpen}
               className="inline-flex items-center justify-center rounded-full font-outfit font-semibold text-[14px] px-7 py-3.5 text-white transition-all hover:opacity-90"
               style={{
                 background: "linear-gradient(135deg,#4FB6FF,#025eba)",
