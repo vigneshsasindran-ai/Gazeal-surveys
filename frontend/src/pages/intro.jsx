@@ -114,34 +114,29 @@ export default function IntroPage() {
             {/* Copy — quote from the film */}
             <div className="order-1 lg:col-span-6 text-white" data-testid="intro-hero-copy">
               <blockquote data-testid="intro-hero-heading">
-                <p className="font-archivo font-bold tracking-[-0.02em] leading-[1.18] text-white text-[27px] sm:text-[32px] lg:text-[34px] xl:text-[38px]">
-                  For every ten sales, three fall through and six get
+                <p className="font-archivo font-black tracking-[-0.02em] leading-[1.18] text-white text-[27px] sm:text-[32px] lg:text-[34px] xl:text-[38px]">
+                  For every ten sales, three falls through and six get
                   renegotiated. There&rsquo;s a problem with every sale{" "}
                   <span className="text-[#9FDBFF]">except one in ten.</span>{" "}
                   That&rsquo;s crazy.
                 </p>
-                <footer className="mt-5 font-outfit text-[14px]">
-                  <span className="text-white font-semibold">Bryan Mansell</span>
-                  <span className="text-white/60"> · Founder, Gazeal</span>
-                </footer>
               </blockquote>
 
               <div
-                className="mt-8 md:mt-9 space-y-4 max-w-[500px]"
+                className="mt-8 md:mt-9 space-y-5 max-w-[500px]"
                 data-testid="intro-hero-subcopy"
               >
-                <p className="font-outfit text-white/85 text-[15px] lg:text-[16px] leading-[1.6]">
-                  Too many sales fall through, and too many get renegotiated
-                  when the survey appears weeks into the process. The Home
-                  Insights Survey brings that information to the start, before
-                  the property is even marketed.
-                </p>
-                <p className="font-outfit text-white/85 text-[15px] lg:text-[16px] leading-[1.6]">
-                  It is a full Level 3 inspection by a qualified, insured RPSA
-                  surveyor, with nothing for the seller to pay upfront, and a
-                  report that can be relied on by the seller, buyer, agent, and
-                  conveyancer.
-                </p>
+                <div className="rounded-2xl border border-white/20 bg-white/[0.06] p-5 sm:p-6">
+                  <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/60 mb-2.5">
+                    The Home Insights Survey
+                  </p>
+                  <p className="font-outfit text-white/90 text-[15px] lg:text-[16px] leading-[1.6]">
+                    A full Level 3 inspection by a qualified, insured RPSA
+                    surveyor, with nothing for the seller to pay upfront, and a
+                    report that can be relied on by the seller, buyer, agent,
+                    and conveyancer.
+                  </p>
+                </div>
                 <p className="font-outfit text-white font-medium text-[15px] lg:text-[16px] leading-[1.6]">
                   Watch Bryan Mansell and Alan Milstein explain how one upfront
                   survey can remove the surprise that so often breaks the deal.
