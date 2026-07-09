@@ -24,7 +24,7 @@ export const SurveyGuideModal = ({ open, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4"
       data-testid="survey-guide-modal"
     >
       <div
@@ -32,7 +32,7 @@ export const SurveyGuideModal = ({ open, onClose }) => {
         onClick={onClose}
         data-testid="survey-guide-backdrop"
       />
-      <div className="relative w-full max-w-4xl h-[86vh] rounded-2xl overflow-hidden border border-white/15 bg-[#0b0b0d] flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+      <div className="relative w-full max-w-4xl h-[96vh] sm:h-[94vh] rounded-2xl overflow-hidden border border-white/15 bg-[#0b0b0d] flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-white/10 bg-white/[0.03]">
           <p className="font-archivo font-bold text-white text-[14px] sm:text-[15px] truncate">
             Home Insights Survey Guide
