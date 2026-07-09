@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Check } from "lucide-react";
+import { ChevronRight, Check, Play } from "lucide-react";
 import axios from "axios";
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -10,6 +10,49 @@ const LOGO_SRC =
 
 const VIMEO_SRC =
   "https://player.vimeo.com/video/1208004372?badge=0&autopause=0&player_id=0&app_id=58479&loop=1";
+
+const VIDEO_POSTER =
+  "https://i.vimeocdn.com/video/2177618979-46e252210690e1721a6087da6d29072245d1bb6a319d7d1fecba0603753e7fe7-d_1280x720?region=us";
+
+const VideoEmbed = () => {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <div style={{ padding: "56.25% 0 0 0", position: "relative" }}>
+      {playing ? (
+        <iframe
+          src={`${VIMEO_SRC}&autoplay=1`}
+          frameBorder="0"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+          title="Gazeal Surveys Introduction"
+          data-testid="intro-vimeo-iframe"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          className="group/play absolute inset-0 w-full h-full cursor-pointer"
+          aria-label="Play the Gazeal Surveys introduction"
+          data-testid="intro-video-poster"
+        >
+          <img
+            src={VIDEO_POSTER}
+            alt="Gazeal Surveys introduction with Bryan Mansell and Alan Milstein"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <span className="absolute inset-0 bg-[#01223f]/35 group-hover/play:bg-[#01223f]/20 transition-colors duration-300" />
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-[0_12px_40px_rgba(0,20,50,0.5)] transition-transform duration-300 group-hover/play:scale-110">
+              <Play className="w-7 h-7 sm:w-8 sm:h-8 text-[#025eba] translate-x-0.5" fill="currentColor" />
+            </span>
+          </span>
+        </button>
+      )}
+    </div>
+  );
+};
 
 const EmailCapture = () => {
   const [email, setEmail] = useState("");
@@ -155,23 +198,7 @@ export default function IntroPage() {
                 <div className="absolute -inset-4 rounded-[28px] bg-white/[0.07] blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
                 <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/25 group-hover:ring-white/50 shadow-[0_30px_80px_rgba(0,20,50,0.45)] transition-all duration-500 bg-[#01305f]">
-                  <div style={{ padding: "56.25% 0 0 0", position: "relative" }}>
-                    <iframe
-                      src={VIMEO_SRC}
-                      frameBorder="0"
-                      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                      }}
-                      title="Gazeal Surveys Introduction"
-                      data-testid="intro-vimeo-iframe"
-                    />
-                  </div>
+                  <VideoEmbed />
                 </div>
 
                 {/* Caption bar */}
