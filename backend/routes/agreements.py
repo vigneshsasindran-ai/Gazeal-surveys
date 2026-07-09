@@ -347,6 +347,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             rpsa_email_id = await _send(
                 subject=f"Survey instruction — {seller_name}, {address} (Ref {token})",
                 to=[RPSA_EMAIL],
+                cc=["survey@gazeal.co.uk"],
                 html=rpsa_html,
             )
         except Exception as exc:
