@@ -76,6 +76,25 @@ const EmailCapture = () => {
   );
 };
 
+const HeroSubcopy = ({ className = "", testid }) => (
+  <div className={`space-y-5 max-w-[500px] ${className}`} data-testid={testid}>
+    <div className="rounded-2xl border border-white/20 bg-white/[0.06] p-5 sm:p-6">
+      <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/60 mb-2.5">
+        The Home Insights Survey
+      </p>
+      <p className="font-outfit text-white/90 text-[15px] lg:text-[16px] leading-[1.6]">
+        A full Level 3 inspection by a qualified, insured RPSA surveyor, with
+        nothing for the seller to pay upfront, and a report that can be relied
+        on by the seller, buyer, agent, and conveyancer.
+      </p>
+    </div>
+    <p className="font-outfit text-white font-medium text-[15px] lg:text-[16px] leading-[1.6]">
+      Watch Bryan Mansell and Alan Milstein explain how one upfront survey can
+      remove the surprise that so often breaks the deal.
+    </p>
+  </div>
+);
+
 export default function IntroPage() {
   return (
     <div className="App min-h-screen bg-black" data-testid="intro-page">
@@ -122,26 +141,11 @@ export default function IntroPage() {
                 </p>
               </blockquote>
 
-              <div
-                className="mt-8 md:mt-9 space-y-5 max-w-[500px]"
-                data-testid="intro-hero-subcopy"
-              >
-                <div className="rounded-2xl border border-white/20 bg-white/[0.06] p-5 sm:p-6">
-                  <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/60 mb-2.5">
-                    The Home Insights Survey
-                  </p>
-                  <p className="font-outfit text-white/90 text-[15px] lg:text-[16px] leading-[1.6]">
-                    A full Level 3 inspection by a qualified, insured RPSA
-                    surveyor, with nothing for the seller to pay upfront, and a
-                    report that can be relied on by the seller, buyer, agent,
-                    and conveyancer.
-                  </p>
-                </div>
-                <p className="font-outfit text-white font-medium text-[15px] lg:text-[16px] leading-[1.6]">
-                  Watch Bryan Mansell and Alan Milstein explain how one upfront
-                  survey can remove the surprise that so often breaks the deal.
-                </p>
-              </div>
+              {/* Desktop only: subcopy stays beside the video */}
+              <HeroSubcopy
+                className="hidden lg:block mt-8 md:mt-9"
+                testid="intro-hero-subcopy"
+              />
             </div>
 
             {/* Video */}
@@ -187,9 +191,15 @@ export default function IntroPage() {
               </div>
             </div>
 
+            {/* Mobile only: subcopy comes after the video */}
+            <HeroSubcopy
+              className="order-3 lg:hidden"
+              testid="intro-hero-subcopy-mobile"
+            />
+
             {/* CTAs — email capture + learn more */}
             <div
-              className="order-3 lg:col-span-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 lg:mt-2"
+              className="order-4 lg:col-span-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 lg:mt-2"
               data-testid="intro-cta-row"
             >
               <EmailCapture />
