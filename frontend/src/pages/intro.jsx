@@ -54,7 +54,7 @@ const VideoEmbed = () => {
   );
 };
 
-const EmailCapture = () => {
+export const EmailCapture = ({ buttonLabel = "Get on the waitlist" }) => {
   const [email, setEmail] = useState("");
   const [state, setState] = useState("idle"); // idle | sending | done | error
 
@@ -107,7 +107,7 @@ const EmailCapture = () => {
         className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-[#025eba] font-outfit font-semibold px-7 py-3.5 text-[15px] shadow-[0_6px_22px_rgba(255,255,255,0.18)] hover:shadow-[0_8px_28px_rgba(255,255,255,0.28)] hover:-translate-y-[1px] transition-all duration-300 disabled:opacity-60 whitespace-nowrap"
         data-testid="intro-email-submit"
       >
-        {state === "sending" ? "Sending…" : "Get on the waitlist"}
+        {state === "sending" ? "Sending…" : buttonLabel}
         <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
       </button>
       {state === "error" && (
@@ -138,7 +138,7 @@ const HeroSubcopy = ({ className = "", testid }) => (
   </div>
 );
 
-export default function IntroPage() {
+export default function IntroPage({ topSection = null }) {
   return (
     <div className="App min-h-screen bg-black" data-testid="intro-page">
       {/* Minimal header — logo only, links back to the main site */}
@@ -149,6 +149,8 @@ export default function IntroPage() {
           </Link>
         </div>
       </header>
+
+      {topSection}
 
       {/* Hero — same copy as the main site, video in place of the house */}
       <section
