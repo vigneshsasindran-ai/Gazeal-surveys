@@ -10,9 +10,9 @@ import IntroPage, { EmailCapture } from "@/pages/intro";
  */
 
 const PROOF_POINTS = [
-  "Live in every postcode",
-  "1,000+ surveyors ready at launch",
-  "Nothing for sellers to pay upfront",
+  { big: "Every postcode", small: "Live nationwide from day one." },
+  { big: "1,000+ surveyors", small: "Signed up and ready at launch.", accent: true },
+  { big: "£0 upfront", small: "Nothing for your sellers to pay." },
 ];
 
 const LaunchTop = () => (
@@ -27,22 +27,8 @@ const LaunchTop = () => (
     />
 
     <div className="relative z-10 max-w-[1100px] mx-auto px-6 pt-32 md:pt-40 pb-16 md:pb-24 text-center">
-      {/* Live status */}
-      <div
-        className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2"
-        data-testid="launch-live-badge"
-      >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4FB6FF] opacity-70" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4FB6FF]" />
-        </span>
-        <span className="font-outfit font-semibold uppercase tracking-[0.2em] text-[11px] text-white/70">
-          Now live across the UK
-        </span>
-      </div>
-
       <h1
-        className="mt-7 md:mt-9 font-archivo font-black tracking-[-0.03em] leading-[1.05] text-white text-[38px] sm:text-[54px] lg:text-[68px]"
+        className="font-archivo font-black tracking-[-0.03em] leading-[1.05] text-white text-[38px] sm:text-[54px] lg:text-[68px]"
         data-testid="launch-heading"
       >
         Upfront Seller Surveys are
@@ -61,55 +47,66 @@ const LaunchTop = () => (
         to stop sales falling apart.
       </p>
 
-      {/* Proof strip */}
+      {/* Proof cards */}
       <div
-        className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-0"
+        className="mt-10 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-[900px] mx-auto"
         data-testid="launch-proof-strip"
       >
-        {PROOF_POINTS.map((p, i) => (
-          <React.Fragment key={p}>
-            {i > 0 && (
-              <span className="hidden sm:block mx-5 h-1 w-1 rounded-full bg-white/25" aria-hidden="true" />
-            )}
-            <span className="font-archivo font-bold text-white text-[14px] sm:text-[15px] tracking-[-0.01em]">
-              {p}
-            </span>
-          </React.Fragment>
+        {PROOF_POINTS.map((p) => (
+          <div
+            key={p.big}
+            className="group relative rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-7 text-center overflow-hidden transition-colors duration-300 hover:border-[#4FB6FF]/40"
+          >
+            <div
+              className="absolute inset-x-0 -top-16 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(60% 100% at 50% 0%, rgba(79,182,255,0.18) 0%, rgba(79,182,255,0) 70%)",
+              }}
+            />
+            <p className="relative font-archivo font-black tracking-[-0.02em] text-[24px] sm:text-[22px] lg:text-[28px] leading-none">
+              {p.accent ? (
+                <span className="bg-gradient-to-r from-[#4FB6FF] to-[#025eba] bg-clip-text text-transparent">
+                  {p.big}
+                </span>
+              ) : (
+                <span className="text-white">{p.big}</span>
+              )}
+            </p>
+            <p className="relative mt-3 font-outfit text-white/60 text-[13px] sm:text-[14px] leading-snug">
+              {p.small}
+            </p>
+          </div>
         ))}
       </div>
 
-      {/* Urgency block */}
+      {/* Urgency + CTA — one modular unit */}
       <div
-        className="mt-12 md:mt-14 mx-auto max-w-[780px] rounded-2xl border border-white/10 bg-white/[0.03] p-7 sm:p-9"
+        className="mt-12 md:mt-14 mx-auto max-w-[820px] rounded-3xl border border-white/10 bg-white/[0.03] p-8 sm:p-11"
         data-testid="launch-urgency"
       >
         <p className="font-outfit text-[14px] sm:text-[15px] text-white/65">
           Agents are already instructing surveys this week.
         </p>
         <p className="mt-3 font-archivo font-bold text-white text-[21px] sm:text-[26px] leading-[1.3] tracking-[-0.015em]">
-          The direction is set. The only question is whether you{" "}
+          The only question is whether you{" "}
           <span className="text-[#4FB6FF]">lead in your town</span> or wait for
           your competitors to catch up.
         </p>
-      </div>
-
-      {/* CTA */}
-      <p className="mt-11 font-outfit font-semibold uppercase tracking-[0.22em] text-[11px] text-white/50">
-        Start offering Seller Surveys
-      </p>
-      <div
-        className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-4"
-        data-testid="launch-cta-row"
-      >
-        <EmailCapture buttonLabel="Claim your town" />
-        <Link
-          to="/"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
-          data-testid="launch-learn-more-link"
+        <div
+          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
+          data-testid="launch-cta-row"
         >
-          Learn More
-          <ChevronRight className="w-4 h-4" />
-        </Link>
+          <EmailCapture buttonLabel="Claim your town" />
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
+            data-testid="launch-learn-more-link"
+          >
+            Learn More
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </div>
   </section>
