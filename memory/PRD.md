@@ -10,49 +10,56 @@ Parallel co-branded funnel for **Balgores** estate agents at `/balgores/*` with 
 - PRODUCTION: https://survey.gazeal.co.uk (user redeploys to push changes; agent has no prod access)
 
 ## Routes
-- Gazeal: `/`, `/pricing`, `/order-survey`, `/agreement/:token`, `/intro` (unlisted video page)
+- Gazeal: `/`, `/pricing`, `/order-survey`, `/agreement/:token`, `/intro` (unlisted video page), `/launch` (ad landing page)
 - Balgores: `/balgores`, `/balgores/pricing`, `/balgores/order-survey`, `/balgores/agreement/:token`
 
 ## Key Rules
-- Balgores = solid `#1A1434` + `#B8AB84` only. User hates mixed purple/gold gradients (UI + emails).
-- DO NOT merge Balgores/Gazeal components — user chose duplicated files intentionally. Fixes must be applied twice.
-- Frontend uses REACT_APP_BACKEND_URL; backend routes prefixed `/api`.
+- Balgores = solid `#1A1434` + `#B8AB84` only. NO mixed purple/gold gradients (UI + emails).
+- DO NOT merge Balgores/Gazeal components — duplicated intentionally. Fixes applied twice.
+- **NEVER send test emails to gazeal@rpsa.org.uk.** If acceptance-flow testing is needed, temporarily set RPSA_EMAIL=vignesh.sasindran@gazeal.co.uk in backend/.env, test, restore, restart backend.
+- Always share preview links in every response (user mandate).
 
-## Implemented (history)
-- Full Gazeal funnel: hero, bento, sale agreed, reservation explainer, benefits, FAQ, footer reveal, learn-more modal, order stepper, pricing calculator (whole GBP), clickwrap agreement page w/ audit trail + sale_room_package generation
-- Resend email notifications (brand-aware templates), Slack webhook notify, webhook fan-out (consumers collection), admin endpoints (ADMIN_TOKEN in backend/.env)
-- Balgores parallel funnel (duplicated components), flat colors, custom icons/images
-- GAZEAL_ECOSYSTEM_HANDOFF.md documents CRM/App integration plans
-
-### June 2026 (this session)
-- Balgores hero heading → "Essex, meet how Scotland sells homes."
-- Balgores header: removed Gazeal Surveys logo; native gold "Balgores Property Group" text + B shield
-- Balgores hero eyebrow: "HOME INSIGHTS POWERED BY GAZEAL" (gold, uppercase, no rule line)
-- Fixed mobile horizontal overflow (bento 600px ambient gradient) — added overflow-hidden on both bento sections
-- **NEW `/intro` page** (unlisted, Gazeal branding): hero copy + Vimeo embed (video 1208004372) replacing house image, "Featuring Alan Milstein — Director, Skyline Surveyors Ltd" caption, stat band ("Every UK postcode" / "1,000+ surveyors"), email capture CTA + Learn More → `/`
-- **NEW `POST /api/leads/intro-email`**: stores lead (kind=intro_email) in `leads` collection, fan_out `intro_email.created`, Resend notification to NOTIFY_EMAIL. Tested working.
-
-## Email Notification Matrix (June 2026 overhaul)
-All internal notifications: TO NOTIFY_EMAIL (vignesh.sasindran@gazeal.co.uk), CC NOTIFY_CC (erik.groen@gazeal.co.uk, survey@gazeal.co.uk) — set in backend/.env.
+## Email Notification Matrix
+Sender: **survey@gazeal.co.uk**. Internal = TO vignesh.sasindran@gazeal.co.uk, CC erik.groen@gazeal.co.uk + survey@gazeal.co.uk (NOTIFY_EMAIL / NOTIFY_CC in backend/.env).
 1. Learn More lead → internal (branded)
-2. Intro page signup → internal
-3. Order survey → internal (branded, top note: details go to RPSA only after seller accepts; "Seller survey agreement" section)
-4. Seller invite → seller (branded, CTA "Get started", Home Insights Survey wording)
+2. Intro/launch page signup → internal (`POST /api/leads/intro-email`)
+3. Order survey → internal (branded, note: details go to RPSA only after seller accepts)
+4. Seller invite → seller (branded, CTA "Get started")
 5. (removed — replaced by CC on #6)
-6. Seller accepted → listing agent, CC internal (branded, acceptance record + agreement link)
+6. Seller accepted → listing agent, CC internal (branded, acceptance record)
 7. Seller accepted confirmation → seller (branded)
 8. Seller declined → internal
 9. Reservation interest → internal
-10. RPSA survey instruction → RPSA_EMAIL env (branded, full case: seller/property/agent/acceptance record). **RPSA_EMAIL currently = vignesh.sasindran@gazeal.co.uk for testing. MUST be switched to survey@rpsa.org.uk before real launch.**
+10. RPSA survey instruction → **gazeal@rpsa.org.uk**, CC survey@gazeal.co.uk + vignesh (branded, full case details)
 
-"Sale room" wording renamed to "Seller survey agreement" everywhere user-facing (emails + Slack). Internal `sale_room_package` JSON naming kept. **Sale room product = recorded FUTURE PROJECT** (transaction room UI inside agreement link).
+"Sale room" renamed "Seller survey agreement" user-facing. Sale room product = FUTURE PROJECT.
+
+## Pricing (July 2026, all inc. VAT)
+Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604 · £1.5M–2M: 1235/1466/1834 · £2M–2.5M: 1718/2063/2408. Above £2.5M = bespoke quote. Listed Grade 2/2* add £200; Grade 1 = quote. Implemented in home table (`survey-pricing-table.jsx`) + both calculators (`pricing-calculator.jsx`, balgores duplicate).
+
+## Agreement Page (both funnels)
+- Full **Home Insight Survey Service Terms v3.2** (15 clauses), heading "Home Insight Survey Service Terms."
+- Version line: **Version 1.0, dated 14th July 2026** (in intro panel + acceptance line)
+- Personalised intro (seller/address/agent/agency auto-filled)
+- Clause 14 privacy links: RPSA (rpsa.org.uk/gdpr-2018-privacy-notice) + Gazeal (gazeal.co.uk/privacy-policy)
+- Survey guide PDF popup (served same-origin via `GET /api/assets/survey-guide.pdf`, file at /app/backend/assets/, currently 22MB "Home Insight Survey.pdf" — compression offered, not accepted yet); mobile opens native viewer in new tab
+
+## Implemented (history highlights)
+- Full Gazeal + Balgores funnels, Resend brand-aware emails, Slack notify (order/accept/interest only — NOT learn-more/intro signups), webhook fan-out, admin endpoints (ADMIN_TOKEN)
+- `/intro`: Bryan Mansell quote hero + Vimeo facade player (poster + play, no player chrome), Home Insights box, stats band, email capture ("Get on the waitlist") + Learn More; mobile order: quote → video → content
+- `/launch`: ad landing — huge centred heading "Upfront Seller Surveys are now live in every UK postcode.", proof cards (Every postcode / 1,000+ surveyors / £0 upfront), urgency box with email CTA "Claim your town" + Learn More, then full intro content below
+- Home: Survey Pricing table + guide card below "How it works"; Pricing in header nav
+- Favicon (blue G house icon) across all pages: favicon.ico + 32/192 PNGs + apple-touch-icon in index.html
+- Fixed mobile horizontal overflow (bento gradient); PDF popup ~95vh tall
+- Balgores: "Essex, meet how Scotland…", Balgores-only header logo, "HOME INSIGHTS POWERED BY GAZEAL" eyebrow
 
 ## Backlog / Upcoming
-- **P0 — Task 1**: Legally self-contained package + PDF generation (Phase 1). Extend `sale_room_package` in `POST /api/agreements/{token}/accept` with `evidence` block (agreement_version, clickwrap_hash, accepted_at, accepted_ip, user_agent). Server-side signed PDF (weasyprint/reportlab), upload to object storage, include URL + SHA256 in package.
-- **P1 — Task 2**: Outbound webhook delivery of sale_room_package JSON (RPSA) on seller acceptance.
-- **P2 — Task 3**: Event bus & delivery worker for CRMs (lead.created, agreement.accepted → Hubspot/Pipedrive/Zapier).
-- **P2 — Task 4**: Read-only sales-room WebView (iframe-embeddable) for the React Native Gazeal App. See GAZEAL_ECOSYSTEM_HANDOFF.md.
+- **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
+- **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.
+- **P2**: CRM event bus (lead.created, agreement.accepted → Hubspot/Pipedrive/Zapier).
+- **P2**: Read-only sales-room WebView for Gazeal App (see GAZEAL_ECOSYSTEM_HANDOFF.md).
+- Optional: compress 22MB guide PDF; Slack notify for learn-more/intro signups; OG meta tags for /intro & /launch; tag launch-page signups with source for ad attribution.
 
 ## 3rd Party
-- Resend (RESEND_API_KEY, SENDER_EMAIL, NOTIFY_EMAIL in backend/.env)
-- Slack incoming webhooks
+- Resend (RESEND_API_KEY, SENDER_EMAIL=survey@gazeal.co.uk, NOTIFY_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
+- Slack incoming webhook (SLACK_WEBHOOK_URL) — verified working from preview; if prod Slack silent, check prod env vars
