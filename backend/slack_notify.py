@@ -15,26 +15,38 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-_WEBHOOK = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+_background_tasks: set = set()
 
 
 async def _post(blocks: list[dict[str, Any]], fallback_text: str) -> None:
-    if not _WEBHOOK:
-        return  # Slack not configured — silently no-op
+    webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+    if not webhook:
+        logger.warning("Slack notify skipped: SLACK_WEBHOOK_URL is not set")
+        return
     try:
-        async with httpx.AsyncClient(timeout=5) as client:
-            await client.post(
-                _WEBHOOK,
+        async with httpx.AsyncClient(timeout=8) as client:
+            r = await client.post(
+                webhook,
                 json={"text": fallback_text, "blocks": blocks},
             )
+            if r.status_code == 200:
+                logger.info("Slack notify delivered: %s", fallback_text)
+            else:
+                logger.warning(
+                    "Slack notify rejected (%s): %s — payload: %s",
+                    r.status_code, r.text[:200], fallback_text,
+                )
     except Exception as exc:  # pragma: no cover
         logger.warning("Slack notify failed: %s", exc)
 
 
 def _bg(coro) -> None:
-    """Fire a coroutine in the background so the caller doesn't await it."""
+    """Fire a coroutine in the background, holding a reference so the
+    task cannot be garbage-collected before it completes."""
     try:
-        asyncio.create_task(coro)
+        task = asyncio.create_task(coro)
+        _background_tasks.add(task)
+        task.add_done_callback(_background_tasks.discard)
     except RuntimeError:  # pragma: no cover — outside an event loop
         pass
 
