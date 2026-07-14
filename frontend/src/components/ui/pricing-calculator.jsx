@@ -212,7 +212,15 @@ const PricingCalculator = ({
       data-testid={`${testidPrefix}-summary`}
     >
       <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#4FB6FF]/25 blur-3xl" />
-      <p className="relative font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/70">Your survey fee</p>
+      <div className="relative flex items-start justify-between gap-3">
+        <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/70">Your survey fee</p>
+        <span
+          className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1 font-outfit font-semibold text-[10.5px] tracking-[0.06em] uppercase text-white/90"
+          data-testid={`${testidPrefix}-vat-badge`}
+        >
+          All prices include VAT
+        </span>
+      </div>
 
       {result.quote ? (
         <>
@@ -246,7 +254,6 @@ const PricingCalculator = ({
       >
         <p>This price is based on the information you have provided.</p>
         <p>The Estate Agent sets the valuation price, not the surveyor.</p>
-        <p>*All prices inc. VAT.</p>
       </div>
     </div>
   );

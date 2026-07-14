@@ -64,6 +64,12 @@ const SurveyPricingTable = () => (
         className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-10"
         data-testid="survey-pricing-table"
       >
+        <p
+          className="mb-5 text-right font-outfit font-semibold text-[13px] text-white/70"
+          data-testid="pricing-vat-note"
+        >
+          *All prices include VAT
+        </p>
         {/* Desktop / tablet table */}
         <div className="hidden md:block">
           <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] gap-x-6 pb-4">
@@ -114,13 +120,6 @@ const SurveyPricingTable = () => (
             </div>
           ))}
         </div>
-
-        <p
-          className="mt-5 font-outfit text-[13px] text-white/50"
-          data-testid="pricing-vat-note"
-        >
-          *All prices inc. VAT
-        </p>
 
         {/* Quotation tiles */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
