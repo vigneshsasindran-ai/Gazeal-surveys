@@ -13,23 +13,29 @@ import React, { useEffect, useMemo, useState } from "react";
  *   - showBandChip?: boolean — show the "£1M – £2M" hint above the input
  */
 
-const PRICE_BY_TIER = [646.88, 838.55, 1030.22, 1221.88, 1413.55];
+const PRICE_MATRIX = [
+  [776, 1006, 1374],
+  [1006, 1235, 1604],
+  [1235, 1466, 1834],
+  [1718, 2063, 2408],
+];
 
 const PROP_BANDS = [
   { label: "Up to £999,999", min: 0, max: 999_999, tier: 0 },
   { label: "£1,000,000 – £1,499,999", min: 1_000_000, max: 1_499_999, tier: 1 },
-  { label: "£1,500,000 – £2,000,000", min: 1_500_000, max: 2_000_000, tier: 2 },
-  { label: "Above £2,000,000", min: 2_000_001, max: Infinity, tier: null },
+  { label: "£1,500,000 – £1,999,999", min: 1_500_000, max: 1_999_999, tier: 2 },
+  { label: "£2,000,000 – £2,499,999", min: 2_000_000, max: 2_499_999, tier: 3 },
+  { label: "Above £2,500,000", min: 2_500_000, max: Infinity, tier: null },
 ];
 const BED_OPTS = [
   { label: "1 to 3", tier: 0 },
   { label: "4 to 5", tier: 1 },
-  { label: "6+", tier: null },
+  { label: "6+", tier: 2 },
 ];
 const LISTED_OPTS = [
-  { label: "N/A", tier: 0 },
-  { label: "Grade 2 or 2*", tier: 1 },
-  { label: "Grade 1", tier: null },
+  { label: "N/A", add: 0 },
+  { label: "Grade 2 or 2*", add: 200 },
+  { label: "Grade 1", add: null },
 ];
 
 const SLIDER_MIN = 100_000;
@@ -47,10 +53,10 @@ function priceFor({ value, beds, listed }) {
   const bedOpt = BED_OPTS.find((b) => b.label === beds);
   const listedOpt = LISTED_OPTS.find((l) => l.label === listed);
   if (!propBand || !bedOpt || !listedOpt) return { quote: true };
-  if (propBand.tier == null || bedOpt.tier == null || listedOpt.tier == null) {
+  if (propBand.tier == null || listedOpt.add == null) {
     return { quote: true, band: propBand.label };
   }
-  const total = PRICE_BY_TIER[propBand.tier + bedOpt.tier + listedOpt.tier];
+  const total = PRICE_MATRIX[propBand.tier][bedOpt.tier] + listedOpt.add;
   return { quote: false, price: total, band: propBand.label };
 }
 
@@ -240,7 +246,7 @@ const PricingCalculator = ({
       >
         <p>This price is based on the information you have provided.</p>
         <p>The Estate Agent sets the valuation price, not the surveyor.</p>
-        <p>*VAT is added to the price.</p>
+        <p>*All prices inc. VAT.</p>
       </div>
     </div>
   );

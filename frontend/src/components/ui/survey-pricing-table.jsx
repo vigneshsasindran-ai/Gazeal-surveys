@@ -9,9 +9,10 @@ import SurveyGuide from "@/components/ui/survey-guide";
  */
 
 const ROWS = [
-  { band: "Up to £999,999", beds13: "£647", beds45: "£839", beds6: "On request" },
-  { band: "£1,000,000 to £1,499,999", beds13: "£839", beds45: "£1,030", beds6: "On request" },
-  { band: "£1,500,000 to £2,000,000", beds13: "£1,030", beds45: "£1,221", beds6: "On request" },
+  { band: "Up to £999,999", beds13: "£776", beds45: "£1,006", beds6: "£1,374" },
+  { band: "£1,000,000 to £1,499,999", beds13: "£1,006", beds45: "£1,235", beds6: "£1,604" },
+  { band: "£1,500,000 to £1,999,999", beds13: "£1,235", beds45: "£1,466", beds6: "£1,834" },
+  { band: "£2,000,000 to £2,499,999", beds13: "£1,718", beds45: "£2,063", beds6: "£2,408" },
 ];
 
 const NOTES = [
@@ -19,30 +20,13 @@ const NOTES = [
     title: "Listed buildings, Grade 2 or 2*",
     body: (
       <>
-        Add <span className="text-white font-semibold">£192</span> to the price
+        Add <span className="text-white font-semibold">£200</span> to the price
         shown above.
       </>
     ),
   },
   {
     title: "Listed buildings, Grade 1",
-    body: (
-      <>
-        Priced by <span className="text-white font-semibold">individual quotation.</span>
-      </>
-    ),
-  },
-  {
-    title: "6+ bedrooms",
-    body: (
-      <>
-        Priced by <span className="text-white font-semibold">individual quotation</span>{" "}
-        across every value band.
-      </>
-    ),
-  },
-  {
-    title: "Above £2,000,000",
     body: (
       <>
         Priced by <span className="text-white font-semibold">individual quotation.</span>
@@ -98,7 +82,7 @@ const SurveyPricingTable = () => (
                 <span className="font-outfit text-white/85 text-[15px]">{r.band}</span>
                 <span className="font-archivo font-bold text-white text-[19px] text-right">{r.beds13}</span>
                 <span className="font-archivo font-bold text-white text-[19px] text-right">{r.beds45}</span>
-                <span className="font-outfit text-white/55 text-[15px] text-right">{r.beds6}</span>
+                <span className="font-archivo font-bold text-white text-[19px] text-right">{r.beds6}</span>
               </div>
               <GradientRule />
             </React.Fragment>
@@ -124,7 +108,7 @@ const SurveyPricingTable = () => (
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/60">6+ beds</span>
-                  <span className="text-white/55">{r.beds6}</span>
+                  <span className="font-archivo font-bold text-white text-[16px]">{r.beds6}</span>
                 </div>
               </div>
             </div>
@@ -135,7 +119,7 @@ const SurveyPricingTable = () => (
           className="mt-5 font-outfit text-[13px] text-white/50"
           data-testid="pricing-vat-note"
         >
-          *VAT is added to the price
+          *All prices inc. VAT
         </p>
 
         {/* Quotation tiles */}
