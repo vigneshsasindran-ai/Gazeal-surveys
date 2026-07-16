@@ -76,6 +76,15 @@ const AgreementPage = () => {
   const [pricingSnapshot, setPricingSnapshot] = useState(null);
   const sentinelRef = useRef(null);
 
+  // Confidential page — tell search engines never to index or follow
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow, noarchive";
+    document.head.appendChild(meta);
+    return () => document.head.removeChild(meta);
+  }, []);
+
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
