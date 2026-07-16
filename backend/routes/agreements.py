@@ -298,7 +298,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
                 f'<strong>{seller_name}</strong> has accepted the Gazeal Seller Survey '
                 f'Agreement for <strong>{address}</strong>. Please contact the seller '
-                'directly to book the Home Insights Survey.'
+                'directly to book the Home Insight Survey.'
                 '</p>'
                 + _section_title("The seller", pd)
                 + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'

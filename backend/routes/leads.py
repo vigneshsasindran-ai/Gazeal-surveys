@@ -424,7 +424,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
           <td style="padding:18px 36px 4px;font-size:15px;color:#0B1220;">
             <p style="margin:0;">
               Your agent, <strong>{lead.agency_name}</strong>, has ordered a
-              Home Insights Survey powered by Gazeal for your property. To
+              Home Insight Survey powered by Gazeal for your property. To
               move things forward, please review and accept the terms of the
               agreement. Everything you need is on the page linked below.
             </p>

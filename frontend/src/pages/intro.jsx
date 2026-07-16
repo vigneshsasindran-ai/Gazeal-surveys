@@ -138,7 +138,7 @@ const HeroSubcopy = ({ className = "", testid }) => (
   <div className={`space-y-5 max-w-[500px] ${className}`} data-testid={testid}>
     <div className="rounded-2xl border border-white/20 bg-white/[0.06] p-5 sm:p-6">
       <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/60 mb-2.5">
-        The Home Insights Survey
+        The Home Insight Survey
       </p>
       <p className="font-outfit text-white/90 text-[15px] lg:text-[16px] leading-[1.6]">
         A full Level 3 inspection by a qualified, insured RPSA surveyor, with
