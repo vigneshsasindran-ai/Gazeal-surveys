@@ -62,7 +62,7 @@ const HubSpotMeetingsEmbed = ({ formData = {} }) => {
   );
 };
 
-const SurveysLearnMoreModal = ({ open, onClose }) => {
+const SurveysLearnMoreModal = ({ open, onClose, startAtCalendar = false, initialEmail = "" }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     agency: "",
@@ -71,6 +71,13 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const showCalendar = isSuccess || startAtCalendar;
+
+  useEffect(() => {
+    if (open && startAtCalendar) {
+      setFormData((f) => ({ ...f, email: initialEmail }));
+    }
+  }, [open, startAtCalendar, initialEmail]);
 
   useEffect(() => {
     if (!open) return;
@@ -156,7 +163,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
           <X className="h-5 w-5" />
         </button>
 
-        {!isSuccess ? (
+        {!showCalendar ? (
           <div className="p-8" data-testid="learn-more-form-state">
             <div className="text-center mb-7">
               <div

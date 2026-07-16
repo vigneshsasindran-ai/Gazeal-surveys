@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Check, Play } from "lucide-react";
 import axios from "axios";
+import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -57,6 +58,7 @@ const VideoEmbed = () => {
 export const EmailCapture = ({ buttonLabel = "Get on the waitlist" }) => {
   const [email, setEmail] = useState("");
   const [state, setState] = useState("idle"); // idle | sending | done | error
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -65,24 +67,37 @@ export const EmailCapture = ({ buttonLabel = "Get on the waitlist" }) => {
     try {
       await axios.post(`${API}/api/leads/intro-email`, { email });
       setState("done");
+      setShowCalendar(true);
     } catch {
       setState("error");
     }
   };
 
+  const calendarModal = (
+    <SurveysLearnMoreModal
+      open={showCalendar}
+      onClose={() => setShowCalendar(false)}
+      startAtCalendar
+      initialEmail={email}
+    />
+  );
+
   if (state === "done") {
     return (
-      <div
-        className="flex items-center gap-3 rounded-full bg-white/[0.08] border border-white/20 px-6 py-3.5"
-        data-testid="intro-email-success"
-      >
-        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white shrink-0">
-          <Check className="w-3.5 h-3.5 text-[#025eba]" strokeWidth={3} />
-        </span>
-        <span className="font-outfit text-white text-[15px]">
-          Thanks, we&rsquo;ll be in touch shortly.
-        </span>
-      </div>
+      <>
+        <div
+          className="flex items-center gap-3 rounded-full bg-white/[0.08] border border-white/20 px-6 py-3.5"
+          data-testid="intro-email-success"
+        >
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white shrink-0">
+            <Check className="w-3.5 h-3.5 text-[#025eba]" strokeWidth={3} />
+          </span>
+          <span className="font-outfit text-white text-[15px]">
+            Thanks, we&rsquo;ll be in touch shortly.
+          </span>
+        </div>
+        {calendarModal}
+      </>
     );
   }
 
