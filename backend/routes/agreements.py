@@ -182,6 +182,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_at": now,
             "accepted_ip": ip,
             "accepted_ua": ua,
+            "terms_version": "1.0 (14 July 2026)",
         }
         if pricing_snapshot is not None:
             update_set["pricing_snapshot"] = pricing_snapshot
@@ -255,7 +256,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             seller_body = (
                 f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {seller_first},</p>'
                 '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
-                'Thank you. Your acceptance of the Seller Survey Agreement for '
+                'Thank you. Your acceptance of the Home Insight Survey Service Terms '
+                '(Version 1.0, dated 14 July 2026) for '
                 f'<strong>{address}</strong> has been recorded. RPSA will be in '
                 'touch shortly to arrange your survey.'
                 '</p>'
@@ -276,8 +278,9 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 cta_label="View your agreement",
             )
             seller_email_id = await _send(
-                subject="Your Seller Survey Agreement is accepted",
+                subject="Your Home Insight Survey agreement is confirmed",
                 to=[doc.get("seller_email")],
+                cc=["survey@gazeal.co.uk"],
                 html=seller_html,
             )
         except Exception as exc:

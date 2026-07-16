@@ -61,3 +61,32 @@
     animation: none;
   }
 }
+
+/* Print styles — agreement pages: clean white document, hide interactive chrome */
+@media print {
+  .print-hide,
+  [data-testid="agreement-page"] header,
+  [data-testid="agreement-page"] footer,
+  [data-testid="agreement-page"] .fixed {
+    display: none !important;
+  }
+  body,
+  [data-testid="agreement-page"] {
+    background: #fff !important;
+  }
+  [data-testid="agreement-page"] * {
+    color: #000 !important;
+    background: transparent !important;
+    background-image: none !important;
+    border-color: #c8c8c8 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+  [data-testid="agreement-page"] main > div:first-child {
+    display: none !important; /* decorative radial glow */
+  }
+  [data-testid="agreement-page"] section {
+    break-inside: avoid;
+  }
+}

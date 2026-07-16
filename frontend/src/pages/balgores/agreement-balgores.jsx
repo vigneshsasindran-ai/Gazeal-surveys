@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Check, X, ChevronDown, ArrowUpRight, Mail } from "lucide-react";
+import { Check, X, ChevronDown, ArrowUpRight, Mail, Printer } from "lucide-react";
 import SurveysHeader from "@/components/ui/balgores/surveys-header-balgores";
 import ReservationExplainer from "@/components/ui/balgores/reservation-explainer-balgores";
 import PricingCalculator from "@/components/ui/balgores/pricing-calculator-balgores";
@@ -223,7 +223,17 @@ const AgreementPage = () => {
             </div>
           )}
 
-          <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84] mb-4">Seller Survey Agreement</p>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84]">Seller Survey Agreement</p>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="print-hide inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 font-outfit font-semibold text-[12px] text-white/80 hover:text-white hover:border-white/60 transition-all shrink-0"
+              data-testid="agreement-print-btn"
+            >
+              <Printer className="w-3.5 h-3.5" /> Print / Save PDF
+            </button>
+          </div>
           <h1 className="font-archivo font-bold text-3xl sm:text-4xl lg:text-[44px] leading-[1.1] tracking-[-0.025em] text-white">
             <span className="text-white">Home Insight Survey </span>
             <span className="text-[#B8AB84]">Service Terms.</span>
@@ -273,7 +283,7 @@ const AgreementPage = () => {
         </div>
 
         {/* Pricing calculator (wider container so the £ figure never crops) */}
-        <div className="relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20">
+        <div className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20">
           <div className="max-w-2xl mb-8">
             <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
               See what your survey costs.
@@ -289,7 +299,7 @@ const AgreementPage = () => {
         </div>
 
         {/* Reservation Agreement explainer + interest checkbox */}
-        <div className={`relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
+        <div className={`print-hide relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
           <ReservationExplainer
             variant="seller"
             token={data.token}
