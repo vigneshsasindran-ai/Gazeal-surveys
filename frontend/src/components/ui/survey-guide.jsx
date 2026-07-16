@@ -35,7 +35,7 @@ export const SurveyGuideModal = ({ open, onClose }) => {
       <div className="relative w-full max-w-4xl h-[96vh] sm:h-[94vh] rounded-2xl overflow-hidden border border-white/15 bg-[#0b0b0d] flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
         <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-white/10 bg-white/[0.03]">
           <p className="font-archivo font-bold text-white text-[14px] sm:text-[15px] truncate">
-            Home Insights Survey Guide
+            Home Insight Survey Guide
           </p>
           <div className="flex items-center gap-2 shrink-0">
             <a
@@ -94,10 +94,9 @@ const SurveyGuide = ({ testidPrefix = "survey-guide" }) => {
             </p>
             <p className="font-outfit text-[14px] sm:text-[15px] leading-[1.65] text-white/75">
               This guide summarises the information covered in a full Home
-              Insights Survey, a detailed report on every element of a single
+              Insight Survey, a detailed report on every element of a single
               property. The complete survey follows the guidance defined by the
-              RPSA Survey Inspection &amp; Reporting Standards, Edition 1v5.2,
-              November 2020.
+              RPSA Survey Inspection &amp; Reporting Standards.
             </p>
           </div>
           <div className="shrink-0">

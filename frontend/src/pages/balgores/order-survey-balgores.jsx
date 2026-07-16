@@ -96,6 +96,8 @@ const OrderSurveyPage = () => {
     if (step === 3) {
       if (!formData.addressLine1.trim()) e.addressLine1 = "Required";
       if (!formData.postcode.trim()) e.postcode = "Required";
+      else if (!/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(formData.postcode.trim()))
+        e.postcode = "Enter a valid UK postcode (e.g. CM2 6PJ)";
     }
     if (step === 4) {
       if (!formData.confirmation) e.confirmation = "Please confirm to continue";
@@ -133,7 +135,7 @@ const OrderSurveyPage = () => {
             seller_email: formData.sellerEmail,
             seller_phone: formData.sellerPhone,
             address_line_1: formData.addressLine1,
-            postcode: formData.postcode,
+            postcode: formData.postcode.trim().toUpperCase().replace(/\s+/g, "").replace(/(.{3})$/, " $1"),
             listing_url: formData.listingUrl,
             asking_price: formData.askingPrice,
             confirmation: formData.confirmation,
