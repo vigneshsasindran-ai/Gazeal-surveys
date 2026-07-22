@@ -282,7 +282,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             seller_email_id = await _send(
                 subject="Your Home Insight Survey agreement is confirmed",
                 to=[doc.get("seller_email")],
-                cc=["vignesh.sasindran@gazeal.co.uk"],  # TEST-REDIRECT: restore to survey@gazeal.co.uk
+                cc=["survey@gazeal.co.uk"],
                 html=seller_html,
             )
         except Exception as exc:
@@ -352,7 +352,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             rpsa_email_id = await _send(
                 subject=f"Survey instruction — {seller_name}, {address} (Ref {token})",
                 to=[RPSA_EMAIL],
-                cc=[NOTIFY_EMAIL],  # TEST-REDIRECT: restore to ["survey@gazeal.co.uk", NOTIFY_EMAIL]
+                cc=["survey@gazeal.co.uk", NOTIFY_EMAIL],
                 html=rpsa_html,
             )
         except Exception as exc:

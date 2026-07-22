@@ -31,6 +31,7 @@ Sender: **survey@gazeal.co.uk**. Internal = TO vignesh.sasindran@gazeal.co.uk, C
 8. Seller declined → internal
 9. Reservation interest → internal
 10. RPSA survey instruction → **gazeal@rpsa.org.uk**, CC survey@gazeal.co.uk + vignesh (branded, full case details)
+11. Balgores seller-direct order (`flow=seller_direct`) → white-labelled Balgores email (B logo, flat #1A1434 header/footer, gold CTA) TO NOTIFY_EMAIL only (no CC), replaces #3+#4 for that flow. Emails #6/7/10 still fire on acceptance.
 
 "Sale room" renamed "Seller survey agreement" user-facing. Sale room product = FUTURE PROJECT.
 
@@ -45,6 +46,7 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Survey guide PDF popup (served same-origin via `GET /api/assets/survey-guide.pdf`, file at /app/backend/assets/, currently 22MB "Home Insight Survey.pdf" — compression offered, not accepted yet); mobile opens native viewer in new tab
 
 ## Implemented (history highlights)
+- **Jul 2026: Balgores seller-direct overhaul** — seller-perspective copy across hero/bento/benefits/FAQ, new `seller-advantage-balgores.jsx` accordion, rewritten `order-survey-balgores.jsx` (branch dropdown, sign-on-submit redirect), backend `flow` field on OrderSurveyLead + `_render_balgores_direct_order` white-label email, agreement page "ordered through Balgores Property Group (branch)" fallback when no agent. Tested 100% (iteration_9, incl. Gazeal regression). Backend tests: /app/backend/tests/test_balgores_seller_direct.py.
 - Full Gazeal + Balgores funnels, Resend brand-aware emails, Slack notify (order/accept/interest only — NOT learn-more/intro signups), webhook fan-out, admin endpoints (ADMIN_TOKEN)
 - `/intro`: Bryan Mansell quote hero + Vimeo facade player (poster + play, no player chrome), Home Insights box, stats band, email capture ("Get on the waitlist") + Learn More; mobile order: quote → video → content
 - `/launch`: ad landing — huge centred heading "Upfront Seller Surveys are now live in every UK postcode.", proof cards (Every postcode / 1,000+ surveyors / £0 upfront), urgency box with email CTA "Claim your town" + Learn More, then full intro content below
@@ -62,4 +64,6 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 
 ## 3rd Party
 - Resend (RESEND_API_KEY, SENDER_EMAIL=survey@gazeal.co.uk, NOTIFY_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
+- Slack incoming webhook (SLACK_WEBHOOK_URL) — verified working from preview; if prod Slack silent, check prod env vars
+Y_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
 - Slack incoming webhook (SLACK_WEBHOOK_URL) — verified working from preview; if prod Slack silent, check prod env vars

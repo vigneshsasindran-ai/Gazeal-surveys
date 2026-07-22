@@ -59,6 +59,9 @@ const labelCls = "block text-sm text-white/65 mb-2 font-outfit";
 
 const errorCls = "text-[#FF6B6B] text-xs mt-1 font-outfit";
 
+const fmtPostcode = (p) =>
+  p.trim().toUpperCase().replace(/\s+/g, "").replace(/(.{3})$/, " $1");
+
 const OrderSurveyPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
@@ -152,7 +155,7 @@ const OrderSurveyPage = () => {
             seller_email: formData.sellerEmail,
             seller_phone: formData.sellerPhone,
             address_line_1: formData.addressLine1,
-            postcode: formData.postcode.trim().toUpperCase().replace(/\s+/g, "").replace(/(.{3})$/, " $1"),
+            postcode: fmtPostcode(formData.postcode),
             listing_url: formData.listingUrl,
             asking_price: formData.askingPrice,
             confirmation: formData.confirmation,
@@ -564,7 +567,7 @@ const OrderSurveyPage = () => {
                       ],
                       [
                         "Property",
-                        `${formData.addressLine1 || "—"}${formData.postcode ? `, ${formData.postcode}` : ""}`,
+                        `${formData.addressLine1 || "—"}${formData.postcode ? `, ${fmtPostcode(formData.postcode)}` : ""}`,
                       ],
                       ["Property details", formData.listingUrl || "—"],
                       ["Asking price", formData.askingPrice || "—"],
