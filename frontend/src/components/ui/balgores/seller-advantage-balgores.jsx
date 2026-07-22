@@ -28,7 +28,7 @@ const ITEMS = [
     body: "Once you know what the survey says, you choose what to do. Get the works done before you launch and market at a stronger price, or share the findings with viewers so they offer with their eyes open. Either way, nothing \u201cnew\u201d can be discovered later to derail your sale.",
   },
   {
-    title: "No hidden surprises. No renegotiation ammunition.",
+    title: "No hidden surprises. No renegotiation.",
     body: "Buyers who offer after seeing the report have already priced the condition in. That means no price chips on the back of a survey, no last-minute gazundering, and far fewer collapsed chains. It is the same transparency that makes the Scottish system work so well.",
   },
   {
