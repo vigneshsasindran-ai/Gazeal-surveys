@@ -144,7 +144,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
       if (!res.ok) throw new Error("failed");
       setSubmitted(true);
     } catch {
-      setErr("We couldn't record that just now — please untick and try again.");
+      setErr("We couldn't record that just now. Please untick and try again.");
       setInterested(false);
     } finally {
       setSubmitting(false);
@@ -198,7 +198,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
               </span>
               <div>
                 <p className="font-archivo font-bold text-white text-[15px]">
-                  Thanks &mdash; we&apos;ll be in touch shortly.
+                  Thanks. We&apos;ll be in touch shortly.
                 </p>
                 <p className="mt-1 font-outfit text-[13px] text-white/65">
                   We&apos;ll email you details on how a Gazeal Reservation Agreement could help protect your sale. This page stays live for you to come back and accept or decline once you&apos;re ready.

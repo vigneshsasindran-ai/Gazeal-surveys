@@ -80,7 +80,7 @@ const SurveysBento = () => {
                 arranged at the start of your marketing, shared with buyers
                 during the sale, and only paid for when your sale actually
                 completes. If the sale falls through there is no cost to you
-                at all &mdash; so you can give buyers better upfront
+                at all, so you can give buyers better upfront
                 information without spending a penny before you have sold
                 your home.
               </p>

@@ -19,7 +19,7 @@ const STEPS = [
   {
     icon: ClipboardList,
     title: "Order your survey",
-    body: "Tell us about you, your property and your Balgores branch — it takes a couple of minutes — and sign your agreement online there and then.",
+    body: "Tell us about you, your property and your Balgores branch. It takes a couple of minutes, and you sign your agreement online there and then.",
   },
   {
     icon: Send,

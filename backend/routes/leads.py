@@ -663,7 +663,7 @@ def _render_balgores_direct_order(lead: OrderSurveyLead, agreement_url: str) -> 
         '<p style="margin:0;font-size:14px;color:#0B1220;line-height:1.65;">'
         '<strong>A seller has ordered their survey directly through the '
         'Balgores funnel.</strong> They were taken straight to the agreement '
-        'to sign online — the acceptance notification will follow separately. '
+        'to sign online. The acceptance notification will follow separately. '
         'Details go to RPSA only after the seller accepts the terms.'
         '</p>'
         '</div>'

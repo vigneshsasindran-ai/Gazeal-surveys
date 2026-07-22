@@ -102,7 +102,7 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
             >
               Selling with Balgores? Order your survey upfront, inspired by
               the Scottish model, so buyers know your home&apos;s condition
-              before they offer &mdash; and your sale stays sold.
+              before they offer, and your sale stays sold.
             </p>
           </div>
 

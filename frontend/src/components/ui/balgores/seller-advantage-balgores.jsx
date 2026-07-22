@@ -17,23 +17,23 @@ import { ChevronRight } from "lucide-react";
 const ITEMS = [
   {
     title: "Every day in the UK, a sale falls through because of a survey",
-    body: "The traditional process leaves the survey until weeks after a price is agreed. That's exactly when defects surface — and at the eleventh hour a buyer can renegotiate hard or simply walk away, scot-free. Ordering your survey before you go to market takes the single biggest late-stage sale-killer off the table.",
+    body: "The traditional process leaves the survey until weeks after a price is agreed. That's exactly when defects surface, and at the eleventh hour a buyer can renegotiate hard or simply walk away, scot-free. Ordering your survey before you go to market takes the single biggest late-stage sale-killer off the table.",
   },
   {
     title: "It's like selling with a full service history",
-    body: "Buying a used car with a full service history and a fresh MOT feels safe — and homes are no different. When buyers can see an independent, accredited report from day one, they trust the property and the price. Being upfront builds the kind of confidence that carries a sale all the way to completion.",
+    body: "Buying a used car with a full service history and a fresh MOT feels safe, and homes are no different. When buyers can see an independent, accredited report from day one, they trust the property and the price. Being upfront builds the kind of confidence that carries a sale all the way to completion.",
   },
   {
     title: "Fix it, or simply be upfront about it",
-    body: "Once you know what the survey says, you choose what to do. Get the works done before you launch and market at a stronger price — or share the findings with viewers so they offer with their eyes open. Either way, nothing \u201cnew\u201d can be discovered later to derail your sale.",
+    body: "Once you know what the survey says, you choose what to do. Get the works done before you launch and market at a stronger price, or share the findings with viewers so they offer with their eyes open. Either way, nothing \u201cnew\u201d can be discovered later to derail your sale.",
   },
   {
     title: "No hidden surprises. No renegotiation ammunition.",
-    body: "Buyers who offer after seeing the report have already priced the condition in. That means no price chips on the back of a survey, no last-minute gazundering, and far fewer collapsed chains — the same transparency that makes the Scottish system work so well.",
+    body: "Buyers who offer after seeing the report have already priced the condition in. That means no price chips on the back of a survey, no last-minute gazundering, and far fewer collapsed chains. It is the same transparency that makes the Scottish system work so well.",
   },
   {
     title: "And unlike a normal pre-sale survey, you don't pay upfront",
-    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, when used with a Gazeal Reservation Agreement, the fee is settled only when your sale completes — and if the sale falls through unreasonably, you pay nothing at all.",
+    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, when used with a Gazeal Reservation Agreement, the fee is settled only when your sale completes. And if the sale falls through unreasonably, you pay nothing at all.",
   },
 ];
 
@@ -49,12 +49,6 @@ const SellerAdvantage = ({ onOrderSurvey }) => {
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
           {/* Left — heading + CTA */}
           <div className="lg:sticky lg:top-32">
-            <p
-              className="font-outfit text-[12px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84] mb-4"
-              data-testid="seller-advantage-eyebrow"
-            >
-              The seller&apos;s advantage
-            </p>
             <h2
               className="font-archivo font-bold tracking-[-0.025em] leading-[1.12] text-white text-3xl sm:text-4xl lg:text-[44px]"
               data-testid="seller-advantage-heading"

@@ -338,7 +338,7 @@ const AgreementPage = () => {
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
                      data-testid="agreement-scroll-hint">
                   {unlocked ? (
-                    <span className="text-[#B8AB84]">Thank you — you're ready to confirm.</span>
+                    <span className="text-[#B8AB84]">Thank you. You're ready to confirm.</span>
                   ) : (
                     <>
                       <ChevronDown className="w-3.5 h-3.5" />

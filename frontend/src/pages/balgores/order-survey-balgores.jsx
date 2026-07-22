@@ -236,9 +236,9 @@ const OrderSurveyPage = () => {
             </p>
             <ul className="space-y-2.5">
               {[
-                "Tell us about you, your property and your Balgores branch below — it takes two minutes.",
+                "Tell us about you, your property and your Balgores branch below. It takes two minutes.",
                 "Review and sign your survey agreement online, straight away. No waiting for emails.",
-                "RPSA, the accredited surveyor body, contacts you directly to arrange a convenient visit. You pay nothing now — the fee is settled only when your sale completes, and if the sale falls through unreasonably, you pay nothing at all.",
+                "RPSA, the accredited surveyor body, contacts you directly to arrange a convenient visit. You pay nothing now. The fee is settled only when your sale completes, and if the sale falls through unreasonably, you pay nothing at all.",
               ].map((line, i) => (
                 <li
                   key={i}

@@ -16,7 +16,7 @@ import { ArrowRight } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "Who pays for the survey — me or the buyer?",
+    question: "Who pays for the survey, me or the buyer?",
     answer:
       "You do, but only on completion. You never pay up front, and if the sale collapses because the buyer pulls out, you pay nothing at all.",
   },
@@ -33,12 +33,12 @@ const FAQ_ITEMS = [
   {
     question: "What type of survey is it?",
     answer:
-      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association \u2014 similar to a Level 2 or Level 3 survey. It gives buyers a clear, independent view of your property before they offer.",
+      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association, similar to a Level 2 or Level 3 survey. It gives buyers a clear, independent view of your property before they offer.",
   },
   {
     question: "What if the survey finds a problem?",
     answer:
-      "You stay in control. You can get the works done before buyers view \u2014 like selling with a full service history \u2014 or simply share the findings so buyers offer with their eyes open. Either way, nothing new can surface later to derail your sale.",
+      "You stay in control. You can get the works done before buyers view, like selling with a full service history, or simply share the findings so buyers offer with their eyes open. Either way, nothing new can surface later to derail your sale.",
   },
   {
     question: "Can buyers rely on the report?",
@@ -53,12 +53,12 @@ const FAQ_ITEMS = [
   {
     question: "Do I have to order a survey to sell with Balgores?",
     answer:
-      "No \u2014 it is completely optional. But sellers who order upfront give buyers transparency from day one, which tends to mean stronger offers and a sale that holds together.",
+      "No, it is completely optional. But sellers who order upfront give buyers transparency from day one, which tends to mean stronger offers and a sale that holds together.",
   },
   {
     question: "How do I get started?",
     answer:
-      "Click Order Survey, tell us about you and your property, and sign the agreement online \u2014 it takes about two minutes and you pay nothing today.",
+      "Click Order Survey, tell us about you and your property, and sign the agreement online. It takes about two minutes and you pay nothing today.",
   },
 ];
 

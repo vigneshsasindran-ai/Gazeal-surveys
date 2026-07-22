@@ -130,6 +130,7 @@ const SurveysLandingBalgores = () => {
       <main className="relative z-10 bg-black">
         <BSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
         <BSurveysBento />
+        <BSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <BSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
         <section
           className="relative bg-black pt-2 pb-20 md:pt-4 md:pb-28"
@@ -140,7 +141,6 @@ const SurveysLandingBalgores = () => {
           </div>
         </section>
         <BSurveysBenefits />
-        <BSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <BSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
       </main>
       <BSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
