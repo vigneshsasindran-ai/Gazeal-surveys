@@ -171,11 +171,11 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                 <Check className="h-6 w-6 text-[#B8AB84]" strokeWidth={2.4} />
               </div>
               <h2 className="text-2xl sm:text-[28px] font-archivo font-bold tracking-[-0.025em] mb-2 text-white">
-                Learn more about Gazeal Surveys
+                Learn more about upfront surveys
               </h2>
               <p className="text-white/65 font-outfit text-sm sm:text-[15px] max-w-sm mx-auto leading-relaxed">
                 Tell us who you are and we&apos;ll get you on a quick call to
-                walk through how Surveys fits your agency.
+                walk through how the upfront survey works for your sale.
               </p>
             </div>
 
@@ -198,7 +198,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
               </div>
               <div>
                 <label className="block text-sm text-white/60 mb-2 font-outfit">
-                  Agency name
+                  Estate agency / branch
                 </label>
                 <input
                   type="text"
@@ -208,7 +208,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                     setFormData({ ...formData, agency: e.target.value })
                   }
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#B8AB84]/60 transition-colors"
-                  placeholder="Enter your agency name"
+                  placeholder="e.g. Balgores Chelmsford"
                   data-testid="learn-more-input-agency"
                 />
               </div>

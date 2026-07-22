@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 import resend
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -56,12 +56,12 @@ class IntroEmailLead(BaseModel):
 
 class OrderSurveyLead(BaseModel):
     model_config = ConfigDict(extra="ignore")
-    # Agent
-    agent_name: str = Field(..., min_length=1, max_length=120)
-    agency_name: str = Field(..., min_length=1, max_length=160)
+    # Agent — optional when flow == "seller_direct" (Balgores seller flow)
+    agent_name: Optional[str] = Field(default="", max_length=120)
+    agency_name: Optional[str] = Field(default="", max_length=160)
     branch: Optional[str] = ""
-    phone: str = Field(..., min_length=1, max_length=40)
-    email: EmailStr
+    phone: Optional[str] = Field(default="", max_length=40)
+    email: Optional[EmailStr] = None
     # Seller
     seller_name: str = Field(..., min_length=1, max_length=120)
     seller_email: EmailStr
@@ -75,6 +75,9 @@ class OrderSurveyLead(BaseModel):
     # Branding — which product surface the lead was captured from.
     # Defaults to "gazeal" for backwards-compat with any existing clients.
     brand: str = Field(default="gazeal", pattern="^(gazeal|balgores)$")
+    # "agent" = agent orders + seller receives invite email (default).
+    # "seller_direct" = seller orders for themselves and signs on-page.
+    flow: str = Field(default="agent", pattern="^(agent|seller_direct)$")
 
 
 # ---------------------------------------------------------------------------
@@ -634,6 +637,189 @@ def _render_order_survey(lead: OrderSurveyLead, agreement_url: str = "") -> str:
     )
 
 
+def _render_balgores_direct_order(lead: OrderSurveyLead, agreement_url: str) -> str:
+    """White-labelled Balgores internal notification — solid #1A1434 header
+    with the Balgores mark, flat gold CTA, no Gazeal chrome. Sent when a
+    seller orders directly through the /balgores funnel."""
+    pd = "#1A1434"
+    gold = "#B8AB84"
+    reference = agreement_url.rstrip("/").split("/")[-1] if agreement_url else ""
+    address = lead.address_line_1
+    if lead.postcode:
+        address = f"{address}, {lead.postcode}"
+
+    agent_rows = ""
+    if lead.agent_name or lead.email:
+        agent_rows = (
+            _row("Agent name", lead.agent_name or "", primary_dark=pd)
+            + _row("Agent email", lead.email or "",
+                   link=(f"mailto:{lead.email}" if lead.email else None),
+                   primary_dark=pd)
+        )
+
+    body = (
+        f'<div style="background:#F5F3EC;border:1px solid {gold};border-radius:10px;'
+        'padding:14px 18px;margin:0 0 12px;">'
+        '<p style="margin:0;font-size:14px;color:#0B1220;line-height:1.65;">'
+        '<strong>A seller has ordered their survey directly through the '
+        'Balgores funnel.</strong> They were taken straight to the agreement '
+        'to sign online — the acceptance notification will follow separately. '
+        'Details go to RPSA only after the seller accepts the terms.'
+        '</p>'
+        '</div>'
+        + _section_title("The seller", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Name", lead.seller_name, primary_dark=pd)
+        + _row("Email", lead.seller_email,
+               link=f"mailto:{lead.seller_email}", primary_dark=pd)
+        + _row("Phone", lead.seller_phone or "",
+               link=(f"tel:{lead.seller_phone}" if lead.seller_phone else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("The property", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Address", lead.address_line_1, primary_dark=pd)
+        + _row("Postcode", lead.postcode, primary_dark=pd)
+        + _row("Asking price", lead.asking_price or "", primary_dark=pd)
+        + _row("Listing", lead.listing_url or "",
+               link=lead.listing_url or None, primary_dark=pd)
+        + '</table>'
+        + _section_title("Balgores", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Branch", lead.branch or "", primary_dark=pd)
+        + agent_rows
+        + '</table>'
+        + _section_title("Confirmation", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
+        + (
+            'The seller has confirmed they are happy for RPSA to contact '
+            'them about arranging their survey.'
+            if lead.confirmation
+            else
+            '<span style="color:#B23A3A;font-weight:600;">The seller '
+            'confirmation checkbox was not ticked.</span>'
+        )
+        + '</p>'
+        + _section_title("Seller survey agreement", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
+          'Use this link to track the status of the agreement for this sale.'
+          '</p>'
+          f'<p style="margin:10px 0 0;font-size:13px;line-height:1.6;">'
+          f'<a href="{agreement_url}" style="color:{pd};text-decoration:none;'
+          f'font-weight:600;word-break:break-all;">{agreement_url}</a></p>'
+          f'<p style="margin:8px 0 0;font-size:12px;color:#6B7280;">'
+          f'Reference: <code>{reference}</code></p>'
+    )
+
+    return f"""\
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New Balgores seller survey order</title>
+</head>
+<body style="margin:0;padding:0;background:#050505;font-family:-apple-system,
+             BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+             color:#0B1220;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+         style="background:#050505;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+               style="max-width:600px;background:#ffffff;border-radius:20px;
+                      overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+          <!-- Hero band — flat Balgores purple -->
+          <tr>
+            <td style="background:{pd};padding:32px 36px;color:#ffffff;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td valign="middle">
+                    <table cellpadding="0" cellspacing="0" border="0"><tr>
+                      <td valign="middle">
+                        <img src="{_BALGORES_LOGO_URL}" alt="Balgores"
+                             width="44" height="44"
+                             style="display:block;border:0;outline:none;
+                                    text-decoration:none;border-radius:5px;">
+                      </td>
+                      <td valign="middle" style="padding-left:14px;font-size:17px;
+                                                 color:{gold};letter-spacing:0.4px;">
+                        Balgores Property Group
+                      </td>
+                    </tr></table>
+                  </td>
+                  <td align="right" valign="middle"
+                      style="font-size:11px;letter-spacing:2.4px;
+                             text-transform:uppercase;color:rgba(255,255,255,0.8);
+                             font-weight:600;">
+                    Seller order
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:22px;font-size:24px;line-height:1.2;
+                          font-weight:700;letter-spacing:-0.5px;
+                          color:#ffffff;max-width:480px;">
+                New seller survey order
+              </div>
+              <div style="margin-top:10px;font-size:14px;line-height:1.6;
+                          color:rgba(255,255,255,0.85);max-width:480px;">
+                {lead.seller_name} has ordered a Home Insight Survey for
+                {address} via the Balgores {lead.branch or ''} funnel.
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 36px 8px 36px;font-size:14px;
+                       line-height:1.65;color:#0B1220;">
+              {body}
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="padding:8px 36px 32px 36px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:{gold};border-radius:999px;">
+                    <a href="{agreement_url}"
+                       style="display:inline-block;padding:12px 22px;
+                              font-size:14px;font-weight:600;color:#ffffff;
+                              text-decoration:none;letter-spacing:0.2px;">
+                      View the agreement
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer — flat Balgores purple -->
+          <tr>
+            <td style="padding:20px 36px 26px 36px;background:{pd};
+                       font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;">
+              <strong style="color:{gold};font-weight:700;">Balgores Property Group</strong>
+              &nbsp;·&nbsp; Home Insights powered by Gazeal.
+              <br>
+              Captured by the Balgores seller funnel &nbsp;·&nbsp; sent {datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")}.
+            </td>
+          </tr>
+        </table>
+
+        <div style="margin-top:18px;font-size:11px;color:#6B7280;
+                    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                    Helvetica,Arial,sans-serif;">
+          This is an automated notification from the Balgores seller survey funnel.
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
+
+
 async def _send_email(subject: str, html: str, to: Optional[List[str]] = None,
                       cc: Optional[List[str]] = None) -> Optional[str]:
     params = {
@@ -725,6 +911,11 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
     @router.post("/order-survey")
     async def submit_order_survey(lead: OrderSurveyLead, request: Request):
+        if lead.flow == "agent" and not (
+            lead.agent_name and lead.agency_name and lead.email
+        ):
+            raise HTTPException(422, "Agent details are required")
+
         # Mint the unique reference up front so it lives on both the lead
         # and the agreement (single value, shared across systems).
         agreement_token = secrets.token_urlsafe(8)
@@ -736,6 +927,8 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "reference_number": agreement_token,
             **lead.model_dump(),
         }
+        for k in ("agent_name", "agency_name", "branch", "phone", "email"):
+            doc[k] = doc.get(k) or ""
         await db.leads.insert_one(doc)
         await fan_out(db, "order_survey.created", doc)
 
@@ -769,11 +962,12 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 "status": "pending",
                 "created_at": doc["created_at"],
                 "brand": lead.brand,
-                "agent_name": lead.agent_name,
-                "agency_name": lead.agency_name,
-                "branch": lead.branch,
-                "agent_email": lead.email,
-                "agent_phone": lead.phone,
+                "flow": lead.flow,
+                "agent_name": doc["agent_name"],
+                "agency_name": doc["agency_name"],
+                "branch": doc["branch"],
+                "agent_email": doc["email"],
+                "agent_phone": doc["phone"],
                 "seller_name": lead.seller_name,
                 "seller_email": lead.seller_email,
                 "address_line_1": lead.address_line_1,
@@ -785,28 +979,44 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         email_id = None
         email_error = None
-        try:
-            email_id = await _send_email(
-                subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
-                html=_render_order_survey(lead, agreement_url),
-                cc=NOTIFY_CC,
-            )
-        except Exception as exc:
-            email_error = str(exc)
-
-        # Second email: send the seller their agreement link
         seller_email_id = None
         seller_email_error = None
-        try:
-            seller_email_id = await _send_email(
-                subject=f"Re: The Sale of {lead.address_line_1}, {lead.postcode}",
-                html=_render_seller_invite(lead, agreement_url),
-                to=[lead.seller_email],
-            )
-        except Exception as exc:
-            seller_email_error = str(exc)
 
-        # Fire the Slack ping AFTER both email attempts so we can surface
+        if lead.flow == "seller_direct":
+            # Balgores seller-direct: the seller signs the agreement on-page
+            # immediately after submitting — no invite email loop. Internal
+            # team gets a white-labelled Balgores notification instead.
+            try:
+                email_id = await _send_email(
+                    subject=(
+                        f"New Balgores seller survey order — "
+                        f"{lead.seller_name} ({lead.branch or 'branch not set'})"
+                    ),
+                    html=_render_balgores_direct_order(lead, agreement_url),
+                )
+            except Exception as exc:
+                email_error = str(exc)
+        else:
+            try:
+                email_id = await _send_email(
+                    subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
+                    html=_render_order_survey(lead, agreement_url),
+                    cc=NOTIFY_CC,
+                )
+            except Exception as exc:
+                email_error = str(exc)
+
+            # Second email: send the seller their agreement link
+            try:
+                seller_email_id = await _send_email(
+                    subject=f"Re: The Sale of {lead.address_line_1}, {lead.postcode}",
+                    html=_render_seller_invite(lead, agreement_url),
+                    to=[lead.seller_email],
+                )
+            except Exception as exc:
+                seller_email_error = str(exc)
+
+        # Fire the Slack ping AFTER the email attempts so we can surface
         # delivery status (quota / domain errors land visibly in Slack).
         notify_order_submitted(
             doc,

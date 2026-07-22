@@ -26,6 +26,7 @@ import BSurveysBento from "@/components/ui/balgores/surveys-bento-balgores";
 import BSurveysSaleAgreed from "@/components/ui/balgores/surveys-sale-agreed-balgores";
 import BReservationExplainer from "@/components/ui/balgores/reservation-explainer-balgores";
 import BSurveysBenefits from "@/components/ui/balgores/surveys-benefits-balgores";
+import BSellerAdvantage from "@/components/ui/balgores/seller-advantage-balgores";
 import BSurveysFAQ from "@/components/ui/balgores/surveys-faq-balgores";
 import BSurveysFooterReveal from "@/components/ui/balgores/surveys-footer-reveal-balgores";
 import BSurveysLearnMoreModal from "@/components/ui/balgores/surveys-learn-more-modal-balgores";
@@ -139,6 +140,7 @@ const SurveysLandingBalgores = () => {
           </div>
         </section>
         <BSurveysBenefits />
+        <BSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <BSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
       </main>
       <BSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />

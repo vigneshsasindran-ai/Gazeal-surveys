@@ -76,14 +76,13 @@ const SurveysBento = () => {
                 No upfront cost<span className="text-white/45 font-outfit text-[0.55em] align-super ml-0.5">*</span>
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
-                Your seller does not have to pay anything when the survey is
-                booked. It is arranged at the start of the marketing, shared
-                with buyers during the sale, and only paid for when the
-                property actually completes. If the sale falls through there
-                is no cost to your seller at all, so the biggest objection to
-                ordering a survey early simply disappears, and you can offer
-                better upfront information without asking your seller to
-                spend a penny before they have sold their home.
+                You don&apos;t pay anything when the survey is booked. It is
+                arranged at the start of your marketing, shared with buyers
+                during the sale, and only paid for when your sale actually
+                completes. If the sale falls through there is no cost to you
+                at all &mdash; so you can give buyers better upfront
+                information without spending a penny before you have sold
+                your home.
               </p>
               <p
                 className="mt-auto pt-5 text-[12px] text-white/50 font-outfit italic leading-relaxed"
@@ -134,14 +133,14 @@ const SurveysBento = () => {
                 sale success
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
-                Gazeal already helps agents reach around 95% sale success by
+                Gazeal already helps sellers reach around 95% sale success by
                 securing commitment at the point of offer. Of the small
                 number of sales that still fall apart, survey issues are one
-                of the biggest causes. Gazeal Surveys fixes this earlier by
-                giving buyers the information they need upfront, so
-                commitment and transparency work together to give your
-                seller the strongest possible chance of completing, with
-                success rates reaching up to 98%.
+                of the biggest causes. Ordering your survey upfront fixes
+                this earlier by giving buyers the information they need
+                before they offer, so commitment and transparency work
+                together to give your sale the strongest possible chance of
+                completing, with success rates reaching up to 98%.
               </p>
             </CardContent>
           </SurveysCard>

@@ -1,0 +1,32 @@
+{
+  "summary": "Full end-to-end verification of the new Balgores seller-direct funnel + regression of the Gazeal agent funnel. Backend: 6/6 new pytest cases pass. Frontend: /balgores landing shows the new seller-advantage accordion (5 items, CTA routes to /balgores/order-survey), the 4-step seller-direct stepper submits successfully, redirects DIRECTLY to /balgores/agreement/{token}, the Hi panel correctly reads 'ordered through Balgores Property Group (Chelmsford)' with no agent name, scroll unlocks the accept button and acceptance completes without 500. Gazeal /order-survey regression: still the original 4-step agent flow (About you / Your seller / The property / Confirmation), submits and shows success card with no redirect.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_balgores_seller_direct.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "order-survey-balgores.jsx submit(): the postcode is normalised only inside the fetch payload — the summary card in Step 4 (`order-review-property`) still shows the raw user typed postcode. Minor UX inconsistency; not a bug.",
+    "leads.py:930-931 blanks out None values for agent_* fields but the OrderSurveyLead pydantic schema already defaults them to '' — the loop is defensive but redundant.",
+    "agreements.py accept endpoint sends the seller confirmation email even when doc.get('seller_email') is None — resend will error but is swallowed. In seller_direct we always have a seller_email, so fine today; worth guarding.",
+    "The frontend agreement route detection assumes /balgores prefix from lead.brand; a manual GET of /agreement/{token} for a balgores-brand agreement would still render (mismatched chrome). Not user-reachable via UI today."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_balgores_seller_direct.py"
+  ],
+  "success_rate": {"backend": "100% (6/6 new + no regressions observed)", "frontend": "100%"},
+  "test_credentials": "None — public forms.",
+  "seed_data_creation": "Created 3 test agreements: 1 balgores seller_direct (accepted, token JMTdJrYfLVY via UI), 1 gazeal agent flow (success card, no redirect), and backend fixture leads via pytest. All seller_email set to seller-test@example.com or vignesh.sasindran@gazeal.co.uk to respect EMAIL SAFETY RULE. RPSA_EMAIL redirect in .env preserved.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "New backend suite: /app/backend/tests/test_balgores_seller_direct.py — covers seller_direct submit (email_id non-null, seller_email_id null, agreement_url contains /balgores/agreement/), GET agreement returns empty agent.name + Balgores agency + branch, accept works with no 500 despite empty agent_email, agent-flow regression happy-path + 422 when agent fields missing, default-flow (no `flow` key) defaults to 'agent'. Gazeal /order-survey uses testid `order-input-agency` (NOT `order-input-agency-name`)."
+}

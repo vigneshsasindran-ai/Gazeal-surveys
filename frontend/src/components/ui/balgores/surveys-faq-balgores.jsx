@@ -16,49 +16,49 @@ import { ArrowRight } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "Who pays for the survey, the seller or the buyer?",
+    question: "Who pays for the survey — me or the buyer?",
     answer:
-      "The seller, and only on completion. They never pay up front, and if the sale collapses because the buyer pulls out, they pay nothing at all.",
-  },
-  {
-    question: "Does it cost me anything as an agent to offer this?",
-    answer:
-      "No. Gazeal Surveys is available to every Gazeal agent at no cost to you. You add it to your service and strengthen your pitch without touching your overheads.",
+      "You do, but only on completion. You never pay up front, and if the sale collapses because the buyer pulls out, you pay nothing at all.",
   },
   {
     question: "When is the survey carried out?",
     answer:
-      "At the point of listing, as the property goes to market. That is the whole idea. The condition is known from day one, so buyers offer on the facts instead of finding them out weeks later.",
+      "At the point of listing, as your home goes to market. That is the whole idea. The condition is known from day one, so buyers offer on the facts instead of finding them out weeks later.",
   },
   {
-    question: "Will offering a survey slow my listing down?",
+    question: "Will it slow down putting my home on the market?",
     answer:
-      "No. You market the property as normal and the survey runs alongside. Having the report ready tends to speed the sale up, because buyers commit faster and with fewer conditions when the information is already there.",
+      "No. Your home is marketed as normal and the survey runs alongside. Having the report ready tends to speed the sale up, because buyers commit faster and with fewer conditions when the information is already there.",
   },
   {
     question: "What type of survey is it?",
     answer:
-      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association \u2014 similar to a Level 2 or Level 3 survey. It gives buyers a clear, independent view of the property before they offer.",
+      "A professional condition survey carried out by accredited surveyors from the Residential Property Surveyors Association \u2014 similar to a Level 2 or Level 3 survey. It gives buyers a clear, independent view of your property before they offer.",
+  },
+  {
+    question: "What if the survey finds a problem?",
+    answer:
+      "You stay in control. You can get the works done before buyers view \u2014 like selling with a full service history \u2014 or simply share the findings so buyers offer with their eyes open. Either way, nothing new can surface later to derail your sale.",
   },
   {
     question: "Can buyers rely on the report?",
     answer:
-      "Yes. It is independent and professionally accredited, and it indemnifies both the seller and the buyer, so both sides are protected by it.",
+      "Yes. It is independent and professionally accredited, and it indemnifies both you and the buyer, so both sides are protected by it.",
   },
   {
     question: "Does the buyer still need their own survey or mortgage valuation?",
     answer:
-      "A lender's mortgage valuation is a separate process and the buyer's lender will still run their own. The Gazeal Survey gives the buyer the condition information up front, so in most cases they have what they need to offer with confidence without commissioning a second survey.",
+      "A lender's mortgage valuation is a separate process and the buyer's lender will still run their own. Your upfront survey gives the buyer the condition information from day one, so in most cases they have what they need to offer with confidence without commissioning a second survey.",
   },
   {
-    question: "How do I introduce Gazeal Surveys to win the instruction?",
+    question: "Do I have to order a survey to sell with Balgores?",
     answer:
-      "Lead with certainty, not cost. Tell your seller they can give buyers full transparency from day one, the way Scotland does, at no upfront cost. It is a clear point of difference that wins listings and protects the sale.",
+      "No \u2014 it is completely optional. But sellers who order upfront give buyers transparency from day one, which tends to mean stronger offers and a sale that holds together.",
   },
   {
-    question: "Is it available for all my listings?",
+    question: "How do I get started?",
     answer:
-      "Gazeal Surveys is available to every Gazeal agent for residential sales. Your account team can confirm anything specific about property types or locations.",
+      "Click Order Survey, tell us about you and your property, and sign the agreement online \u2014 it takes about two minutes and you pay nothing today.",
   },
 ];
 
@@ -86,8 +86,8 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
               </h2>
 
               <p className="text-white/55 text-sm leading-relaxed mb-6 font-outfit">
-                Everything you need to know about Gazeal Surveys and how it
-                sits alongside your existing Gazeal Reservation.
+                Everything you need to know about ordering your upfront
+                survey when selling with Balgores.
               </p>
 
               <div className="p-4 bg-[#B8AB84]/[0.08] border border-[#B8AB84]/25 rounded-xl">
@@ -132,10 +132,10 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
               >
                 <div>
                   <div className="text-white font-medium text-[15px] font-outfit mb-1">
-                    Start offering surveys to your sellers today.
+                    Get your home sale-ready today.
                   </div>
                   <div className="text-white/55 text-sm font-outfit">
-                    Send your seller an invite in under two minutes.
+                    Order your survey and sign online in under two minutes.
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

@@ -190,7 +190,9 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
         seller_name = doc.get("seller_name") or "the seller"
-        agent_label = f"{doc.get('agent_name','')} · {doc.get('agency_name','')}"
+        agent_label = " · ".join(
+            x for x in (doc.get("agent_name"), doc.get("agency_name"), doc.get("branch")) if x
+        ) or "—"
         agreement_url = doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}"
         brand = doc.get("brand") or "gazeal"
         tokens = _tokens(brand)
@@ -280,7 +282,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             seller_email_id = await _send(
                 subject="Your Home Insight Survey agreement is confirmed",
                 to=[doc.get("seller_email")],
-                cc=["survey@gazeal.co.uk"],
+                cc=["vignesh.sasindran@gazeal.co.uk"],  # TEST-REDIRECT: restore to survey@gazeal.co.uk
                 html=seller_html,
             )
         except Exception as exc:
@@ -350,7 +352,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             rpsa_email_id = await _send(
                 subject=f"Survey instruction — {seller_name}, {address} (Ref {token})",
                 to=[RPSA_EMAIL],
-                cc=["survey@gazeal.co.uk", NOTIFY_EMAIL],
+                cc=[NOTIFY_EMAIL],  # TEST-REDIRECT: restore to ["survey@gazeal.co.uk", NOTIFY_EMAIL]
                 html=rpsa_html,
             )
         except Exception as exc:

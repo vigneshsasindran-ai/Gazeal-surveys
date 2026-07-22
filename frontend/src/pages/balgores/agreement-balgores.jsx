@@ -253,9 +253,23 @@ const AgreementPage = () => {
             <p className="font-outfit text-[15px] text-white/80 leading-relaxed">
               Hi <span className="text-white font-semibold">{data.seller?.first_name}</span>, these are the Service Terms for your
               <strong className="text-white"> RPSA Home Insight Survey</strong> for{" "}
-              <span className="text-white font-semibold">{address || "your property"}</span>, arranged on your behalf by
-              <span className="text-white font-semibold"> {data.agent?.name}</span> at
-              <span className="text-white font-semibold"> {data.agent?.agency}</span>.
+              <span className="text-white font-semibold">{address || "your property"}</span>
+              {data.agent?.name ? (
+                <>
+                  , arranged on your behalf by
+                  <span className="text-white font-semibold"> {data.agent.name}</span> at
+                  <span className="text-white font-semibold"> {data.agent.agency}</span>.
+                </>
+              ) : (
+                <>
+                  , ordered through{" "}
+                  <span className="text-white font-semibold">
+                    {data.agent?.agency || "Balgores Property Group"}
+                    {data.agent?.branch ? ` (${data.agent.branch})` : ""}
+                  </span>
+                  .
+                </>
+              )}
             </p>
             <p className="mt-4 pt-4 border-t border-white/10 font-outfit text-[13px] text-white/60 leading-relaxed" data-testid="agreement-about-summary">
               These Service Terms explain the Home Insight Survey, what the Surveyor will inspect and report

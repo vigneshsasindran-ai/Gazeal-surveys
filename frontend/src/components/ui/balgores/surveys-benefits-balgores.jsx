@@ -18,26 +18,26 @@ const RPSA_LOGO =
 const STEPS = [
   {
     icon: ClipboardList,
-    title: "Order the survey",
-    body: "Submit the property details and request a survey using Gazeal — it takes a couple of minutes.",
+    title: "Order your survey",
+    body: "Tell us about you, your property and your Balgores branch — it takes a couple of minutes — and sign your agreement online there and then.",
   },
   {
     icon: Send,
-    title: "We invite the seller",
-    body: "Gazeal finds an accredited surveyor, contacts your seller and arranges a convenient visit. Once the report is ready, it comes back to you and your seller.",
+    title: "A surveyor comes to you",
+    body: "RPSA contacts you directly and arranges a convenient visit from an accredited surveyor. Once the report is ready, it comes back to you and your Balgores agent.",
   },
   {
     icon: FileCheck,
-    title: "Share with buyers",
-    body: "Pass the report on to interested buyers so they can offer knowing the home's real condition. Fewer surprises later, fewer renegotiations, and a stronger sale from the start.",
+    title: "Buyers offer with confidence",
+    body: "Your agent shares the report with interested buyers so they can offer knowing your home's real condition. Fewer surprises later, fewer renegotiations, and a stronger sale from the start.",
   },
 ];
 
 const SELLER_COPY =
-  "When used with a Gazeal Reservation Agreement, the seller can order an upfront survey without paying on day one. The survey is paid for only when the sale completes. If the buyer pulls out unreasonably, or if either party withdraws for a valid reason under the agreement, the seller does not pay. The buyer gets the condition information before they offer, which means fewer late surprises, less renegotiation, and a sale that has a much better chance of completing.";
+  "When used with a Gazeal Reservation Agreement, you can order an upfront survey without paying on day one. The survey is paid for only when your sale completes. If the buyer pulls out unreasonably, or if either party withdraws for a valid reason under the agreement, you do not pay. Buyers get the condition information before they offer, which means fewer late surprises, less renegotiation, and a sale that has a much better chance of completing.";
 
 const BUYER_COPY =
-  "An upfront survey gives the buyer key condition information before they make an offer. Instead of waiting weeks and then discovering a problem later, they can see the report at the start and offer with more confidence. The survey is carried out by an accredited RPSA surveyor, so the buyer gets a clearer view of the property before committing to the sale. With the condition known upfront, there are fewer surprises, less back and forth, and a much smoother route to completion.";
+  "An upfront survey gives your buyer key condition information before they make an offer. Instead of waiting weeks and then discovering a problem later, they can see the report at the start and offer with more confidence. The survey is carried out by an accredited RPSA surveyor, so your buyer gets a clearer view of the property before committing to the sale. With the condition known upfront, there are fewer surprises, less back and forth, and a much smoother route to completion.";
 
 const StepCard = ({ index, icon: Icon, title, body }) => (
   <div
@@ -218,7 +218,7 @@ const SurveysBenefits = () => {
           />
           <BenefitColumn
             audience="Buyers"
-            headline="See the condition before you make an offer."
+            headline="They see the condition before they make an offer."
             body={BUYER_COPY}
           />
         </div>
@@ -233,11 +233,11 @@ const SurveysBenefits = () => {
               Indemnified both sides
             </p>
             <p className="font-outfit text-[14px] sm:text-[15px] text-white/80 leading-[1.65] max-w-[68ch]">
-              The Gazeal Survey is professionally accredited and indemnifies{" "}
+              The survey is professionally accredited and indemnifies{" "}
               <span className="text-white font-semibold">
-                both the seller and the buyer
+                both you and your buyer
               </span>
-              , so neither party is left exposed by relying on the report.
+              , so neither side is left exposed by relying on the report.
               Both are covered by the surveyor&apos;s professional standing
               rather than by anyone else in the transaction.
             </p>
