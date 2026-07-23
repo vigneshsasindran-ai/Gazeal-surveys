@@ -73,17 +73,15 @@ const SurveysBento = () => {
             <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
               <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
               <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-white">
-                No upfront cost<span className="text-white/45 font-outfit text-[0.55em] align-super ml-0.5">*</span>
+                No upfront cost
               </h3>
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
-                Your seller does not have to pay anything when the survey is
-                booked. It is arranged at the start of the marketing, shared
-                with buyers during the sale, and only paid for when the
-                property actually completes. If the sale falls through there
-                is no cost to your seller at all, so the biggest objection to
-                ordering a survey early simply disappears, and you can offer
-                better upfront information without asking your seller to
-                spend a penny before they have sold their home.
+                The survey is arranged at the start of marketing and shared
+                with buyers during the sale, but the seller pays no money
+                upfront. The survey fee is settled only upon completion of
+                the sale, and if the deal collapses through no fault of the
+                seller, the survey costs nothing at all.
+                <span className="text-white/45 align-super text-[0.75em] ml-0.5">*</span>
               </p>
               <p
                 className="mt-auto pt-5 text-[12px] text-white/50 font-outfit italic leading-relaxed"
