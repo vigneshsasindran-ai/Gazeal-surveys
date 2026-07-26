@@ -16,7 +16,7 @@ import { ChevronRight } from "lucide-react";
 
 const ITEMS = [
   {
-    title: "Every day in the UK, a sale falls through because of a survey",
+    title: "Every day in the UK, sales fall through because of a survey",
     body: "The traditional process leaves the survey until weeks after a price is agreed. That's exactly when defects surface, and at the eleventh hour a buyer can renegotiate hard or simply walk away, scot-free. Ordering your survey before you go to market takes the single biggest late-stage sale-killer off the table.",
   },
   {
@@ -33,7 +33,7 @@ const ITEMS = [
   },
   {
     title: "And unlike a normal pre-sale survey, you don't pay upfront",
-    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, when used with a Gazeal Reservation Agreement, the fee is settled only when your sale completes. And if the sale falls through unreasonably, you pay nothing at all.",
+    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, you never pay upfront. The fee is settled only when your sale completes, whether or not you have a Reservation Agreement. And with a Gazeal Reservation Agreement, if the sale falls through unreasonably, you pay nothing at all.",
   },
 ];
 
