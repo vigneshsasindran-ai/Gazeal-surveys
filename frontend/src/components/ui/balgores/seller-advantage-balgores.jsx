@@ -37,7 +37,7 @@ const ITEMS = [
   },
 ];
 
-const SellerAdvantage = ({ onOrderSurvey }) => {
+const SellerAdvantage = ({ onOrderSurvey, eyebrow }) => {
   return (
     <section
       id="seller-advantage"
@@ -49,6 +49,14 @@ const SellerAdvantage = ({ onOrderSurvey }) => {
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
           {/* Left — heading + CTA */}
           <div className="lg:sticky lg:top-32">
+            {eyebrow && (
+              <p
+                className="font-outfit text-[12px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84] mb-4"
+                data-testid="seller-advantage-eyebrow"
+              >
+                {eyebrow}
+              </p>
+            )}
             <h2
               className="font-archivo font-bold tracking-[-0.025em] leading-[1.12] text-white text-3xl sm:text-4xl lg:text-[44px]"
               data-testid="seller-advantage-heading"
@@ -62,15 +70,17 @@ const SellerAdvantage = ({ onOrderSurvey }) => {
               already threatening their sale. Getting there first turns the
               survey from a risk into your strongest selling tool.
             </p>
-            <button
-              type="button"
-              onClick={onOrderSurvey}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white text-[#1A1434] font-outfit font-semibold px-7 py-3.5 text-[15px] hover:-translate-y-[1px] transition-transform duration-300"
-              data-testid="seller-advantage-cta"
-            >
-              Order Survey
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            {onOrderSurvey && (
+              <button
+                type="button"
+                onClick={onOrderSurvey}
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-white text-[#1A1434] font-outfit font-semibold px-7 py-3.5 text-[15px] hover:-translate-y-[1px] transition-transform duration-300"
+                data-testid="seller-advantage-cta"
+              >
+                Order Survey
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           {/* Right — accordion */}

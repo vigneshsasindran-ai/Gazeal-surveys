@@ -4,6 +4,7 @@ import { Check, X, ChevronDown, ArrowUpRight, Mail, Printer } from "lucide-react
 import SurveysHeader from "@/components/ui/surveys-header";
 import ReservationExplainer from "@/components/ui/reservation-explainer";
 import PricingCalculator from "@/components/ui/pricing-calculator";
+import SellerAdvantage from "@/components/ui/seller-advantage";
 import SurveyGuide from "@/components/ui/survey-guide";
 
 /*
@@ -311,6 +312,11 @@ const AgreementPage = () => {
             initialListed={data.pricing_snapshot?.listed_status || undefined}
             onChange={setPricingSnapshot}
           />
+        </div>
+
+        {/* Why order your survey before you sell? */}
+        <div className="print-hide mt-16 lg:mt-20">
+          <SellerAdvantage eyebrow="You pay nothing today when ordering the survey" />
         </div>
 
         {/* Reservation Agreement explainer + interest checkbox */}

@@ -184,9 +184,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
           <p className="font-outfit text-[14px] text-white/75 leading-[1.65] mb-5 max-w-[60ch]">
             You don&apos;t have to decide now. Tick the box below and we&apos;ll
             send you more details on how a Gazeal Reservation Agreement could
-            help protect your sale. You can come back to this page later to
-            accept or decline the survey terms once you&apos;ve had a chance to
-            read everything.
+            help protect your sale.
           </p>
           {submitted ? (
             <div className="flex items-start gap-3" data-testid="re-interest-submitted">
