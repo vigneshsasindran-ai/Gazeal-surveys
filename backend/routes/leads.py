@@ -820,6 +820,48 @@ def _render_balgores_direct_order(lead: OrderSurveyLead, agreement_url: str) -> 
 """
 
 
+async def _dispatch_order_emails(lead: OrderSurveyLead, agreement_url: str) -> tuple:
+    """Send the order emails for either flow.
+    Returns (email_id, email_error, seller_email_id, seller_email_error)."""
+    email_id = email_error = seller_email_id = seller_email_error = None
+
+    if lead.flow == "seller_direct":
+        # Balgores seller-direct: the seller signs the agreement on-page
+        # immediately after submitting — no invite email loop. Internal
+        # team gets a white-labelled Balgores notification instead.
+        try:
+            email_id = await _send_email(
+                subject=(
+                    f"New Balgores seller survey order — "
+                    f"{lead.seller_name} ({lead.branch or 'branch not set'})"
+                ),
+                html=_render_balgores_direct_order(lead, agreement_url),
+            )
+        except Exception as exc:
+            email_error = str(exc)
+        return email_id, email_error, seller_email_id, seller_email_error
+
+    try:
+        email_id = await _send_email(
+            subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
+            html=_render_order_survey(lead, agreement_url),
+            cc=NOTIFY_CC,
+        )
+    except Exception as exc:
+        email_error = str(exc)
+
+    # Second email: send the seller their agreement link
+    try:
+        seller_email_id = await _send_email(
+            subject=f"Re: The Sale of {lead.address_line_1}, {lead.postcode}",
+            html=_render_seller_invite(lead, agreement_url),
+            to=[lead.seller_email],
+        )
+    except Exception as exc:
+        seller_email_error = str(exc)
+    return email_id, email_error, seller_email_id, seller_email_error
+
+
 async def _send_email(subject: str, html: str, to: Optional[List[str]] = None,
                       cc: Optional[List[str]] = None) -> Optional[str]:
     params = {
@@ -977,44 +1019,9 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # Reference already stamped on the lead at insert; agreement now
         # carries it too for cross-collection lookup.
 
-        email_id = None
-        email_error = None
-        seller_email_id = None
-        seller_email_error = None
-
-        if lead.flow == "seller_direct":
-            # Balgores seller-direct: the seller signs the agreement on-page
-            # immediately after submitting — no invite email loop. Internal
-            # team gets a white-labelled Balgores notification instead.
-            try:
-                email_id = await _send_email(
-                    subject=(
-                        f"New Balgores seller survey order — "
-                        f"{lead.seller_name} ({lead.branch or 'branch not set'})"
-                    ),
-                    html=_render_balgores_direct_order(lead, agreement_url),
-                )
-            except Exception as exc:
-                email_error = str(exc)
-        else:
-            try:
-                email_id = await _send_email(
-                    subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
-                    html=_render_order_survey(lead, agreement_url),
-                    cc=NOTIFY_CC,
-                )
-            except Exception as exc:
-                email_error = str(exc)
-
-            # Second email: send the seller their agreement link
-            try:
-                seller_email_id = await _send_email(
-                    subject=f"Re: The Sale of {lead.address_line_1}, {lead.postcode}",
-                    html=_render_seller_invite(lead, agreement_url),
-                    to=[lead.seller_email],
-                )
-            except Exception as exc:
-                seller_email_error = str(exc)
+        email_id, email_error, seller_email_id, seller_email_error = (
+            await _dispatch_order_emails(lead, agreement_url)
+        )
 
         # Fire the Slack ping AFTER the email attempts so we can surface
         # delivery status (quota / domain errors land visibly in Slack).

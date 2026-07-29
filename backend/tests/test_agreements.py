@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://survey-pro-10.preview.emergentagent.com").rstrip("/")
 API = f"{BASE_URL}/api"
-SAMPLE_VALID_TOKEN = "51Sk9WbNm5w"  # read-only token provided by main agent
+SAMPLE_VALID_TOKEN = os.environ.get("SAMPLE_AGREEMENT_TOKEN", "")  # read-only token, set via env
 
 # Mongo client to look up agreement tokens by lead_id (the lead response
 # doesn't surface the token; the seller receives it via email).

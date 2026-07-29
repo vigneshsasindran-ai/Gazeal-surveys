@@ -129,6 +129,238 @@ def _agreement_link_html(agreement_url: str, pd: str) -> str:
     )
 
 
+# ---------------- acceptance email / payload builders ----------------
+def _build_accept_ctx(doc: dict, lead_doc, token: str,
+                      now: str, ip: str, ua: str) -> dict:
+    """Shared values used by the acceptance emails and payloads."""
+    brand = doc.get("brand") or "gazeal"
+    tokens = _tokens(brand)
+    pd = tokens["primary_dark"]
+    accepted_label = _fmt_dt(now)
+    acceptance_rows = (
+        '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Accepted", accepted_label, primary_dark=pd)
+        + _row("IP address", ip or "unknown", primary_dark=pd)
+        + _row("Reference", token, primary_dark=pd)
+        + "</table>"
+    )
+    return {
+        "doc": doc,
+        "lead": lead_doc or {},
+        "token": token,
+        "now": now,
+        "ip": ip,
+        "ua": ua,
+        "brand": brand,
+        "tokens": tokens,
+        "pd": pd,
+        "address": f"{doc.get('address_line_1','')}, {doc.get('postcode','')}",
+        "seller_name": doc.get("seller_name") or "the seller",
+        "agent_label": " · ".join(
+            x for x in (doc.get("agent_name"), doc.get("agency_name"), doc.get("branch")) if x
+        ) or "—",
+        "agreement_url": doc.get("agreement_url")
+        or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
+        "accepted_label": accepted_label,
+        "acceptance_rows": acceptance_rows,
+    }
+
+
+def _agent_signed_email(ctx: dict) -> tuple:
+    """Notify the listing agent (or the internal team). Returns (subject, to, cc, html)."""
+    doc, pd = ctx["doc"], ctx["pd"]
+    agent_first = (doc.get("agent_name") or "").split(" ")[0] or "there"
+    body = (
+        f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {agent_first},</p>'
+        '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
+        f'<strong>{ctx["seller_name"]}</strong> has accepted the Seller Survey Agreement '
+        f'for <strong>{ctx["address"]}</strong>. RPSA has been instructed and will '
+        'contact the seller directly to arrange the survey visit.'
+        '</p>'
+        + _section_title("Acceptance record", pd)
+        + ctx["acceptance_rows"]
+        + _agreement_link_html(ctx["agreement_url"], pd)
+    )
+    html = _wrapped(
+        ctx["brand"],
+        title="The seller has signed",
+        eyebrow=f"{ctx['tokens']['brand_label']} · Agreement",
+        kicker=(
+            f"{ctx['seller_name']} accepted the Seller Survey Agreement "
+            f"for {ctx['address']}."
+        ),
+        body=body,
+        cta_href=ctx["agreement_url"],
+        cta_label="View the signed agreement",
+    )
+    agent_email_addr = doc.get("agent_email")
+    return (
+        f"Seller has signed — {ctx['seller_name']} ({ctx['address']})",
+        [agent_email_addr] if agent_email_addr else [NOTIFY_EMAIL],
+        NOTIFY_CC,
+        html,
+    )
+
+
+def _seller_confirmed_email(ctx: dict) -> tuple:
+    """Confirmation to the seller. Returns (subject, to, cc, html)."""
+    doc, pd = ctx["doc"], ctx["pd"]
+    seller_first = ctx["seller_name"].split(" ")[0]
+    body = (
+        f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {seller_first},</p>'
+        '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
+        'Thank you. Your acceptance of the Home Insight Survey Service Terms '
+        '(Version 1.0, dated 14 July 2026) for '
+        f'<strong>{ctx["address"]}</strong> has been recorded. RPSA will be in '
+        'touch shortly to arrange your survey.'
+        '</p>'
+        + _section_title("For your records", pd)
+        + ctx["acceptance_rows"]
+        + _agreement_link_html(ctx["agreement_url"], pd)
+    )
+    html = _wrapped(
+        ctx["brand"],
+        title="Your agreement is accepted",
+        eyebrow=f"{ctx['tokens']['brand_label']} · Agreement",
+        kicker=(
+            f"Thank you {seller_first}. Your acceptance for {ctx['address']} "
+            "has been recorded."
+        ),
+        body=body,
+        cta_href=ctx["agreement_url"],
+        cta_label="View your agreement",
+    )
+    return (
+        "Your Home Insight Survey agreement is confirmed",
+        [doc.get("seller_email")],
+        ["survey@gazeal.co.uk"],
+        html,
+    )
+
+
+def _rpsa_instruction_email(ctx: dict) -> tuple:
+    """Survey instruction to RPSA with full case details. Returns (subject, to, cc, html)."""
+    doc, ld, pd = ctx["doc"], ctx["lead"], ctx["pd"]
+    body = (
+        '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
+        f'<strong>{ctx["seller_name"]}</strong> has accepted the Gazeal Seller Survey '
+        f'Agreement for <strong>{ctx["address"]}</strong>. Please contact the seller '
+        'directly to book the Home Insight Survey.'
+        '</p>'
+        + _section_title("The seller", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Name", ctx["seller_name"], primary_dark=pd)
+        + _row("Email", doc.get("seller_email") or "",
+               link=f"mailto:{doc.get('seller_email','')}", primary_dark=pd)
+        + _row("Phone", ld.get("seller_phone") or "",
+               link=(f"tel:{ld.get('seller_phone')}" if ld.get("seller_phone") else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("The property", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Address", doc.get("address_line_1") or "", primary_dark=pd)
+        + _row("Postcode", doc.get("postcode") or "", primary_dark=pd)
+        + _row("Asking price", ld.get("asking_price") or "", primary_dark=pd)
+        + _row("Listing", ld.get("listing_url") or "",
+               link=ld.get("listing_url") or None, primary_dark=pd)
+        + '</table>'
+        + _section_title("The listing agent", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Agent", ctx["agent_label"], primary_dark=pd)
+        + _row("Email", doc.get("agent_email") or "",
+               link=f"mailto:{doc.get('agent_email','')}", primary_dark=pd)
+        + _row("Phone", ld.get("phone") or "",
+               link=(f"tel:{ld.get('phone')}" if ld.get("phone") else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("Acceptance record", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Accepted", ctx["accepted_label"], primary_dark=pd)
+        + _row("IP address", ctx["ip"] or "unknown", primary_dark=pd)
+        + _row("Device", ctx["ua"] or "", primary_dark=pd)
+        + _row("Reference", ctx["token"], primary_dark=pd)
+        + '</table>'
+        + _agreement_link_html(ctx["agreement_url"], pd)
+    )
+    html = _wrapped(
+        "gazeal",
+        title="New survey instruction",
+        eyebrow="Gazeal Surveys · Instruction",
+        kicker=(
+            f"The seller of {ctx['address']} has accepted the survey "
+            "agreement and is ready to be contacted."
+        ),
+        body=body,
+        cta_href=f"mailto:{doc.get('seller_email','')}",
+        cta_label="Contact the seller",
+    )
+    return (
+        f"Survey instruction — {ctx['seller_name']}, {ctx['address']} (Ref {ctx['token']})",
+        [RPSA_EMAIL],
+        ["survey@gazeal.co.uk", NOTIFY_EMAIL],
+        html,
+    )
+
+
+def _sale_room_package(ctx: dict, pricing_snapshot) -> dict:
+    doc, ld = ctx["doc"], ctx["lead"]
+    return {
+        "reference_number": doc.get("reference_number") or ctx["token"],
+        "sale_room_url": ctx["agreement_url"],
+        "status": "seller_signed",
+        "created_at": doc.get("created_at"),
+        "signed_at": ctx["now"],
+        "agent": {
+            "name": doc.get("agent_name"),
+            "agency": doc.get("agency_name"),
+            "branch": doc.get("branch"),
+            "email": doc.get("agent_email"),
+            "phone": ld.get("phone"),
+        },
+        "seller": {
+            "name": doc.get("seller_name"),
+            "email": doc.get("seller_email"),
+            "phone": ld.get("seller_phone"),
+        },
+        "property": {
+            "address_line_1": doc.get("address_line_1"),
+            "postcode": doc.get("postcode"),
+            "listing_url": ld.get("listing_url"),
+            "asking_price": ld.get("asking_price"),
+        },
+        "agreement": {
+            "reference_number": doc.get("reference_number") or ctx["token"],
+            "url": ctx["agreement_url"],
+            "accepted_at": ctx["now"],
+            "accepted_ip": ctx["ip"],
+            "accepted_user_agent": ctx["ua"],
+        },
+        "pricing_snapshot": pricing_snapshot,
+        "reservation_interest": bool(doc.get("reservation_interest")),
+    }
+
+
+def _fanout_payload(ctx: dict) -> dict:
+    doc = ctx["doc"]
+    return {
+        "id": doc.get("lead_id") or ctx["token"],
+        "kind": "agreement_signed",
+        "created_at": ctx["now"],
+        "submission_id": doc.get("lead_id"),
+        "agent_name": doc.get("agent_name"),
+        "agency_name": doc.get("agency_name"),
+        "branch": doc.get("branch"),
+        "email": doc.get("agent_email"),
+        "seller_name": doc.get("seller_name"),
+        "seller_email": doc.get("seller_email"),
+        "address_line_1": doc.get("address_line_1"),
+        "postcode": doc.get("postcode"),
+        "agreement_token": ctx["token"],
+        "agreement_url": ctx["agreement_url"],
+        "accepted_at": ctx["now"],
+    }
+
+
 # --------------------------- router ---------------------------
 class _Empty(BaseModel):
     pass
@@ -188,64 +420,17 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             update_set["pricing_snapshot"] = pricing_snapshot
         await db.agreements.update_one({"token": token}, {"$set": update_set})
 
-        address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
-        seller_name = doc.get("seller_name") or "the seller"
-        agent_label = " · ".join(
-            x for x in (doc.get("agent_name"), doc.get("agency_name"), doc.get("branch")) if x
-        ) or "—"
-        agreement_url = doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}"
-        brand = doc.get("brand") or "gazeal"
-        tokens = _tokens(brand)
-        pd = tokens["primary_dark"]
-        accepted_label = _fmt_dt(now)
-
         lead_doc = None
         if doc.get("lead_id"):
             lead_doc = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
-
-        acceptance_rows = (
-            '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
-            + _row("Accepted", accepted_label, primary_dark=pd)
-            + _row("IP address", ip or "unknown", primary_dark=pd)
-            + _row("Reference", token, primary_dark=pd)
-            + "</table>"
-        )
+        ctx = _build_accept_ctx(doc, lead_doc, token, now, ip, ua)
 
         # Notify the listing agent — internal team CC'd on the same email
         agent_email_id: Optional[str] = None
         agent_email_error: Optional[str] = None
-        agent_email_addr = doc.get("agent_email")
-        agent_first = (doc.get("agent_name") or "").split(" ")[0] or "there"
         try:
-            agent_body = (
-                f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {agent_first},</p>'
-                '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
-                f'<strong>{seller_name}</strong> has accepted the Seller Survey Agreement '
-                f'for <strong>{address}</strong>. RPSA has been instructed and will '
-                'contact the seller directly to arrange the survey visit.'
-                '</p>'
-                + _section_title("Acceptance record", pd)
-                + acceptance_rows
-                + _agreement_link_html(agreement_url, pd)
-            )
-            agent_html = _wrapped(
-                brand,
-                title="The seller has signed",
-                eyebrow=f"{tokens['brand_label']} · Agreement",
-                kicker=(
-                    f"{seller_name} accepted the Seller Survey Agreement "
-                    f"for {address}."
-                ),
-                body=agent_body,
-                cta_href=agreement_url,
-                cta_label="View the signed agreement",
-            )
-            agent_email_id = await _send(
-                subject=f"Seller has signed — {seller_name} ({address})",
-                to=[agent_email_addr] if agent_email_addr else [NOTIFY_EMAIL],
-                cc=NOTIFY_CC,
-                html=agent_html,
-            )
+            subject, to, cc, html = _agent_signed_email(ctx)
+            agent_email_id = await _send(subject=subject, to=to, cc=cc, html=html)
         except Exception as exc:
             agent_email_error = str(exc)
             logger.exception("Agent notify email failed")
@@ -253,38 +438,9 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # Confirmation to the seller
         seller_email_id: Optional[str] = None
         seller_email_error: Optional[str] = None
-        seller_first = seller_name.split(" ")[0]
         try:
-            seller_body = (
-                f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {seller_first},</p>'
-                '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
-                'Thank you. Your acceptance of the Home Insight Survey Service Terms '
-                '(Version 1.0, dated 14 July 2026) for '
-                f'<strong>{address}</strong> has been recorded. RPSA will be in '
-                'touch shortly to arrange your survey.'
-                '</p>'
-                + _section_title("For your records", pd)
-                + acceptance_rows
-                + _agreement_link_html(agreement_url, pd)
-            )
-            seller_html = _wrapped(
-                brand,
-                title="Your agreement is accepted",
-                eyebrow=f"{tokens['brand_label']} · Agreement",
-                kicker=(
-                    f"Thank you {seller_first}. Your acceptance for {address} "
-                    "has been recorded."
-                ),
-                body=seller_body,
-                cta_href=agreement_url,
-                cta_label="View your agreement",
-            )
-            seller_email_id = await _send(
-                subject="Your Home Insight Survey agreement is confirmed",
-                to=[doc.get("seller_email")],
-                cc=["survey@gazeal.co.uk"],
-                html=seller_html,
-            )
+            subject, to, cc, html = _seller_confirmed_email(ctx)
+            seller_email_id = await _send(subject=subject, to=to, cc=cc, html=html)
         except Exception as exc:
             seller_email_error = str(exc)
             logger.exception("Seller confirmation email failed")
@@ -295,109 +451,16 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         rpsa_email_id: Optional[str] = None
         rpsa_email_error: Optional[str] = None
         try:
-            ld = lead_doc or {}
-            rpsa_body = (
-                '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
-                f'<strong>{seller_name}</strong> has accepted the Gazeal Seller Survey '
-                f'Agreement for <strong>{address}</strong>. Please contact the seller '
-                'directly to book the Home Insight Survey.'
-                '</p>'
-                + _section_title("The seller", pd)
-                + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
-                + _row("Name", seller_name, primary_dark=pd)
-                + _row("Email", doc.get("seller_email") or "",
-                       link=f"mailto:{doc.get('seller_email','')}", primary_dark=pd)
-                + _row("Phone", ld.get("seller_phone") or "",
-                       link=(f"tel:{ld.get('seller_phone')}" if ld.get("seller_phone") else None),
-                       primary_dark=pd)
-                + '</table>'
-                + _section_title("The property", pd)
-                + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
-                + _row("Address", doc.get("address_line_1") or "", primary_dark=pd)
-                + _row("Postcode", doc.get("postcode") or "", primary_dark=pd)
-                + _row("Asking price", ld.get("asking_price") or "", primary_dark=pd)
-                + _row("Listing", ld.get("listing_url") or "",
-                       link=ld.get("listing_url") or None, primary_dark=pd)
-                + '</table>'
-                + _section_title("The listing agent", pd)
-                + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
-                + _row("Agent", agent_label, primary_dark=pd)
-                + _row("Email", doc.get("agent_email") or "",
-                       link=f"mailto:{doc.get('agent_email','')}", primary_dark=pd)
-                + _row("Phone", ld.get("phone") or "",
-                       link=(f"tel:{ld.get('phone')}" if ld.get("phone") else None),
-                       primary_dark=pd)
-                + '</table>'
-                + _section_title("Acceptance record", pd)
-                + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
-                + _row("Accepted", accepted_label, primary_dark=pd)
-                + _row("IP address", ip or "unknown", primary_dark=pd)
-                + _row("Device", ua or "", primary_dark=pd)
-                + _row("Reference", token, primary_dark=pd)
-                + '</table>'
-                + _agreement_link_html(agreement_url, pd)
-            )
-            rpsa_html = _wrapped(
-                "gazeal",
-                title="New survey instruction",
-                eyebrow="Gazeal Surveys · Instruction",
-                kicker=(
-                    f"The seller of {address} has accepted the survey "
-                    "agreement and is ready to be contacted."
-                ),
-                body=rpsa_body,
-                cta_href=f"mailto:{doc.get('seller_email','')}",
-                cta_label="Contact the seller",
-            )
-            rpsa_email_id = await _send(
-                subject=f"Survey instruction — {seller_name}, {address} (Ref {token})",
-                to=[RPSA_EMAIL],
-                cc=["survey@gazeal.co.uk", NOTIFY_EMAIL],
-                html=rpsa_html,
-            )
+            subject, to, cc, html = _rpsa_instruction_email(ctx)
+            rpsa_email_id = await _send(subject=subject, to=to, cc=cc, html=html)
         except Exception as exc:
             rpsa_email_error = str(exc)
             logger.exception("RPSA instruction email failed")
 
-        # Build the sale-room JSON package (transaction payload) — a single
-        # source of truth combining the agent's original order, the seller's
-        # acceptance, and the pricing snapshot. Persisted on the agreement
-        # doc and emitted to the backend log. The user will provide the
-        # downstream destination (partner API) in a future step.
-        sale_room_package = {
-            "reference_number": doc.get("reference_number") or token,
-            "sale_room_url": agreement_url,
-            "status": "seller_signed",
-            "created_at": doc.get("created_at"),
-            "signed_at": now,
-            "agent": {
-                "name": doc.get("agent_name"),
-                "agency": doc.get("agency_name"),
-                "branch": doc.get("branch"),
-                "email": doc.get("agent_email"),
-                "phone": (lead_doc or {}).get("phone"),
-            },
-            "seller": {
-                "name": doc.get("seller_name"),
-                "email": doc.get("seller_email"),
-                "phone": (lead_doc or {}).get("seller_phone"),
-            },
-            "property": {
-                "address_line_1": doc.get("address_line_1"),
-                "postcode": doc.get("postcode"),
-                "listing_url": (lead_doc or {}).get("listing_url"),
-                "asking_price": (lead_doc or {}).get("asking_price"),
-            },
-            "agreement": {
-                "reference_number": doc.get("reference_number") or token,
-                "url": agreement_url,
-                "accepted_at": now,
-                "accepted_ip": ip,
-                "accepted_user_agent": ua,
-            },
-            "pricing_snapshot": pricing_snapshot,
-            "reservation_interest": bool(doc.get("reservation_interest")),
-        }
+        # Sale-room JSON package — single source of truth combining the
+        # order, the acceptance, and the pricing snapshot. Persisted on the
+        # agreement doc and emitted to the backend log.
+        sale_room_package = _sale_room_package(ctx, pricing_snapshot)
         await db.agreements.update_one(
             {"token": token}, {"$set": {"sale_room_package": sale_room_package}}
         )
@@ -408,24 +471,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             pass
 
         # Webhook fan-out to RPSA
-        fanout_doc = {
-            "id": doc.get("lead_id") or token,
-            "kind": "agreement_signed",
-            "created_at": now,
-            "submission_id": doc.get("lead_id"),
-            "agent_name": doc.get("agent_name"),
-            "agency_name": doc.get("agency_name"),
-            "branch": doc.get("branch"),
-            "email": doc.get("agent_email"),
-            "seller_name": doc.get("seller_name"),
-            "seller_email": doc.get("seller_email"),
-            "address_line_1": doc.get("address_line_1"),
-            "postcode": doc.get("postcode"),
-            "agreement_token": token,
-            "agreement_url": doc.get("agreement_url") or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
-            "accepted_at": now,
-        }
-        await fan_out(db, "agreement.signed", fanout_doc)
+        await fan_out(db, "agreement.signed", _fanout_payload(ctx))
         notify_agreement_accepted(
             {**doc, "token": token, "accepted_ip": ip, "accepted_at": now},
             gazeal_email_id=rpsa_email_id,

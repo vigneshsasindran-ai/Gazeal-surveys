@@ -216,9 +216,9 @@ const OrderSurveyPage = () => {
                     "You add your details, your seller's details and the property listing below.",
                     "We email your seller an invite to book their survey with an accredited surveyor.",
                     "Your seller books directly. They pay nothing now. The fee is settled at completion or within six months, whichever comes first, and if the sale falls through unreasonably, they pay nothing at all.",
-                  ].map((line, i) => (
+                  ].map((line) => (
                     <li
-                      key={i}
+                      key={line}
                       className="flex items-start gap-3 font-outfit text-[14px] text-white/75 leading-relaxed"
                     >
                       <span

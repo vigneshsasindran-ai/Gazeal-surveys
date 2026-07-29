@@ -239,9 +239,9 @@ const OrderSurveyPage = () => {
                 "Tell us about you, your property and your Balgores branch below. It takes two minutes.",
                 "Review and sign your survey agreement online, straight away. No waiting for emails.",
                 "RPSA, the accredited surveyor body, contacts you directly to arrange a convenient visit. You pay nothing now. The fee is settled at completion or within six months, whichever comes first, and if the sale falls through unreasonably, you pay nothing at all.",
-              ].map((line, i) => (
+              ].map((line) => (
                 <li
-                  key={i}
+                  key={line}
                   className="flex items-start gap-3 font-outfit text-[14px] text-white/75 leading-relaxed"
                 >
                   <span
