@@ -21,7 +21,7 @@ const WITH_ITEMS = [
 ];
 
 const WITH_FEE_NOTE =
-  "Sellers do not pay survey fees if the buyer pulls out or if the sale ends for a fair reason by both parties under the terms of the agreement. The seller only pays on completion, or if they pull out of the sale unreasonably.";
+  "Nothing upfront. Settled at completion or within six months, whichever comes first. And no cost at all if the sale ends at no fault of the seller or the buyer pulls out.";
 
 const WITHOUT_ITEMS = [
   "Neither party committed to the sale",
@@ -30,7 +30,7 @@ const WITHOUT_ITEMS = [
 ];
 
 const WITHOUT_FEE_NOTE =
-  "Survey fee becomes payable after 6 months from instruction, and no protection against renegotiation on the back of the survey.";
+  "Nothing upfront. Settled at completion or within six months, whichever comes first; but the fee remains payable even if the sale falls through.";
 
 const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
   const isPositive = tone === "with";

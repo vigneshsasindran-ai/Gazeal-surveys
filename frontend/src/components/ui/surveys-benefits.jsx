@@ -34,7 +34,7 @@ const STEPS = [
 ];
 
 const SELLER_COPY =
-  "When used with a Gazeal Reservation Agreement, the seller can order an upfront survey without paying on day one. The survey is paid for only when the sale completes. If the buyer pulls out unreasonably, or if either party withdraws for a valid reason under the agreement, the seller does not pay. The buyer gets the condition information before they offer, which means fewer late surprises, less renegotiation, and a sale that has a much better chance of completing.";
+  "When used with a Gazeal Reservation Agreement, the seller can order an upfront survey without paying on day one. The survey fee is settled at completion or within six months, whichever comes first. If the buyer pulls out unreasonably, or if either party withdraws for a valid reason under the agreement, the seller does not pay. The buyer gets the condition information before they offer, which means fewer late surprises, less renegotiation, and a sale that has a much better chance of completing.";
 
 const BUYER_COPY =
   "An upfront survey gives the buyer key condition information before they make an offer. Instead of waiting weeks and then discovering a problem later, they can see the report at the start and offer with more confidence. The survey is carried out by an accredited RPSA surveyor, so the buyer gets a clearer view of the property before committing to the sale. With the condition known upfront, there are fewer surprises, less back and forth, and a much smoother route to completion.";

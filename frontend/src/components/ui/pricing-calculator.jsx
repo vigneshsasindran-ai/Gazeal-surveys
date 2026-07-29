@@ -237,7 +237,7 @@ const PricingCalculator = ({
             {formatFee(result.price)}
           </p>
           <p className="relative mt-3 font-outfit text-[13px] text-white/75">
-            Payable only when the sale completes. Nothing on the day.
+            Nothing to pay upfront. Settled at completion or within six months, whichever comes first.
           </p>
         </>
       )}

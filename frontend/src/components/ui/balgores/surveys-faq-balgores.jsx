@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "Who pays for the survey, me or the buyer?",
     answer:
-      "You do, but only on completion. You never pay up front, and if the sale collapses because the buyer pulls out, you pay nothing at all.",
+      "You do, but nothing upfront. The fee is settled at completion or within six months, whichever comes first, and if the sale collapses because the buyer pulls out, you pay nothing at all.",
   },
   {
     question: "When is the survey carried out?",

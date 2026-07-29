@@ -215,7 +215,7 @@ const OrderSurveyPage = () => {
                   {[
                     "You add your details, your seller's details and the property listing below.",
                     "We email your seller an invite to book their survey with an accredited surveyor.",
-                    "Your seller books directly. They pay nothing now. The fee is settled only when the sale completes, and if the sale falls through unreasonably, they pay nothing at all.",
+                    "Your seller books directly. They pay nothing now. The fee is settled at completion or within six months, whichever comes first, and if the sale falls through unreasonably, they pay nothing at all.",
                   ].map((line, i) => (
                     <li
                       key={i}
@@ -720,8 +720,9 @@ const OrderSurveyPage = () => {
               <p className="font-outfit text-[15px] text-white/65 max-w-[52ch] mx-auto leading-relaxed mb-8">
                 RPSA will email your seller an invite from your branch and
                 book the survey directly. You&apos;ll get a copy of the
-                report the moment it&apos;s uploaded, and they pay nothing now,
-                only when the sale completes.
+                report the moment it&apos;s uploaded, and they pay nothing
+                now. The fee is settled at completion or within six months,
+                whichever comes first.
               </p>
               <button
                 type="button"

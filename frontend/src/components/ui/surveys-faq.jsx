@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "Who pays for the survey, the seller or the buyer?",
     answer:
-      "The seller, and only on completion. They never pay up front, and if the sale collapses because the buyer pulls out, they pay nothing at all.",
+      "The seller, but nothing upfront. The fee is settled at completion or within six months, whichever comes first, and if the sale collapses because the buyer pulls out, they pay nothing at all.",
   },
   {
     question: "Does it cost me anything as an agent to offer this?",
