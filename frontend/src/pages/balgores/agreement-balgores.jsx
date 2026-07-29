@@ -179,7 +179,7 @@ const AgreementPage = () => {
         <div className="absolute inset-x-0 top-0 h-[480px] pointer-events-none"
              style={{ background: "radial-gradient(60% 60% at 50% 0%, rgba(26,20,52,0.22) 0%, rgba(26,20,52,0) 60%)" }} />
 
-        <div className={`relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40 ${pending ? "pb-44" : "pb-24"}`}>
+        <div className="relative max-w-3xl mx-auto px-6 pt-32 lg:pt-40">
           {/* Status banner */}
           {accepted && (
             <div className="mb-8 rounded-2xl border border-[#B8AB84]/35 bg-gradient-to-br from-[#B8AB84]/[0.12] to-[#1A1434]/[0.06] p-5 flex items-start gap-4"
@@ -278,7 +278,14 @@ const AgreementPage = () => {
               <span className="text-white/85 font-semibold">Version 1.0, dated 14th July 2026.</span>
             </p>
           </div>
+        </div>
 
+        {/* Why order your survey before you sell? — read before the terms */}
+        <div className="print-hide mt-14 lg:mt-16">
+          <SellerAdvantage eyebrow="You pay nothing today when ordering the survey" />
+        </div>
+
+        <div className="relative max-w-3xl mx-auto px-6">
           {/* Clauses — flow inline with page scroll (no nested scroll box) */}
           <div className="mt-10 space-y-7" data-testid="agreement-clauses">
             {CLAUSES.map((c) => (
@@ -320,11 +327,6 @@ const AgreementPage = () => {
             initialListed={data.pricing_snapshot?.listed_status || undefined}
             onChange={setPricingSnapshot}
           />
-        </div>
-
-        {/* Why order your survey before you sell? */}
-        <div className="print-hide mt-16 lg:mt-20">
-          <SellerAdvantage eyebrow="You pay nothing today when ordering the survey" />
         </div>
 
         {/* Reservation Agreement explainer + interest checkbox */}
