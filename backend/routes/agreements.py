@@ -26,6 +26,7 @@ from slack_notify import notify_agreement_accepted, notify_reservation_interest
 from routes.leads import (
     _EMAIL_WRAPPER,
     _LOGO_URL,
+    _first_name,
     _partner_logo_html,
     _row,
     _section_title,
@@ -52,7 +53,7 @@ def public_context(agreement: dict) -> dict:
         "reference_number": agreement.get("reference_number") or agreement["token"],
         "status": agreement.get("status", "pending"),
         "seller": {
-            "first_name": (agreement.get("seller_name") or "").split(" ")[0]
+            "first_name": _first_name(agreement.get("seller_name"))
             or "there",
             "full_name": agreement.get("seller_name"),
         },
@@ -186,7 +187,7 @@ def _prev_declined_note(ctx: dict) -> str:
 def _agent_signed_email(ctx: dict) -> tuple:
     """Notify the listing agent (or the internal team). Returns (subject, to, cc, html)."""
     doc, pd = ctx["doc"], ctx["pd"]
-    agent_first = (doc.get("agent_name") or "").split(" ")[0] or "there"
+    agent_first = _first_name(doc.get("agent_name"))
     body = (
         f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {agent_first},</p>'
         '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
@@ -223,7 +224,7 @@ def _agent_signed_email(ctx: dict) -> tuple:
 def _seller_confirmed_email(ctx: dict) -> tuple:
     """Confirmation to the seller. Returns (subject, to, cc, html)."""
     doc, pd = ctx["doc"], ctx["pd"]
-    seller_first = ctx["seller_name"].split(" ")[0]
+    seller_first = _first_name(ctx["seller_name"])
     body = (
         f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {seller_first},</p>'
         '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'

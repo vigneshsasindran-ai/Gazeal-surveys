@@ -28,6 +28,18 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from webhooks import fan_out
+
+_TITLES = {"mr", "mrs", "ms", "miss", "dr", "prof", "professor", "sir",
+           "dame", "mx", "rev", "lady", "lord", "capt", "captain", "major"}
+
+
+def _first_name(full_name, fallback: str = "there") -> str:
+    """First name skipping honorifics: 'Mr Vignesh Sasindran' -> 'Vignesh'."""
+    parts = [p for p in (full_name or "").replace(".", " ").split() if p]
+    for p in parts:
+        if p.lower() not in _TITLES:
+            return p
+    return fallback
 from slack_notify import notify_order_submitted
 
 logger = logging.getLogger(__name__)
@@ -417,7 +429,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
               Re: The Sale of {address}
             </h1>
             <p style="margin:0;font-size:15px;color:#0B1220;">
-              Hi {lead.seller_name.split(' ')[0] if lead.seller_name else 'there'},
+              Hi {_first_name(lead.seller_name)},
             </p>
           </td>
         </tr>
