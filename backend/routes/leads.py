@@ -1023,6 +1023,18 @@ def build_router(db: AsyncIOMotorDatabase) -> APIRouter:
             await _dispatch_order_emails(lead, agreement_url)
         )
 
+        # Persist the email audit on the agreement so every record carries
+        # proof of what was sent at order time.
+        order_audit = {
+            "email_audit_order": {
+                "internal": {"id": email_id, "error": email_error},
+                "seller_invite": {"id": seller_email_id, "error": seller_email_error},
+            }
+        }
+        if seller_email_id:
+            order_audit["seller_invite_sent_at"] = doc["created_at"]
+        await db.agreements.update_one({"token": agreement_token}, {"$set": order_audit})
+
         # Fire the Slack ping AFTER the email attempts so we can surface
         # delivery status (quota / domain errors land visibly in Slack).
         notify_order_submitted(

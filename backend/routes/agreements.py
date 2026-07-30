@@ -68,6 +68,11 @@ def public_context(agreement: dict) -> dict:
         "accepted_at": agreement.get("accepted_at"),
         "accepted_ip": agreement.get("accepted_ip"),
         "declined_at": agreement.get("declined_at"),
+        "previously_declined_at": agreement.get("previously_declined_at"),
+        "created_at": agreement.get("created_at"),
+        "flow": agreement.get("flow") or "agent",
+        "seller_invite_sent_at": agreement.get("seller_invite_sent_at"),
+        "rpsa_instructed_at": agreement.get("rpsa_instructed_at"),
         "reservation_interest": bool(agreement.get("reservation_interest")),
         "reservation_interest_at": agreement.get("reservation_interest_at"),
         "pricing_snapshot": agreement.get("pricing_snapshot"),
@@ -163,7 +168,19 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
         or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
         "accepted_label": accepted_label,
         "acceptance_rows": acceptance_rows,
+        "previously_declined_at": doc.get("previously_declined_at"),
     }
+
+
+def _prev_declined_note(ctx: dict) -> str:
+    prev = ctx.get("previously_declined_at")
+    if not prev:
+        return ""
+    return (
+        '<p style="margin:0 0 8px;font-size:13px;color:#6B7280;line-height:1.6;">'
+        f'Note: the seller previously declined these terms on {_fmt_dt(prev)} '
+        'and has since reconsidered and accepted.</p>'
+    )
 
 
 def _agent_signed_email(ctx: dict) -> tuple:
@@ -177,6 +194,7 @@ def _agent_signed_email(ctx: dict) -> tuple:
         f'for <strong>{ctx["address"]}</strong>. RPSA has been instructed and will '
         'contact the seller directly to arrange the survey visit.'
         '</p>'
+        + _prev_declined_note(ctx)
         + _section_title("Acceptance record", pd)
         + ctx["acceptance_rows"]
         + _agreement_link_html(ctx["agreement_url"], pd)
@@ -233,7 +251,7 @@ def _seller_confirmed_email(ctx: dict) -> tuple:
     return (
         "Your Home Insight Survey agreement is confirmed",
         [doc.get("seller_email")],
-        ["survey@gazeal.co.uk"],
+        ["vignesh.sasindran@gazeal.co.uk"],  # TEST-REDIRECT: restore to survey@gazeal.co.uk
         html,
     )
 
@@ -247,6 +265,7 @@ def _rpsa_instruction_email(ctx: dict) -> tuple:
         f'Agreement for <strong>{ctx["address"]}</strong>. Please contact the seller '
         'directly to book the Home Insight Survey.'
         '</p>'
+        + _prev_declined_note(ctx)
         + _section_title("The seller", pd)
         + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
         + _row("Name", ctx["seller_name"], primary_dark=pd)
@@ -297,7 +316,7 @@ def _rpsa_instruction_email(ctx: dict) -> tuple:
     return (
         f"Survey instruction — {ctx['seller_name']}, {ctx['address']} (Ref {ctx['token']})",
         [RPSA_EMAIL],
-        ["survey@gazeal.co.uk", NOTIFY_EMAIL],
+        [NOTIFY_EMAIL],  # TEST-REDIRECT: restore to ["survey@gazeal.co.uk", NOTIFY_EMAIL]
         html,
     )
 
@@ -461,9 +480,17 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # order, the acceptance, and the pricing snapshot. Persisted on the
         # agreement doc and emitted to the backend log.
         sale_room_package = _sale_room_package(ctx, pricing_snapshot)
-        await db.agreements.update_one(
-            {"token": token}, {"$set": {"sale_room_package": sale_room_package}}
-        )
+        audit_set = {
+            "sale_room_package": sale_room_package,
+            "email_audit_acceptance": {
+                "agent_notify": {"id": agent_email_id, "error": agent_email_error},
+                "seller_confirmation": {"id": seller_email_id, "error": seller_email_error},
+                "rpsa_instruction": {"id": rpsa_email_id, "error": rpsa_email_error},
+            },
+        }
+        if rpsa_email_id:
+            audit_set["rpsa_instructed_at"] = now
+        await db.agreements.update_one({"token": token}, {"$set": audit_set})
         try:
             import json as _json
             logger.info("SALE_ROOM_PACKAGE %s", _json.dumps(sale_room_package))
@@ -496,7 +523,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         now = datetime.now(timezone.utc).isoformat()
         await db.agreements.update_one(
-            {"token": token}, {"$set": {"status": "declined", "declined_at": now}}
+            {"token": token},
+            {
+                "$set": {"status": "declined", "declined_at": now},
+                "$push": {"status_history": {"action": "declined", "at": now}},
+            },
         )
         seller_name = doc.get("seller_name") or "the seller"
         address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
@@ -517,6 +548,58 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             logger.exception("Decline notify failed")
 
         return {"status": "declined", "declined_at": now}
+
+    @router.post("/{token}/reopen")
+    async def reopen(token: str):
+        """A seller who declined can re-open the agreement and accept it —
+        the decline stays on record via status_history."""
+        doc = await db.agreements.find_one({"token": token})
+        if not doc:
+            raise HTTPException(404, "Agreement not found")
+        if doc.get("status") == "accepted":
+            raise HTTPException(409, "Agreement already accepted")
+        if doc.get("status") != "declined":
+            return {"status": doc.get("status", "pending")}
+
+        now = datetime.now(timezone.utc).isoformat()
+        prior_declined = doc.get("declined_at")
+        await db.agreements.update_one(
+            {"token": token},
+            {
+                "$set": {
+                    "status": "pending",
+                    "previously_declined_at": prior_declined,
+                    "reopened_at": now,
+                },
+                "$unset": {"declined_at": ""},
+                "$push": {
+                    "status_history": {
+                        "action": "reopened",
+                        "at": now,
+                        "prior_declined_at": prior_declined,
+                    }
+                },
+            },
+        )
+        seller_name = doc.get("seller_name") or "the seller"
+        address = f"{doc.get('address_line_1','')}, {doc.get('postcode','')}"
+        try:
+            await _send(
+                subject=f"Seller re-opened a declined agreement — {seller_name} ({address})",
+                to=[NOTIFY_EMAIL],
+                html=f"""
+                <h2 style="font-family:Arial,sans-serif;color:#025eba;">Seller is reconsidering</h2>
+                <p style="font-family:Arial,sans-serif;font-size:14px;color:#0B1220;">
+                  <strong>{seller_name}</strong> re-opened the Seller Survey Agreement
+                  for <strong>{address}</strong> after declining it on {_fmt_dt(prior_declined) if prior_declined else 'an earlier date'}.
+                  They are reviewing the terms again now — you'll be notified if they accept.
+                </p>
+                """,
+            )
+        except Exception:
+            logger.exception("Reopen notify failed")
+
+        return {"status": "pending", "reopened_at": now}
 
     @router.post("/{token}/express-interest")
     async def express_interest(token: str):

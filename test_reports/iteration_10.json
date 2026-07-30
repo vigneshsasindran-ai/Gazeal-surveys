@@ -1,0 +1,23 @@
+{
+  "summary": "Verified the three new features (persisted email audit trail, seller 'Where things stand' timeline, decline→reopen→accept reconsider cycle) end-to-end. Backend: 7/7 pytest cases pass covering agent-flow audit + public_context fields, seller_direct suppression of invite email, full decline→reopen→accept cycle with Mongo status_history + email_audit_acceptance, and all edge cases (reopen on accepted → 409, reopen on pending no-op, accept on declined → 409). Frontend UI verified: Gazeal /agreement/{token} renders timeline (4 steps: Survey ordered, Agreement emailed to you, You agree to the terms current, RPSA contacts you upcoming), decline surfaces reopen banner + declined X step, reopen returns page to pending (sticky bar + current step), accept ticks all 4 steps with dates including 'RPSA instructed to contact you'. Balgores /balgores/agreement/{token} seller_direct renders exactly 3 steps starting 'You ordered your survey' with gold styling. Regression on legacy token 1mikRpd52Rg passes — all 4 steps ticked, RPSA step falls back to accepted_at.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_new_features.py",
+    "/app/test_reports/pytest/pytest_new_features.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "agreements.py:_seller_confirmed_email — if doc.get('seller_email') is None (edge case for seller_direct where the seller somehow lacks an email), resend will 422 and be swallowed; already noted in prior iterations.",
+    "public_context returns previously_declined_at only when set on the doc — page correctly treats null as never-declined. No change needed.",
+    "Timeline component's `key={s.label}` will collide if labels ever duplicate (they don't today). Prefer stable id keys as a hardening."
+  ],
+  "updated_files": ["/app/backend/tests/test_new_features.py"],
+  "success_rate": {"backend": "100% (7/7 new + prior suites unchanged)", "frontend": "100%"},
+  "seed_data_creation": "Backend tests each create fresh gazeal-agent leads with seller_email=delivered@resend.dev (Resend testing sink) to avoid real email delivery while still exercising email_audit_* persistence. UI tests used tokens 4SJOJRmBjUM (gazeal agent, ended accepted) and Vy12LUPB8qc (balgores seller_direct, still pending).",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": false,
+  "test_credentials": "None — public endpoints.",
+  "context_for_next_testing_agent": "Backend test file /app/backend/tests/test_new_features.py covers the reopen cycle and audit trail. Use seller_email='delivered@resend.dev' (Resend testing sink) not example.com — Resend rejects example.com and it silently null-nulls email_audit ids, which will make audit assertions fail even though the code path is correct. Old-token regression skips gracefully if token 1mikRpd52Rg is missing from db.",
+  "rca_of_the_issue": "N/A — all features work as specified. Initial two failing tests were caused by Resend rejecting example.com addresses; switched to delivered@resend.dev and all pass."
+}

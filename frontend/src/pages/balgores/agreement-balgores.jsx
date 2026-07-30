@@ -5,6 +5,7 @@ import SurveysHeader from "@/components/ui/balgores/surveys-header-balgores";
 import ReservationExplainer from "@/components/ui/balgores/reservation-explainer-balgores";
 import PricingCalculator from "@/components/ui/balgores/pricing-calculator-balgores";
 import SellerAdvantage from "@/components/ui/balgores/seller-advantage-balgores";
+import AgreementTimeline from "@/components/ui/balgores/agreement-timeline-balgores";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -228,8 +229,25 @@ const AgreementPage = () => {
           {declined && (
             <div className="mb-8 rounded-2xl border border-[#FF8A8A]/30 bg-[#FF8A8A]/[0.07] p-5"
                  data-testid="agreement-status-declined">
-              <p className="font-archivo font-bold text-[15px] text-white">Agreement was declined</p>
-              <p className="font-outfit text-[13px] text-white/70 mt-1">Please contact your agent if you'd like to revisit the terms.</p>
+              <p className="font-archivo font-bold text-[15px] text-white">
+                You declined these terms{data.declined_at ? ` on ${new Date(data.declined_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}` : ""}
+              </p>
+              <p className="font-outfit text-[13px] text-white/70 mt-1">
+                Changed your mind? You can review the terms again and accept them below. If you have any questions, please contact your agent.
+              </p>
+              <button
+                type="button"
+                onClick={() => post("reopen")}
+                disabled={busy}
+                className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-outfit font-semibold text-[13px] text-white disabled:opacity-50 transition-all hover:opacity-90"
+                style={{ background: "#B8AB84", boxShadow: "0 6px 20px rgba(26,20,52,0.4)" }}
+                data-testid="agreement-reopen"
+              >
+                Review the terms again
+              </button>
+              {actionErr && (
+                <p className="font-outfit text-[12px] text-[#FF8A8A] mt-3" data-testid="agreement-reopen-error">{actionErr}</p>
+              )}
             </div>
           )}
 
@@ -278,6 +296,8 @@ const AgreementPage = () => {
               <span className="text-white/85 font-semibold">Version 1.0, dated 14th July 2026.</span>
             </p>
           </div>
+
+          <AgreementTimeline data={data} />
         </div>
 
         {/* Why order your survey before you sell? — read before the terms */}
