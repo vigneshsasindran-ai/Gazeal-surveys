@@ -16,6 +16,7 @@ import SurveysLearnMoreModal from "@/components/ui/surveys-learn-more-modal";
 import OrderSurveyPage from "@/pages/order-survey";
 import AgreementPage from "@/pages/agreement";
 import PricingPage from "@/pages/pricing";
+import AdminPage from "@/pages/admin";
 import IntroPage from "@/pages/intro";
 import LaunchPage from "@/pages/launch";
 
@@ -160,6 +161,7 @@ function App() {
         <Route path="/order-survey" element={<OrderSurveyPage />} />
         <Route path="/agreement/:token" element={<AgreementPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         {/* Unlisted video intro page — not linked from the main nav */}
         <Route path="/intro" element={<IntroPage />} />
         <Route path="/launch" element={<LaunchPage />} />
