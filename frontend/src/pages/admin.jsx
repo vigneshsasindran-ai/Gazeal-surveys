@@ -186,18 +186,22 @@ const LoginCard = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-6">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.03] p-8" data-testid="admin-login-form">
-        <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#4FB6FF]">Gazeal Surveys</p>
-        <h1 className="font-archivo font-bold text-white text-[24px] mt-1">Admin panel</h1>
-        <div className="mt-6 space-y-4">
+    <div className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#025eba" }}>
+      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-white/20 bg-white/[0.08] backdrop-blur-sm p-8" data-testid="admin-login-form">
+        <img
+          src="https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/k9mairc3_Gazeal%20surveys%20logo.png"
+          alt="Gazeal Surveys"
+          className="h-10 w-auto mx-auto"
+          data-testid="admin-login-logo"
+        />
+        <div className="mt-8 space-y-4">
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
             autoComplete="username"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
+            className="w-full px-4 py-3 rounded-xl bg-black/20 border border-white/25 text-white placeholder-white/50 font-outfit text-[14px] focus:outline-none focus:border-white/60 transition-colors"
             data-testid="admin-login-username"
           />
           <input
@@ -206,7 +210,7 @@ const LoginCard = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             autoComplete="current-password"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-white/40 font-outfit text-[14px] focus:outline-none focus:border-[#4FB6FF]/60 transition-colors"
+            className="w-full px-4 py-3 rounded-xl bg-black/20 border border-white/25 text-white placeholder-white/50 font-outfit text-[14px] focus:outline-none focus:border-white/60 transition-colors"
             data-testid="admin-login-password"
           />
         </div>
@@ -214,8 +218,7 @@ const LoginCard = ({ onLogin }) => {
         <button
           type="submit"
           disabled={busy || !username || !password}
-          className="mt-6 w-full rounded-full py-3 font-outfit font-semibold text-[14px] text-white disabled:opacity-50 transition-all hover:opacity-90"
-          style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)" }}
+          className="mt-6 w-full rounded-full py-3 font-outfit font-semibold text-[14px] text-[#025eba] bg-white disabled:opacity-50 transition-all hover:opacity-90"
           data-testid="admin-login-submit"
         >
           {busy ? "Signing in..." : "Sign in"}
