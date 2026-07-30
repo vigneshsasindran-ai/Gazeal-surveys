@@ -251,7 +251,7 @@ def _seller_confirmed_email(ctx: dict) -> tuple:
     return (
         "Your Home Insight Survey agreement is confirmed",
         [doc.get("seller_email")],
-        ["vignesh.sasindran@gazeal.co.uk"],  # TEST-REDIRECT: restore to survey@gazeal.co.uk
+        ["survey@gazeal.co.uk"],
         html,
     )
 
@@ -316,7 +316,7 @@ def _rpsa_instruction_email(ctx: dict) -> tuple:
     return (
         f"Survey instruction — {ctx['seller_name']}, {ctx['address']} (Ref {ctx['token']})",
         [RPSA_EMAIL],
-        [NOTIFY_EMAIL],  # TEST-REDIRECT: restore to ["survey@gazeal.co.uk", NOTIFY_EMAIL]
+        ["survey@gazeal.co.uk", NOTIFY_EMAIL],
         html,
     )
 
