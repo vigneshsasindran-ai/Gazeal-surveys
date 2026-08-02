@@ -11,6 +11,7 @@ import {
   ExternalLink,
   RefreshCw,
 } from "lucide-react";
+import AdminInsights from "@/components/ui/admin-insights";
 
 /*
  * Internal admin panel — /admin
@@ -378,6 +379,9 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+
+        {/* Insights (collapsible charts) */}
+        {data && <AdminInsights orders={data.orders} />}
 
         {/* Tabs + filters */}
         <div className="flex flex-wrap items-center gap-3 mb-5">
