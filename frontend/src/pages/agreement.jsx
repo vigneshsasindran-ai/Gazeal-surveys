@@ -114,6 +114,8 @@ const AgreementPage = () => {
     return () => obs.disconnect();
   }, [data]);
 
+  const [riskAck, setRiskAck] = useState(false);
+
   const post = async (action) => {
     setBusy(true);
     setActionErr("");
@@ -123,7 +125,11 @@ const AgreementPage = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(action === "accept" && pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}),
+          body: JSON.stringify(
+            action === "accept"
+              ? { risk_ack: riskAck, ...(pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}) }
+              : {}
+          ),
         }
       );
       if (!res.ok) {
@@ -348,6 +354,35 @@ const AgreementPage = () => {
             token={data.token}
             initialInterest={!!data.reservation_interest}
           />
+
+          {pending && (
+            <label
+              className={`mt-6 flex items-start gap-4 cursor-pointer rounded-2xl border p-5 transition-colors ${
+                riskAck ? "border-[#4FB6FF]/50 bg-[#4FB6FF]/[0.05]" : "border-white/15 bg-white/[0.02] hover:border-white/30"
+              }`}
+              data-testid="agreement-risk-ack"
+            >
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={riskAck}
+                onChange={(e) => setRiskAck(e.target.checked)}
+              />
+              <span
+                className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-[2px] transition-all ${
+                  riskAck ? "border-transparent" : "border-white/35"
+                }`}
+                style={riskAck ? { background: "linear-gradient(135deg,#4FB6FF,#025eba)" } : {}}
+              >
+                {riskAck && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+              </span>
+              <span className="font-outfit text-[13.5px] text-white/80 leading-relaxed">
+                I understand that proceeding with my sale{" "}
+                <span className="text-white font-semibold">without a Gazeal Reservation Agreement</span>{" "}
+                allows my buyer to walk away or renegotiate at any point, without any protection for me.
+              </span>
+            </label>
+          )}
         </div>
 
         {/* Sticky action bar — only shown while pending */}
@@ -358,7 +393,11 @@ const AgreementPage = () => {
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
                      data-testid="agreement-scroll-hint">
                   {unlocked ? (
-                    <span className="text-[#4FB6FF]">Thank you — you're ready to confirm.</span>
+                    riskAck ? (
+                      <span className="text-[#4FB6FF]">Thank you — you're ready to confirm.</span>
+                    ) : (
+                      <span className="text-white/70">One last step: please tick the confirmation above to enable Agree.</span>
+                    )
                   ) : (
                     <>
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -372,7 +411,7 @@ const AgreementPage = () => {
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked}
+                  <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked || !riskAck}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
                           data-testid="agreement-accept">

@@ -408,8 +408,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
         # Optional pricing snapshot captured from the calculator on the page.
         pricing_snapshot: Optional[dict] = None
+        risk_ack = False
         try:
             body = await request.json()
+            if isinstance(body, dict):
+                risk_ack = bool(body.get("risk_ack"))
             snap = body.get("pricing_snapshot") if isinstance(body, dict) else None
             if isinstance(snap, dict):
                 pricing_snapshot = {
@@ -435,6 +438,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_ip": ip,
             "accepted_ua": ua,
             "terms_version": "1.0 (14 July 2026)",
+            "risk_acknowledged": risk_ack,
         }
         if pricing_snapshot is not None:
             update_set["pricing_snapshot"] = pricing_snapshot
