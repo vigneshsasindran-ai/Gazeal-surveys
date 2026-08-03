@@ -67,6 +67,12 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Tested: 15/15 backend pytest (tests/test_agreements.py incl. new test_accept_requires_risk_ack), safe e2e accept on both brands with redirected recipients (email_audit_acceptance recorded all 3 email IDs), recipients restored, demo tokens hEcjMBDNcro/j3je4PfutiA reset to pending.
 - Also confirmed: Balgores orders (flow=seller_direct) appear in /admin panel alongside Gazeal orders (no brand filter in panel.py), with status, stages timeline, branch and agreement link.
 
+## Aug 2026: Admin panel — fee countdown + reservation dropdown (VERIFIED)
+- Signed orders show a colour-coded fee badge next to the Signed label: "Fee due in X mo Y days" (green), amber in the final month, red "Fee overdue" past 6 calendar months from accepted_at. Expanded detail shows "Fee due by <date>".
+- Per-order "Reservation Agreement on this order" dropdown (Not set / Yes / No), saved instantly via PATCH /api/panel/leads/{id}/reservation → lead.reservation_status; small badge on the row (blue Yes / grey No). Informational only, does not affect the countdown.
+- Excel export gained "Reservation" and "Fee Due By" columns.
+- Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

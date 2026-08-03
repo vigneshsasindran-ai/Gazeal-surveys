@@ -53,6 +53,66 @@ const StatusBadge = ({ status }) => (
   </span>
 );
 
+/* ---------- fee due countdown (6 months from signing) ---------- */
+const addMonths = (d, n) => {
+  const r = new Date(d);
+  const day = r.getDate();
+  r.setMonth(r.getMonth() + n);
+  if (r.getDate() < day) r.setDate(0);
+  return r;
+};
+
+const feeCountdown = (acceptedIso) => {
+  if (!acceptedIso) return null;
+  const due = addMonths(new Date(acceptedIso), 6);
+  const now = new Date();
+  if (now >= due) return { overdue: true, due };
+  let months = (due.getFullYear() - now.getFullYear()) * 12 + (due.getMonth() - now.getMonth());
+  if (addMonths(now, months) > due) months -= 1;
+  const days = Math.ceil((due - addMonths(now, months)) / 86400000);
+  return { overdue: false, months, days, due };
+};
+
+const FeeDueBadge = ({ acceptedAt }) => {
+  const c = feeCountdown(acceptedAt);
+  if (!c) return null;
+  const style = c.overdue
+    ? "bg-red-500/15 text-red-300 border-red-500/30"
+    : c.months === 0
+    ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+    : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+  const label = c.overdue
+    ? "Fee overdue"
+    : c.months > 0
+    ? `Fee due in ${c.months} mo${c.days > 0 ? ` ${c.days} ${c.days === 1 ? "day" : "days"}` : ""}`
+    : `Fee due in ${c.days} ${c.days === 1 ? "day" : "days"}`;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-outfit text-[11px] font-semibold tracking-wide whitespace-nowrap ${style}`}
+      title={`Fee due by ${fmt(c.due.toISOString(), false)}`}
+      data-testid="fee-due-badge"
+    >
+      {label}
+    </span>
+  );
+};
+
+const ReservationBadge = ({ value }) => {
+  if (!value) return null;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-outfit text-[11px] font-semibold tracking-wide whitespace-nowrap ${
+        value === "yes"
+          ? "bg-[#4FB6FF]/12 text-[#4FB6FF] border-[#4FB6FF]/35"
+          : "bg-white/[0.04] text-white/55 border-white/20"
+      }`}
+      data-testid={`reservation-badge-${value}`}
+    >
+      {value === "yes" ? "Reservation: Yes" : "Reservation: No"}
+    </span>
+  );
+};
+
 /* ---------- process timeline (simple visual) ---------- */
 const StageDot = ({ done, declined }) => (
   <span
@@ -303,6 +363,23 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   };
 
+  const updateReservation = async (id, value) => {
+    setData((d) => ({ ...d, orders: d.orders.map((o) => (o.id === id ? { ...o, reservation: value } : o)) }));
+    try {
+      const res = await authFetch(`/leads/${id}/reservation`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservation: value }),
+      });
+      if (!res.ok) throw new Error();
+    } catch (e) {
+      if (e.message !== "Session expired") {
+        setLoadErr("Couldn't save the reservation setting. Try again.");
+        load();
+      }
+    }
+  };
+
   const confirmDelete = async () => {
     setDeleteBusy(true);
     try {
@@ -424,6 +501,8 @@ export default function AdminPage() {
                   <span className="font-outfit text-[13px] text-white/65 flex-1 min-w-[180px] truncate">{o.address}{o.postcode ? `, ${o.postcode}` : ""}</span>
                   <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
                   <StatusBadge status={o.status} />
+                  {o.status === "accepted" && <FeeDueBadge acceptedAt={o.stages?.accepted_at} />}
+                  <ReservationBadge value={o.reservation} />
                   {expanded === o.id ? <ChevronUp className="w-4 h-4 text-white/50" /> : <ChevronDown className="w-4 h-4 text-white/50" />}
                 </button>
                 {expanded === o.id && (
@@ -438,6 +517,22 @@ export default function AdminPage() {
                       <p className="text-white/55">Asking price <span className="text-white block">{o.asking_price || "—"}</span></p>
                       <p className="text-white/55">Agent email <span className="text-white block">{o.agent_email || "—"}</span></p>
                       <p className="text-white/55">Listing <span className="text-white block break-all">{o.listing_url || "—"}</span></p>
+                      {o.status === "accepted" && o.stages?.accepted_at && (
+                        <p className="text-white/55">Fee due by <span className="text-white block" data-testid={`fee-due-date-${o.reference}`}>{fmt(addMonths(new Date(o.stages.accepted_at), 6).toISOString(), false)}</span></p>
+                      )}
+                    </div>
+                    <div className="mt-5 flex items-center gap-3">
+                      <span className="font-outfit text-[13px] text-white/55">Reservation Agreement on this order</span>
+                      <select
+                        value={o.reservation || ""}
+                        onChange={(e) => updateReservation(o.id, e.target.value)}
+                        className="rounded-full bg-white/5 border border-white/20 text-white font-outfit text-[12.5px] font-semibold px-3.5 py-2 focus:outline-none focus:border-[#4FB6FF]/60 transition-colors cursor-pointer [&>option]:bg-[#0b0b0d]"
+                        data-testid={`order-reservation-select-${o.reference}`}
+                      >
+                        <option value="">Not set</option>
+                        <option value="yes">Reservation: Yes</option>
+                        <option value="no">Reservation: No</option>
+                      </select>
                     </div>
                     <div className="mt-5 flex flex-wrap gap-3">
                       {o.agreement_url && (

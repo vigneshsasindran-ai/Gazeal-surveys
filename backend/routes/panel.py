@@ -71,6 +71,25 @@ class LoginBody(BaseModel):
     password: str
 
 
+class ReservationBody(BaseModel):
+    reservation: str = ""
+
+
+def _fee_due_date(accepted_iso: str | None) -> datetime | None:
+    """Fee falls due 6 calendar months after signing."""
+    if not accepted_iso:
+        return None
+    try:
+        d = datetime.fromisoformat(accepted_iso)
+    except Exception:
+        return None
+    import calendar
+    m = d.month + 6
+    y = d.year + (m - 1) // 12
+    m = (m - 1) % 12 + 1
+    return d.replace(year=y, month=m, day=min(d.day, calendar.monthrange(y, m)[1]))
+
+
 def _stage_timestamps(lead: dict, ag: dict | None) -> dict:
     ag = ag or {}
     return {
@@ -151,6 +170,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                         "asking_price": lead.get("asking_price") or "",
                         "listing_url": lead.get("listing_url") or "",
                         "agreement_url": (ag or {}).get("agreement_url") or "",
+                        "reservation": lead.get("reservation_status") or "",
                         "stages": _stage_timestamps(lead, ag),
                     }
                 )
@@ -166,6 +186,16 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                     }
                 )
         return {"orders": orders, "enquiries": enquiries}
+
+    @router.patch("/leads/{lead_id}/reservation")
+    async def set_reservation(lead_id: str, body: ReservationBody, response: Response, _: None = Depends(require_panel_auth)):
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        if body.reservation not in ("", "yes", "no"):
+            raise HTTPException(422, "reservation must be '', 'yes' or 'no'")
+        r = await db.leads.update_one({"id": lead_id}, {"$set": {"reservation_status": body.reservation}})
+        if r.matched_count == 0:
+            raise HTTPException(404, "Lead not found")
+        return {"id": lead_id, "reservation": body.reservation}
 
     @router.delete("/leads/{lead_id}")
     async def delete_lead(lead_id: str, response: Response, _: None = Depends(require_panel_auth)):
@@ -196,7 +226,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
         headers = ["Submitted", "Reference", "Brand", "Status", "Agent", "Agency", "Branch",
                    "Agent Email", "Seller", "Seller Email", "Seller Phone", "Address",
                    "Postcode", "Asking Price", "Agreement Emailed", "Accepted", "Declined",
-                   "RPSA Instructed", "Agreement Link"]
+                   "RPSA Instructed", "Reservation", "Fee Due By", "Agreement Link"]
         ws.append(headers)
         def _d(iso):
             try:
@@ -213,6 +243,8 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 lead.get("seller_phone") or "", lead.get("address_line_1") or "", lead.get("postcode") or "",
                 lead.get("asking_price") or "", _d(ag.get("seller_invite_sent_at")),
                 _d(ag.get("accepted_at")), _d(ag.get("declined_at")), _d(ag.get("rpsa_instructed_at")),
+                (lead.get("reservation_status") or "").capitalize(),
+                (lambda due: due.strftime("%d %b %Y") if due else "")(_fee_due_date(ag.get("accepted_at"))),
                 ag.get("agreement_url") or "",
             ])
         ws2 = wb.create_sheet("Learn More Enquiries")
@@ -221,7 +253,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
             ws2.append([_d(lead.get("created_at")), lead.get("name") or lead.get("agent_name") or "",
                         lead.get("agency") or lead.get("agency_name") or "",
                         lead.get("email") or "", lead.get("brand") or "gazeal"])
-        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 18, 18, 18, 18, 40]),
+        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 18, 18, 18, 18, 12, 14, 40]),
                               (ws2, [18, 18, 24, 28, 10])):
             for i, w in enumerate(widths, 1):
                 sheet.column_dimensions[get_column_letter(i)].width = w
