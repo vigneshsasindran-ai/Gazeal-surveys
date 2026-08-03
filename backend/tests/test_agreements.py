@@ -143,9 +143,16 @@ class TestAgreementUrlDerivation:
 
 # --------------------- ACCEPT FLOW ---------------------
 class TestAcceptFlow:
+    def test_accept_requires_risk_ack(self):
+        token, _ = _create_agreement()
+        r = requests.post(f"{API}/agreements/{token}/accept", timeout=15)
+        assert r.status_code == 422, f"Expected 422 without risk_ack, got {r.status_code}: {r.text}"
+        ctx = requests.get(f"{API}/agreements/{token}", timeout=15).json()
+        assert ctx["status"] == "pending"
+
     def test_accept_then_idempotent(self):
         token, _ = _create_agreement()
-        r = requests.post(f"{API}/agreements/{token}/accept", timeout=30)
+        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True}, timeout=30)
         assert r.status_code == 200, r.text
         body = r.json()
         assert body["status"] == "accepted"
@@ -163,7 +170,7 @@ class TestAcceptFlow:
 
     def test_decline_on_accepted_returns_409(self):
         token, _ = _create_agreement()
-        r = requests.post(f"{API}/agreements/{token}/accept", timeout=30)
+        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True}, timeout=30)
         assert r.status_code == 200
         r2 = requests.post(f"{API}/agreements/{token}/decline", timeout=15)
         assert r2.status_code == 409, f"Expected 409 on decline-after-accept, got {r2.status_code}: {r2.text}"

@@ -426,6 +426,13 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         except Exception:
             pricing_snapshot = None
 
+        if not risk_ack:
+            raise HTTPException(
+                422,
+                "Please confirm you understand the risk of proceeding without a "
+                "Gazeal Reservation Agreement before agreeing to the terms.",
+            )
+
         now = datetime.now(timezone.utc).isoformat()
         ip = (
             request.headers.get("x-forwarded-for", "").split(",")[0].strip()

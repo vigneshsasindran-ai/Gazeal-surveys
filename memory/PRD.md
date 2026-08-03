@@ -60,6 +60,13 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Fixed mobile horizontal overflow (bento gradient); PDF popup ~95vh tall
 - Balgores: "Essex, meet how Scotland…", Balgores-only header logo, "HOME INSIGHTS POWERED BY GAZEAL" eyebrow
 
+## Aug 2026: Seller risk acknowledgement (VERIFIED)
+- Both agreement pages (Gazeal + Balgores) show a single checkbox after the Reservation Agreement interest box: "I understand that proceeding with my sale without a Gazeal Reservation Agreement allows my buyer to walk away or renegotiate at any point, without any protection for me."
+- Accept button disabled until ticked; sticky bar hints "One last step: please tick the confirmation above to enable Agree."
+- Backend enforces it too: POST /api/agreements/{token}/accept returns 422 without `risk_ack: true`; stores `risk_acknowledged: true` on the agreement doc for the audit trail.
+- Tested: 15/15 backend pytest (tests/test_agreements.py incl. new test_accept_requires_risk_ack), safe e2e accept on both brands with redirected recipients (email_audit_acceptance recorded all 3 email IDs), recipients restored, demo tokens hEcjMBDNcro/j3je4PfutiA reset to pending.
+- Also confirmed: Balgores orders (flow=seller_direct) appear in /admin panel alongside Gazeal orders (no brand filter in panel.py), with status, stages timeline, branch and agreement link.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.
