@@ -33,7 +33,7 @@ const ITEMS = [
   },
   {
     title: "And unlike a normal pre-sale survey, you don't pay upfront",
-    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, you never pay upfront. With a Gazeal Reservation Agreement, the fee is settled at completion, and if the deal collapses through no fault of your own, there is no cost at all. Without one, it is settled at completion or within six months, whichever comes first.",
+    body: "A typical pre-sale survey means paying hundreds of pounds before you've sold. Here, you never pay upfront. The fee is settled at completion or within six months, whichever comes first, and if the deal collapses through no fault of your own, there is no cost at all when using a Gazeal Reservation Agreement.",
   },
 ];
 

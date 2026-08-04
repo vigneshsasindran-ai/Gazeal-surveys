@@ -73,10 +73,11 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
-## Aug 2026: Reservation fee-rule copy audit (VERIFIED)
-- FINAL rule (user-corrected twice): WITH Reservation Agreement = nothing upfront, settled at completion, and no fee at all if the sale falls through at no fault of the seller (NO six-month clause). WITHOUT = nothing upfront, settled at completion or within six months whichever first, fee remains payable even if sale falls through.
-- Updated 17 locations across both brands: reservation-explainer with-variant, FAQs, bento cards, benefits, seller-advantage accordions, order form intros, order success screen, pricing calculators note, pricing page headings ("Nothing Upfront. Here Is When the Fee Is Settled.").
-- Screenshot verified home comparison cards + FAQ. Backend email templates make no fee claims.
+## Aug 2026: Reservation fee-rule copy — FINAL SCOPE (user-corrected 3x)
+- User only wanted the with/without Reservation COMPARISON TABLE changed. All other sections reverted to original wording ("settled at completion or within six months, whichever comes first...").
+- ONLY change now in effect: reservation-explainer.jsx + reservation-explainer-balgores.jsx WITH-side fee text = "Nothing upfront. Settled at completion. And if the sale falls through at no fault of the seller, there is no fee at all." WITHOUT-side untouched.
+- The comparison table appears on: home page, Balgores home, pricing page, Balgores pricing, and both agreement pages (shared component).
+- LESSON: do not extend copy changes beyond the section the user names. Screenshot verified table + restored bento card.
 
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).

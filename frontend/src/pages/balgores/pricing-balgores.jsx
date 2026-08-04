@@ -41,7 +41,7 @@ const PricingPage = () => (
         <div className="mt-20 lg:mt-24 max-w-2xl">
           <p className="font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-[#B8AB84] mb-3">When the fee is due</p>
           <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-            Nothing Upfront. Here Is When the Fee Is Settled.
+            Nothing Upfront. Settled at Completion or Within Six Months.
           </h2>
         </div>
         <div className="mt-10">
