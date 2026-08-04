@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "Who pays for the survey, me or the buyer?",
     answer:
-      "You do, but nothing upfront. The fee is settled at completion or within six months, whichever comes first, and if the sale collapses because the buyer pulls out, you pay nothing at all.",
+      "You do, but nothing upfront. The fee is settled at completion or within six months, whichever comes first. With a Gazeal Reservation Agreement in place, if your sale falls through at no fault of your own, there is no fee at all. Without one, the fee remains payable even if the sale falls through.",
   },
   {
     question: "When is the survey carried out?",
