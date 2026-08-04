@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "Who pays for the survey, the seller or the buyer?",
     answer:
-      "The seller, but nothing upfront. The fee is settled at completion or within six months, whichever comes first. With a Gazeal Reservation Agreement in place, if the sale falls through at no fault of the seller, there is no fee at all. Without one, the fee remains payable even if the sale falls through.",
+      "The seller, but nothing upfront. With a Gazeal Reservation Agreement, the fee is settled at completion, and if the sale falls through at no fault of the seller there is no fee at all. Without one, the fee is settled at completion or within six months, whichever comes first, and remains payable even if the sale falls through.",
   },
   {
     question: "Does it cost me anything as an agent to offer this?",

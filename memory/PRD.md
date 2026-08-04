@@ -74,10 +74,9 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
 ## Aug 2026: Reservation fee-rule copy audit (VERIFIED)
-- Correct rule: fee timing (completion or 6 months, whichever first) applies in BOTH cases. WITH a Reservation Agreement only: no fee at all if the sale falls through at no fault of the seller. WITHOUT: fee remains payable.
-- Fixed 8 locations that claimed "no fee if sale falls through" without the Reservation condition: surveys-faq (both brands), order-survey form intro (both brands), reservation-explainer with-variant (both brands), surveys-benefits (both brands).
-- Already correct (left as-is): bento cards (asterisk footnote), seller-advantage accordions, pricing pages, pricing calculators, order success screens, intro/launch landing pages, backend email templates (no fee claims).
-- Screenshot verified home comparison cards + FAQ.
+- FINAL rule (user-corrected twice): WITH Reservation Agreement = nothing upfront, settled at completion, and no fee at all if the sale falls through at no fault of the seller (NO six-month clause). WITHOUT = nothing upfront, settled at completion or within six months whichever first, fee remains payable even if sale falls through.
+- Updated 17 locations across both brands: reservation-explainer with-variant, FAQs, bento cards, benefits, seller-advantage accordions, order form intros, order success screen, pricing calculators note, pricing page headings ("Nothing Upfront. Here Is When the Fee Is Settled.").
+- Screenshot verified home comparison cards + FAQ. Backend email templates make no fee claims.
 
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).

@@ -21,7 +21,7 @@ const WITH_ITEMS = [
 ];
 
 const WITH_FEE_NOTE =
-  "Nothing upfront. Settled at completion or within six months, whichever comes first. And if the sale falls through at no fault of the seller, there is no fee at all.";
+  "Nothing upfront. Settled at completion. And if the sale falls through at no fault of the seller, there is no fee at all.";
 
 const WITHOUT_ITEMS = [
   "Neither party committed to the sale",

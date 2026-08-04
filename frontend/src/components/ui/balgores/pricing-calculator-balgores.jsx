@@ -237,7 +237,7 @@ const PricingCalculator = ({
             {formatFee(result.price)}
           </p>
           <p className="relative mt-3 font-outfit text-[13px] text-white/75">
-            Nothing to pay upfront. Settled at completion or within six months, whichever comes first.
+            Nothing to pay upfront. With a Gazeal Reservation Agreement, settled at completion; without one, at completion or within six months, whichever comes first.
           </p>
         </>
       )}

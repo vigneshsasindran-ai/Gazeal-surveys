@@ -78,9 +78,9 @@ const SurveysBento = () => {
               <p className="mt-3 text-sm sm:text-[15px] text-white/70 font-outfit leading-relaxed">
                 Your survey is arranged at the start of marketing and shared
                 with buyers during your sale, but you pay no money upfront.
-                The fee is settled at completion or within six months,
-                whichever comes first, and if the deal collapses through no
-                fault of your own, the survey costs you nothing at all.
+                The fee is settled at completion, and if the deal collapses
+                through no fault of your own, the survey costs you nothing
+                at all.
                 <span className="text-white/45 align-super text-[0.75em] ml-0.5">*</span>
               </p>
               <p

@@ -215,7 +215,7 @@ const OrderSurveyPage = () => {
                   {[
                     "You add your details, your seller's details and the property listing below.",
                     "We email your seller an invite to book their survey with an accredited surveyor.",
-                    "Your seller books directly. They pay nothing now. The fee is settled at completion or within six months, whichever comes first, and with a Gazeal Reservation Agreement, no fee at all if the sale falls through at no fault of the seller.",
+                    "Your seller books directly. They pay nothing now. With a Gazeal Reservation Agreement, the fee is settled at completion, and there is no fee at all if the sale falls through at no fault of the seller.",
                   ].map((line) => (
                     <li
                       key={line}
@@ -721,8 +721,9 @@ const OrderSurveyPage = () => {
                 RPSA will email your seller an invite from your branch and
                 book the survey directly. You&apos;ll get a copy of the
                 report the moment it&apos;s uploaded, and they pay nothing
-                now. The fee is settled at completion or within six months,
-                whichever comes first.
+                now. With a Gazeal Reservation Agreement the fee is settled
+                at completion; without one, at completion or within six
+                months, whichever comes first.
               </p>
               <button
                 type="button"
