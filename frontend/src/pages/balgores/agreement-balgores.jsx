@@ -114,6 +114,7 @@ const AgreementPage = () => {
   }, [data]);
 
   const [confirmStep, setConfirmStep] = useState(null);
+  const [moreInfo, setMoreInfo] = useState(false);
 
   const post = async (action) => {
     setBusy(true);
@@ -414,9 +415,47 @@ const AgreementPage = () => {
                     Proceeding with your sale{" "}
                     <span className="text-white font-semibold">without a Gazeal Reservation Agreement</span>{" "}
                     allows your buyer to walk away or renegotiate at any point, without any protection for you.
+                    Remember to ask your agent to secure your sale when a buyer is found.
                   </p>
+                  {!data.reservation_interest && (
+                    <label
+                      className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
+                        moreInfo ? "border-[#B8AB84]/60 bg-[#B8AB84]/[0.06]" : "border-white/15 bg-white/[0.02] hover:border-white/30"
+                      }`}
+                      data-testid="agreement-more-info-label"
+                    >
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={moreInfo}
+                        onChange={(e) => setMoreInfo(e.target.checked)}
+                        data-testid="agreement-more-info-checkbox"
+                      />
+                      <span
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                          moreInfo ? "border-transparent" : "border-white/35"
+                        }`}
+                        style={moreInfo ? { background: "#B8AB84" } : {}}
+                      >
+                        {moreInfo && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                      </span>
+                      <span className="font-outfit text-[13px] text-white/75 leading-relaxed">
+                        Send me more information about Gazeal Reservation Agreements.
+                      </span>
+                    </label>
+                  )}
                   <div className="mt-6 flex flex-col sm:flex-row-reverse gap-3">
-                    <button type="button" onClick={() => { setConfirmStep(null); post("accept"); }} disabled={busy}
+                    <button type="button"
+                            onClick={async () => {
+                              setConfirmStep(null);
+                              if (moreInfo && !data.reservation_interest) {
+                                try {
+                                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/express-interest`, { method: "POST" });
+                                } catch {}
+                              }
+                              post("accept");
+                            }}
+                            disabled={busy}
                             className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                             style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                             data-testid="agreement-confirm-accept">

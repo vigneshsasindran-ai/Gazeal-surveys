@@ -73,6 +73,11 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Confirm modal additions (VERIFIED)
+- Risk statement now ends with "Remember to ask your agent to secure your sale when a buyer is found." (both brands).
+- Added optional checkbox in accept modal: "Send me more information about Gazeal Reservation Agreements." — when ticked, fires existing POST /api/agreements/{token}/express-interest before accept (idempotent; hidden if reservation_interest already set). data-testids: agreement-more-info-label / agreement-more-info-checkbox.
+- Tested e2e on Gazeal (reservation_interest=True + accepted + risk_acknowledged=True in DB) with redirected emails; Balgores modal visually verified; recipients restored; demo tokens reset to pending.
+
 ## Aug 2026: Risk acknowledgement UX redesign (VERIFIED)
 - Complaint: sellers confused by the standalone risk checkbox (sat alone above sticky bar, Agree greyed out) and clicked Disagree by mistake.
 - Fix: checkbox removed entirely. Agree enables after scrolling terms; clicking Agree opens a confirmation modal ("One thing to confirm") with the risk statement and primary button "I understand, agree to the terms" (sends risk_ack: true, backend 422 guard unchanged). Disagree now also opens a confirm modal ("Decline the survey terms?" with Go back as primary) to stop accidental declines.
