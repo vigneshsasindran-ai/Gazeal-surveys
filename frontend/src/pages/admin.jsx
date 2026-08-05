@@ -352,6 +352,13 @@ export default function AdminPage() {
     });
   }, [data, query, statusFilter]);
 
+  const interestOrders = useMemo(() => {
+    if (!data) return [];
+    return data.orders
+      .filter((o) => o.reservation_interest)
+      .sort((a, b) => new Date(b.reservation_interest_at || 0) - new Date(a.reservation_interest_at || 0));
+  }, [data]);
+
   const doExport = async () => {
     const res = await authFetch("/export");
     const blob = await res.blob();
@@ -463,9 +470,9 @@ export default function AdminPage() {
         {/* Tabs + filters */}
         <div className="flex flex-wrap items-center gap-3 mb-5">
           <div className="flex rounded-full border border-white/15 p-1">
-            {["orders", "enquiries"].map((t) => (
+            {["orders", "enquiries", "interest"].map((t) => (
               <button key={t} type="button" onClick={() => setTab(t)} className={`rounded-full px-4 py-1.5 font-outfit text-[13px] font-semibold capitalize transition-all ${tab === t ? "bg-white text-black" : "text-white/60 hover:text-white"}`} data-testid={`admin-tab-${t}`}>
-                {t === "orders" ? "Survey orders" : "Learn-more enquiries"}
+                {t === "orders" ? "Survey orders" : t === "enquiries" ? "Learn-more enquiries" : `Reservation interest${interestOrders.length ? ` (${interestOrders.length})` : ""}`}
               </button>
             ))}
           </div>
@@ -545,6 +552,30 @@ export default function AdminPage() {
                       </button>
                     </div>
                   </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Reservation interest */}
+        {data && tab === "interest" && (
+          <div className="space-y-2" data-testid="admin-interest-list">
+            <p className="font-outfit text-[12.5px] text-white/50 mb-3">
+              Sellers who asked for more information about Gazeal Reservation Agreements, from the agreement page or the confirmation popup. Newest first.
+            </p>
+            {interestOrders.length === 0 && <p className="font-outfit text-white/45 text-[14px]">No reservation interest recorded yet.</p>}
+            {interestOrders.map((o) => (
+              <div key={o.id} className="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-2" data-testid={`interest-row-${o.reference}`}>
+                <span className="font-outfit text-[12px] text-white/45 w-[130px] shrink-0">{fmt(o.reservation_interest_at)}</span>
+                <span className="font-archivo font-bold text-white text-[14px] min-w-[140px]">{o.seller_name || "—"}</span>
+                <span className="font-outfit text-[13px] text-white/65 flex-1 min-w-[180px] truncate">{o.address}{o.postcode ? `, ${o.postcode}` : ""}</span>
+                <span className="font-outfit text-[13px] text-white/65 min-w-[180px]">{o.seller_email || "—"}</span>
+                <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
+                {o.agreement_url && (
+                  <a href={o.agreement_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-outfit text-[12px] font-semibold text-white/60 hover:text-white transition-colors" data-testid={`interest-agreement-link-${o.reference}`}>
+                    <ExternalLink className="w-3.5 h-3.5" /> Agreement
+                  </a>
                 )}
               </div>
             ))}

@@ -171,6 +171,8 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                         "listing_url": lead.get("listing_url") or "",
                         "agreement_url": (ag or {}).get("agreement_url") or "",
                         "reservation": lead.get("reservation_status") or "",
+                        "reservation_interest": bool((ag or {}).get("reservation_interest")),
+                        "reservation_interest_at": (ag or {}).get("reservation_interest_at"),
                         "stages": _stage_timestamps(lead, ag),
                     }
                 )

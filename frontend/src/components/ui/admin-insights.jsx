@@ -103,6 +103,25 @@ export const AdminInsights = ({ orders }) => {
     ].filter((s) => s.value > 0);
   }, [orders]);
 
+  const interestSeries = useMemo(() => {
+    const cfg = BUCKETS[gran];
+    const now = new Date();
+    const dates = orders
+      .map((o) => o.reservation_interest_at)
+      .filter(Boolean)
+      .map((d) => new Date(d));
+    const from = cfg.back(now);
+    const buckets = cfg.each({ start: cfg.start(from), end: now });
+    const counts = new Map(buckets.map((b) => [b.getTime(), 0]));
+    dates.forEach((d) => {
+      const k = cfg.start(d).getTime();
+      if (counts.has(k)) counts.set(k, counts.get(k) + 1);
+    });
+    return buckets.map((b) => ({ label: format(b, cfg.fmt), count: counts.get(b.getTime()) || 0 }));
+  }, [orders, gran]);
+
+  const totalInterest = useMemo(() => orders.filter((o) => o.reservation_interest).length, [orders]);
+
   return (
     <div className="mb-8" data-testid="admin-insights">
       <button
@@ -201,6 +220,24 @@ export const AdminInsights = ({ orders }) => {
                     </p>
                   ))}
                 </div>
+              </div>
+            </Card>
+
+            {/* Reservation interest over time (follows the same time toggle above) */}
+            <Card
+              title={`Reservation Agreement interest — ${totalInterest} total`}
+              testid="chart-reservation-interest"
+            >
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={interestSeries} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" vertical={false} />
+                    <XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" />
+                    <YAxis {...axisProps} allowDecimals={false} />
+                    <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(255,255,255,0.05)" }} />
+                    <Bar dataKey="count" name="Interest" fill="#34d399" radius={[3, 3, 0, 0]} maxBarSize={34} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </Card>
           </div>

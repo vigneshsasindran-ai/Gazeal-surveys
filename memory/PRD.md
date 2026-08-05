@@ -73,6 +73,12 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Reservation interest in admin panel (VERIFIED)
+- Panel /leads now returns reservation_interest + reservation_interest_at per order (from agreement docs, so all past interests included automatically).
+- New "Reservation Interest (n)" tab in /admin: newest-first list with date, seller, address, contact, brand, agreement link. data-testids: admin-tab-interest, admin-interest-list, interest-row-{ref}.
+- Insights gained "Reservation Agreement interest — n total" green bar chart (shares the Daily/Weekly/Monthly/Quarterly/Yearly toggle). testid: chart-reservation-interest.
+- Verified live: 19 past interests listed + charted in preview.
+
 ## Aug 2026: Confirm modal additions (VERIFIED)
 - Risk statement now ends with "Remember to ask your agent to secure your sale when a buyer is found." (both brands).
 - Added optional checkbox in accept modal: "Send me more information about Gazeal Reservation Agreements." — when ticked, fires existing POST /api/agreements/{token}/express-interest before accept (idempotent; hidden if reservation_interest already set). data-testids: agreement-more-info-label / agreement-more-info-checkbox.
