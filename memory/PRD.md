@@ -73,6 +73,12 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Risk acknowledgement UX redesign (VERIFIED)
+- Complaint: sellers confused by the standalone risk checkbox (sat alone above sticky bar, Agree greyed out) and clicked Disagree by mistake.
+- Fix: checkbox removed entirely. Agree enables after scrolling terms; clicking Agree opens a confirmation modal ("One thing to confirm") with the risk statement and primary button "I understand, agree to the terms" (sends risk_ack: true, backend 422 guard unchanged). Disagree now also opens a confirm modal ("Decline the survey terms?" with Go back as primary) to stop accidental declines.
+- Both brands: Gazeal (#0b0b0d modal, blue gradient) / Balgores (#1A1434, gold #B8AB84). data-testids: agreement-confirm-modal, agreement-risk-statement, agreement-confirm-accept, agreement-confirm-back, agreement-confirm-decline, agreement-decline-back.
+- Tested via playwright: accept flow (risk_acknowledged=true + email audit recorded), decline flow + declined banner + reconsider button, modals dismiss correctly. Emails redirected during test, production recipients restored, demo tokens reset to pending.
+
 ## Aug 2026: Reservation fee-rule copy — FINAL SCOPE (user-corrected 3x)
 - User only wanted the with/without Reservation COMPARISON TABLE changed. All other sections reverted to original wording ("settled at completion or within six months, whichever comes first...").
 - ONLY change now in effect: reservation-explainer.jsx + reservation-explainer-balgores.jsx WITH-side fee text = "Nothing upfront. Settled at completion. And if the sale falls through at no fault of the seller, there is no fee at all." WITHOUT-side untouched.

@@ -114,7 +114,7 @@ const AgreementPage = () => {
     return () => obs.disconnect();
   }, [data]);
 
-  const [riskAck, setRiskAck] = useState(false);
+  const [confirmStep, setConfirmStep] = useState(null);
 
   const post = async (action) => {
     setBusy(true);
@@ -127,7 +127,7 @@ const AgreementPage = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             action === "accept"
-              ? { risk_ack: riskAck, ...(pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}) }
+              ? { risk_ack: true, ...(pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}) }
               : {}
           ),
         }
@@ -354,35 +354,6 @@ const AgreementPage = () => {
             token={data.token}
             initialInterest={!!data.reservation_interest}
           />
-
-          {pending && (
-            <label
-              className={`mt-6 flex items-start gap-4 cursor-pointer rounded-2xl border p-5 transition-colors ${
-                riskAck ? "border-[#4FB6FF]/50 bg-[#4FB6FF]/[0.05]" : "border-white/15 bg-white/[0.02] hover:border-white/30"
-              }`}
-              data-testid="agreement-risk-ack"
-            >
-              <input
-                type="checkbox"
-                className="sr-only"
-                checked={riskAck}
-                onChange={(e) => setRiskAck(e.target.checked)}
-              />
-              <span
-                className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-[2px] transition-all ${
-                  riskAck ? "border-transparent" : "border-white/35"
-                }`}
-                style={riskAck ? { background: "linear-gradient(135deg,#4FB6FF,#025eba)" } : {}}
-              >
-                {riskAck && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
-              </span>
-              <span className="font-outfit text-[13.5px] text-white/80 leading-relaxed">
-                I understand that proceeding with my sale{" "}
-                <span className="text-white font-semibold">without a Gazeal Reservation Agreement</span>{" "}
-                allows my buyer to walk away or renegotiate at any point, without any protection for me.
-              </span>
-            </label>
-          )}
         </div>
 
         {/* Sticky action bar — only shown while pending */}
@@ -393,11 +364,7 @@ const AgreementPage = () => {
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
                      data-testid="agreement-scroll-hint">
                   {unlocked ? (
-                    riskAck ? (
-                      <span className="text-[#4FB6FF]">Thank you — you're ready to confirm.</span>
-                    ) : (
-                      <span className="text-white/70">One last step: please tick the confirmation above to enable Agree.</span>
-                    )
+                    <span className="text-[#4FB6FF]">You're ready. Click Agree to confirm.</span>
                   ) : (
                     <>
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -406,12 +373,12 @@ const AgreementPage = () => {
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button type="button" onClick={() => post("decline")} disabled={busy}
+                  <button type="button" onClick={() => setConfirmStep("decline")} disabled={busy}
                           className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 hover:border-white/35 text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => post("accept")} disabled={busy || !unlocked || !riskAck}
+                  <button type="button" onClick={() => setConfirmStep("accept")} disabled={busy || !unlocked}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
                           data-testid="agreement-accept">
@@ -423,6 +390,57 @@ const AgreementPage = () => {
                 <div className="max-w-3xl mx-auto px-6 pb-4">
                   <p className="font-outfit text-[12px] text-[#FF8A8A]" data-testid="agreement-error">{actionErr}</p>
                 </div>
+              )}
+            </div>
+          </div>
+        )}
+        {/* Confirm modals — acknowledgement is part of the Agree action */}
+        {pending && confirmStep && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" data-testid="agreement-confirm-modal">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setConfirmStep(null)} />
+            <div className="relative w-full max-w-md rounded-2xl border border-white/15 bg-[#0b0b0d] p-6">
+              {confirmStep === "accept" ? (
+                <>
+                  <h3 className="font-archivo font-bold text-white text-[18px]">One thing to confirm</h3>
+                  <p className="mt-3 font-outfit text-[14px] text-white/80 leading-relaxed" data-testid="agreement-risk-statement">
+                    Proceeding with your sale{" "}
+                    <span className="text-white font-semibold">without a Gazeal Reservation Agreement</span>{" "}
+                    allows your buyer to walk away or renegotiate at any point, without any protection for you.
+                  </p>
+                  <div className="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                    <button type="button" onClick={() => { setConfirmStep(null); post("accept"); }} disabled={busy}
+                            className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
+                            style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
+                            data-testid="agreement-confirm-accept">
+                      <Check className="w-4 h-4" /> I understand, agree to the terms
+                    </button>
+                    <button type="button" onClick={() => setConfirmStep(null)}
+                            className="inline-flex items-center justify-center rounded-full border border-white/20 hover:border-white/40 text-white/80 hover:text-white px-6 py-3 font-outfit font-semibold text-[14px]"
+                            data-testid="agreement-confirm-back">
+                      Go back
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 className="font-archivo font-bold text-white text-[18px]">Decline the survey terms?</h3>
+                  <p className="mt-3 font-outfit text-[14px] text-white/75 leading-relaxed">
+                    If you decline, your survey will not go ahead. This link stays live, so you can come back and reconsider at any time.
+                  </p>
+                  <div className="mt-6 flex flex-col sm:flex-row-reverse gap-3">
+                    <button type="button" onClick={() => setConfirmStep(null)}
+                            className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px]"
+                            style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
+                            data-testid="agreement-decline-back">
+                      Go back
+                    </button>
+                    <button type="button" onClick={() => { setConfirmStep(null); post("decline"); }} disabled={busy}
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-red-400/30 hover:border-red-400/60 text-red-300 px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
+                            data-testid="agreement-confirm-decline">
+                      <X className="w-4 h-4" /> Yes, decline
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
