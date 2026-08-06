@@ -105,12 +105,14 @@ const PricingCalculator = ({
   initialListed = LISTED_OPTS[0].label,
   variant = "default",
   testidPrefix = "pricing",
+  requireTouch = false,
   onChange,
 }) => {
   const [value, setValue] = useState(initialValue);
   const [beds, setBeds] = useState(initialBeds);
   const [listed, setListed] = useState(initialListed);
   const [inputText, setInputText] = useState(formatMoney(initialValue));
+  const [touched, setTouched] = useState(!requireTouch);
 
   const setValueFromNumber = (n) => {
     const clamped = Math.max(0, Math.min(VALUE_HARD_MAX, Math.round(n || 0)));
@@ -118,6 +120,7 @@ const PricingCalculator = ({
     setInputText(formatMoney(clamped));
   };
   const onTextChange = (e) => {
+    setTouched(true);
     const raw = e.target.value;
     setInputText(raw);
     const digits = raw.replace(/[^0-9]/g, "");
@@ -126,24 +129,28 @@ const PricingCalculator = ({
     if (Number.isFinite(n)) setValue(Math.min(VALUE_HARD_MAX, n));
   };
   const onTextBlur = () => setInputText(formatMoney(value));
-  const onSliderChange = (e) => setValueFromNumber(Number(e.target.value));
+  const onSliderChange = (e) => { setTouched(true); setValueFromNumber(Number(e.target.value)); };
 
   const result = useMemo(() => priceFor({ value, beds, listed }), [value, beds, listed]);
   const sliderPct = Math.max(0, Math.min(100, ((Math.min(value, SLIDER_MAX) - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100));
 
   useEffect(() => {
     if (typeof onChange === "function") {
-      onChange({
-        property_value: value,
-        bedrooms: beds,
-        listed_status: listed,
-        band: result.band || null,
-        price: result.quote ? null : result.price,
-        quote: !!result.quote,
-      });
+      onChange(
+        touched
+          ? {
+              property_value: value,
+              bedrooms: beds,
+              listed_status: listed,
+              band: result.band || null,
+              price: result.quote ? null : result.price,
+              quote: !!result.quote,
+            }
+          : null
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, beds, listed]);
+  }, [value, beds, listed, touched]);
 
   const controlsCard = (
     <div
@@ -195,11 +202,11 @@ const PricingCalculator = ({
         </Field>
 
         <Field label="Bedrooms">
-          <Segmented options={BED_OPTS} value={beds} onChange={setBeds} testid={`${testidPrefix}-beds`} />
+          <Segmented options={BED_OPTS} value={beds} onChange={(v) => { setTouched(true); setBeds(v); }} testid={`${testidPrefix}-beds`} />
         </Field>
 
         <Field label="Registered Listed Building">
-          <Segmented options={LISTED_OPTS} value={listed} onChange={setListed} testid={`${testidPrefix}-listed`} />
+          <Segmented options={LISTED_OPTS} value={listed} onChange={(v) => { setTouched(true); setListed(v); }} testid={`${testidPrefix}-listed`} />
         </Field>
       </div>
     </div>
@@ -222,7 +229,16 @@ const PricingCalculator = ({
         </span>
       </div>
 
-      {result.quote ? (
+      {!touched ? (
+        <>
+          <p className="relative mt-4 font-archivo font-bold text-white text-4xl sm:text-5xl leading-[1.05] tracking-[-0.025em]" data-testid={`${testidPrefix}-unset-label`}>
+            Set your<br/>property value
+          </p>
+          <p className="relative mt-4 font-outfit text-[14px] text-white/80 leading-relaxed">
+            Use the slider or type your property value, then choose bedrooms and listed status to see your survey fee.
+          </p>
+        </>
+      ) : result.quote ? (
         <>
           <p className="relative mt-4 font-archivo font-bold text-white text-4xl sm:text-5xl leading-[1.05] tracking-[-0.025em]" data-testid={`${testidPrefix}-quote-label`}>
             Bespoke<br/>quote

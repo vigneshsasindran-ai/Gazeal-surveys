@@ -78,6 +78,8 @@ const OrderSurveyPage = () => {
     postcode: "",
     listingUrl: "",
     askingPrice: "",
+    bedrooms: "",
+    listedStatus: "",
     // Balgores branch
     branch: "",
     agentName: "",
@@ -158,6 +160,8 @@ const OrderSurveyPage = () => {
             postcode: fmtPostcode(formData.postcode),
             listing_url: formData.listingUrl,
             asking_price: formData.askingPrice,
+            bedrooms: formData.bedrooms,
+            listed_status: formData.listedStatus,
             confirmation: formData.confirmation,
           }),
         }
@@ -448,6 +452,36 @@ const OrderSurveyPage = () => {
                     />
                   </div>
                 </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelCls}>Bedrooms</label>
+                    <select
+                      className={`${inputCls} [&>option]:bg-[#1A1434]`}
+                      value={formData.bedrooms}
+                      onChange={setField("bedrooms")}
+                      data-testid="order-input-bedrooms"
+                    >
+                      <option value="">Not sure (optional)</option>
+                      <option value="1 to 3">1 to 3</option>
+                      <option value="4 to 5">4 to 5</option>
+                      <option value="6+">6+</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls}>Registered Listed Building</label>
+                    <select
+                      className={`${inputCls} [&>option]:bg-[#1A1434]`}
+                      value={formData.listedStatus}
+                      onChange={setField("listedStatus")}
+                      data-testid="order-input-listed"
+                    >
+                      <option value="">Not sure (optional)</option>
+                      <option value="N/A">N/A</option>
+                      <option value="Grade 2 or 2*">Grade 2 or 2*</option>
+                      <option value="Grade 1">Grade 1</option>
+                    </select>
+                  </div>
+                </div>
                 <div>
                   <label className={labelCls}>
                     Property web link or details to help us identify the property
@@ -571,6 +605,8 @@ const OrderSurveyPage = () => {
                       ],
                       ["Property details", formData.listingUrl || "—"],
                       ["Asking price", formData.askingPrice || "—"],
+                      ["Bedrooms", formData.bedrooms || "—"],
+                      ["Listed building", formData.listedStatus || "—"],
                       ["Balgores branch", formData.branch || "—"],
                       [
                         "Balgores agent",

@@ -1,0 +1,25 @@
+{
+  "summary": "Verified the 'unset pricing' guardrail, confirm-popup details summary + confirmation checkbox, order-form bedrooms/listed fields, and public regression on /pricing. Backend: 6/6 new pytest cases pass in /app/backend/tests/test_agreement_unset_flow.py (seed tokens expose asking_price/bedrooms/listed_status; new bedrooms + listed_status persist on the lead and surface via public_context; POST /accept returns 422 without risk_ack; POST /accept persists pricing_snapshot.details_confirmed=true and risk_acknowledged=true). Frontend: Gazeal /agreement/hEcjMBDNcro rendered 'Please set your property value below…' note and 'Set your property value' unset label; sticky bar said 'Please set your property value in the calculator above to enable Agree.' and Agree stayed disabled AFTER scrolling to agreement-sentinel; typing 725000 into agreement-pricing-value-input revealed £776 fee and enabled Agree; confirm modal exposed 'Your property details' summary (£725,000 / 1 to 3 / N/A / £776), confirm-accept was disabled until the details-ok checkbox was ticked, Edit details closed the popup, and full accept completed — GET returned status=accepted with pricing_snapshot={property_value:725000, details_confirmed:true, price:776} and risk_acknowledged=true in Mongo. Balgores /balgores/agreement/j3je4PfutiA showed the pre-fill note, no unset label, immediate £1,006 fee at £450,000/4 to 5, Agree enabled on scroll (no calculator touch), summary showed £450,000 / 4 to 5 / N/A — modal closed via Go back and token remains status=pending. /order-survey renders order-input-bedrooms and order-input-listed dropdowns after Asking price. /pricing regression: calculator defaults to £600,000, no unset state, price rendered immediately.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_agreement_unset_flow.py",
+    "/app/test_reports/pytest/pytest_unset_flow.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor UX inconsistency: the review request mentioned 'Grade II' but the order form dropdown labels are 'N/A', 'Grade 2 or 2*', 'Grade 1'. The Balgores demo lead has listed_status='N/A' and the agreement calculator maps that correctly. Just flagging in case the option label 'Grade 2 or 2*' should read 'Grade II' to match the calculator wording — not a blocker.",
+    "agreement.jsx pricing-note conditional uses `data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price)` — if a seller enters 0 via the input the OR short-circuits to the unset branch. Low-risk (input is clamped to a positive range in the calculator) but worth an explicit null-check."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_agreement_unset_flow.py",
+    "/app/test_reports/iteration_11.json"
+  ],
+  "success_rate": {"backend": "100% (6/6 new; existing suites unchanged)", "frontend": "100%"},
+  "seed_data_creation": "Backend tests spawn fresh gazeal-agent leads with seller_email=delivered@resend.dev (Resend testing sink). UI accept was performed on the demo Gazeal token hEcjMBDNcro per the request; the Balgores token j3je4PfutiA is untouched (still status=pending, accepted_at=null).",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": false,
+  "test_credentials": "None — public agreement pages.",
+  "context_for_next_testing_agent": "Demo token hEcjMBDNcro has been ACCEPTED by this iteration (status=accepted, pricing_snapshot present). Main agent is expected to reset it back to pending. Balgores token j3je4PfutiA remains pending. New backend test file: /app/backend/tests/test_agreement_unset_flow.py — covers property field surfacing + risk_ack guard + pricing_snapshot persistence and can be reused unchanged in later regression runs.",
+  "rca_of_the_issue": "N/A — feature works end-to-end. Only observation: the property calculator's listed-building labels differ between the order-form dropdown ('Grade 2 or 2*', 'Grade 1') and the review-request wording ('Grade II'); flagged as a copy nit only."
+}

@@ -83,6 +83,8 @@ class OrderSurveyLead(BaseModel):
     postcode: str = Field(..., min_length=1, max_length=20)
     listing_url: Optional[str] = Field(default="", max_length=600)
     asking_price: Optional[str] = ""
+    bedrooms: Optional[str] = Field(default="", max_length=20)
+    listed_status: Optional[str] = Field(default="", max_length=30)
     confirmation: bool = False
     # Branding — which product surface the lead was captured from.
     # Defaults to "gazeal" for backwards-compat with any existing clients.

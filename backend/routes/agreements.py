@@ -46,8 +46,9 @@ def generate_token() -> str:
     return secrets.token_urlsafe(8)  # ~11 chars, url-safe
 
 
-def public_context(agreement: dict) -> dict:
+def public_context(agreement: dict, lead: dict | None = None) -> dict:
     """Personalised data that the public agreement page needs to render."""
+    lead = lead or {}
     return {
         "token": agreement["token"],
         "reference_number": agreement.get("reference_number") or agreement["token"],
@@ -65,6 +66,9 @@ def public_context(agreement: dict) -> dict:
         "property": {
             "address_line_1": agreement.get("address_line_1"),
             "postcode": agreement.get("postcode"),
+            "asking_price": lead.get("asking_price") or "",
+            "bedrooms": lead.get("bedrooms") or "",
+            "listed_status": lead.get("listed_status") or "",
         },
         "accepted_at": agreement.get("accepted_at"),
         "accepted_ip": agreement.get("accepted_ip"),
@@ -317,7 +321,7 @@ def _rpsa_instruction_email(ctx: dict) -> tuple:
     return (
         f"Survey instruction — {ctx['seller_name']}, {ctx['address']} (Ref {ctx['token']})",
         [RPSA_EMAIL],
-        ["survey@gazeal.co.uk", NOTIFY_EMAIL],
+        ["vignesh.sasindran@gazeal.co.uk", NOTIFY_EMAIL],
         html,
     )
 
@@ -394,7 +398,10 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         doc = await db.agreements.find_one({"token": token})
         if not doc:
             raise HTTPException(404, "Agreement not found")
-        return public_context(doc)
+        lead = None
+        if doc.get("lead_id"):
+            lead = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
+        return public_context(doc, lead)
 
     @router.post("/{token}/accept")
     async def accept(token: str, request: Request):
@@ -422,6 +429,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                     "band": snap.get("band"),
                     "price": snap.get("price"),
                     "quote": bool(snap.get("quote")),
+                    "details_confirmed": bool(snap.get("details_confirmed")),
                 }
         except Exception:
             pricing_snapshot = None

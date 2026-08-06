@@ -68,6 +68,19 @@ const CLAUSES = [
   { no: "15", title: "General", body: "Except for the permitted reliance expressly granted to the first successful purchaser, the Contract is between you and the Surveyor, and no other person has any right to enforce its terms under the Contracts (Rights of Third Parties) Act 1999. Each provision operates independently; if any is found to be unlawful, unenforceable or invalid, the remaining provisions continue in full force. The Contract is governed by the law of England and Wales, and any dispute may be brought in the courts of England and Wales; if you live in Scotland or Northern Ireland, you may bring proceedings in your local courts or the English courts. Nothing in these Terms or the Order removes or limits any right you have under applicable consumer protection legislation, including the Consumer Rights Act 2015 and the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013; where any provision conflicts with such legislation, the legislation prevails. These Terms are issued by the RPSA for use with panel instructions, and the Surveyor is responsible for providing the Service in accordance with them." },
 ];
 
+const parseAskingPrice = (raw) => {
+  if (!raw) return null;
+  const m = String(raw).toLowerCase().replace(/,/g, "").match(/(\d+(?:\.\d+)?)\s*(k|m)?/);
+  if (!m) return null;
+  let n = parseFloat(m[1]);
+  if (m[2] === "k") n *= 1_000;
+  if (m[2] === "m") n *= 1_000_000;
+  return n >= 10_000 && n <= 100_000_000 ? Math.round(n) : null;
+};
+
+const money = (n) =>
+  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
+
 const AgreementPage = () => {
   const { token } = useParams();
   const [data, setData] = useState(null);
@@ -115,6 +128,8 @@ const AgreementPage = () => {
 
   const [confirmStep, setConfirmStep] = useState(null);
   const [moreInfo, setMoreInfo] = useState(false);
+  const [detailsOk, setDetailsOk] = useState(false);
+  const calcRef = useRef(null);
 
   const post = async (action) => {
     setBusy(true);
@@ -127,7 +142,7 @@ const AgreementPage = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             action === "accept"
-              ? { risk_ack: true, ...(pricingSnapshot ? { pricing_snapshot: pricingSnapshot } : {}) }
+              ? { risk_ack: true, ...(pricingSnapshot ? { pricing_snapshot: { ...pricingSnapshot, details_confirmed: true } } : {}) }
               : {}
           ),
         }
@@ -341,17 +356,29 @@ const AgreementPage = () => {
         </div>
 
         {/* Pricing calculator (wider container so the £ figure never crops) */}
-        <div className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20">
+        <div ref={calcRef} className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20 scroll-mt-24">
           <div className="max-w-2xl mb-8">
             <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
               See what your survey costs.
             </h2>
+            {pending && (
+              <p className="mt-4 font-outfit text-[14px] text-white/70" data-testid="agreement-pricing-note">
+                {(data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price)) ? (
+                  <>We've pre-filled your property value from your order.{" "}
+                  <span className="text-white font-semibold">Please check the details below are correct.</span></>
+                ) : (
+                  <>Please <span className="text-white font-semibold">set your property value below</span>{" "}
+                  so your survey fee is estimated correctly.</>
+                )}
+              </p>
+            )}
           </div>
           <PricingCalculator
             testidPrefix="agreement-pricing"
-            initialValue={data.pricing_snapshot?.property_value || 600_000}
-            initialBeds={data.pricing_snapshot?.bedrooms || undefined}
-            initialListed={data.pricing_snapshot?.listed_status || undefined}
+            initialValue={data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price) || 600_000}
+            initialBeds={data.pricing_snapshot?.bedrooms || data.property?.bedrooms || undefined}
+            initialListed={data.pricing_snapshot?.listed_status || data.property?.listed_status || undefined}
+            requireTouch={pending && !data.pricing_snapshot?.property_value && !parseAskingPrice(data.property?.asking_price)}
             onChange={setPricingSnapshot}
           />
         </div>
@@ -373,7 +400,11 @@ const AgreementPage = () => {
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-white/55"
                      data-testid="agreement-scroll-hint">
                   {unlocked ? (
-                    <span className="text-[#B8AB84]">You're ready. Click Agree to confirm.</span>
+                    pricingSnapshot ? (
+                      <span className="text-[#B8AB84]">You're ready. Click Agree to confirm.</span>
+                    ) : (
+                      <span className="text-white/70">Please set your property value in the calculator above to enable Agree.</span>
+                    )
                   ) : (
                     <>
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -387,7 +418,7 @@ const AgreementPage = () => {
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => setConfirmStep("accept")} disabled={busy || !unlocked}
+                  <button type="button" onClick={() => { setDetailsOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                           data-testid="agreement-accept">
@@ -417,6 +448,50 @@ const AgreementPage = () => {
                     allows your buyer to walk away or renegotiate at any point, without any protection for you.
                     Remember to ask your agent to secure your sale when a buyer is found.
                   </p>
+                  <div className="mt-4 rounded-xl border border-white/12 bg-white/[0.03] p-4" data-testid="agreement-details-summary">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-outfit font-semibold text-[11px] tracking-[0.18em] uppercase text-white/55">Your property details</p>
+                      <button
+                        type="button"
+                        onClick={() => { setConfirmStep(null); calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                        className="font-outfit text-[12px] font-semibold text-[#B8AB84] hover:underline"
+                        data-testid="agreement-edit-details"
+                      >
+                        Edit details
+                      </button>
+                    </div>
+                    <div className="space-y-1 font-outfit text-[13px] text-white/80">
+                      <div className="flex justify-between"><span>Property value</span><span className="text-white font-semibold">{pricingSnapshot?.property_value ? money(pricingSnapshot.property_value) : "—"}</span></div>
+                      <div className="flex justify-between"><span>Bedrooms</span><span className="text-white font-semibold">{pricingSnapshot?.bedrooms || "—"}</span></div>
+                      <div className="flex justify-between"><span>Listed building</span><span className="text-white font-semibold">{pricingSnapshot?.listed_status || "—"}</span></div>
+                      <div className="flex justify-between"><span>Estimated fee</span><span className="text-white font-semibold">{pricingSnapshot?.quote ? "Bespoke quote" : pricingSnapshot?.price ? money(pricingSnapshot.price) : "—"}</span></div>
+                    </div>
+                  </div>
+                  <label
+                    className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
+                      detailsOk ? "border-[#B8AB84]/60 bg-[#B8AB84]/[0.06]" : "border-white/15 bg-white/[0.02] hover:border-white/30"
+                    }`}
+                    data-testid="agreement-details-ok-label"
+                  >
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={detailsOk}
+                      onChange={(e) => setDetailsOk(e.target.checked)}
+                      data-testid="agreement-details-ok-checkbox"
+                    />
+                    <span
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                        detailsOk ? "border-transparent" : "border-white/35"
+                      }`}
+                      style={detailsOk ? { background: "#B8AB84" } : {}}
+                    >
+                      {detailsOk && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                    </span>
+                    <span className="font-outfit text-[13px] text-white/75 leading-relaxed">
+                      I confirm these property details are correct.
+                    </span>
+                  </label>
                   {!data.reservation_interest && (
                     <label
                       className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
@@ -455,7 +530,7 @@ const AgreementPage = () => {
                               }
                               post("accept");
                             }}
-                            disabled={busy}
+                            disabled={busy || !detailsOk}
                             className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                             style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                             data-testid="agreement-confirm-accept">
