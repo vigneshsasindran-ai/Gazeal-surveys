@@ -73,6 +73,17 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Property value guardrail — no more silent £600k defaults (VERIFIED, iteration_11 100%)
+- Root cause: agreement calculator always started at £600,000 default; untouched value was silently recorded on accept.
+- Fix (user choices 1b, 2a+2b, 3):
+  1. Agreement GET now merges lead data: property.asking_price/bedrooms/listed_status (public_context(agreement, lead) in agreements.py; works for all past agreements).
+  2. Calculator prefills from parsed asking price (parseAskingPrice handles £/commas/k/m; min £10k, no auto-multiply) + bedrooms/listed from order. Note above calc: "We've pre-filled your property value from your order..." vs "Please set your property value below...".
+  3. If no parseable price: PricingCalculator requireTouch prop → summary shows "Set your property value", onChange emits null until any interaction; Agree disabled until pricingSnapshot set; sticky hint explains.
+  4. Confirm popup gained "Your property details" summary (value/bedrooms/listed/fee), "Edit details" link (closes modal, scrolls to calcRef), and required "I confirm these property details are correct" checkbox gating final accept. pricing_snapshot now stores details_confirmed: true.
+  5. Order forms (both brands) capture optional Bedrooms + Registered Listed Building dropdowns (labels EXACTLY match calculator options "1 to 3"/"4 to 5"/"6+", "N/A"/"Grade 2 or 2*"/"Grade 1") → stored on lead → prefill agreement.
+- Regression: public /pricing + home calculators unchanged (requireTouch defaults false). New backend test file: /app/backend/tests/test_agreement_unset_flow.py (6/6).
+- Cleanup done: production recipients restored, demo tokens hEcjMBDNcro + j3je4PfutiA both pending. Balgores demo lead now has asking_price £450,000 + bedrooms 4 to 5 (intentional, demos the prefill flow).
+
 ## Aug 2026: Reservation interest in admin panel (VERIFIED)
 - Panel /leads now returns reservation_interest + reservation_interest_at per order (from agreement docs, so all past interests included automatically).
 - New "Reservation Interest (n)" tab in /admin: newest-first list with date, seller, address, contact, brand, agreement link. data-testids: admin-tab-interest, admin-interest-list, interest-row-{ref}.
