@@ -367,7 +367,7 @@ const AgreementPage = () => {
           </div>
           <PricingCalculator
             testidPrefix="agreement-pricing"
-            initialValue={data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price) || 600_000}
+            initialValue={data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price) || undefined}
             initialBeds={data.pricing_snapshot?.bedrooms || data.property?.bedrooms || undefined}
             initialListed={data.pricing_snapshot?.listed_status || data.property?.listed_status || undefined}
             requireTouch={pending && !data.pricing_snapshot?.property_value && !parseAskingPrice(data.property?.asking_price)}

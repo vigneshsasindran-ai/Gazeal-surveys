@@ -100,7 +100,7 @@ const Field = ({ label, hint, children }) => (
 );
 
 const PricingCalculator = ({
-  initialValue = 600_000,
+  initialValue = null,
   initialBeds = BED_OPTS[0].label,
   initialListed = LISTED_OPTS[0].label,
   variant = "default",
@@ -108,11 +108,11 @@ const PricingCalculator = ({
   requireTouch = false,
   onChange,
 }) => {
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(initialValue ?? 600_000);
   const [beds, setBeds] = useState(initialBeds);
   const [listed, setListed] = useState(initialListed);
-  const [inputText, setInputText] = useState(formatMoney(initialValue));
-  const [touched, setTouched] = useState(!requireTouch);
+  const [inputText, setInputText] = useState(initialValue != null ? formatMoney(initialValue) : "");
+  const [touched, setTouched] = useState(initialValue != null && !requireTouch);
 
   const setValueFromNumber = (n) => {
     const clamped = Math.max(0, Math.min(VALUE_HARD_MAX, Math.round(n || 0)));
@@ -128,7 +128,7 @@ const PricingCalculator = ({
     const n = parseInt(digits, 10);
     if (Number.isFinite(n)) setValue(Math.min(VALUE_HARD_MAX, n));
   };
-  const onTextBlur = () => setInputText(formatMoney(value));
+  const onTextBlur = () => { if (touched) setInputText(formatMoney(value)); };
   const onSliderChange = (e) => { setTouched(true); setValueFromNumber(Number(e.target.value)); };
 
   const result = useMemo(() => priceFor({ value, beds, listed }), [value, beds, listed]);
@@ -167,7 +167,8 @@ const PricingCalculator = ({
               value={inputText.startsWith("£") ? inputText.slice(1).trim() : inputText}
               onChange={onTextChange}
               onBlur={onTextBlur}
-              className="w-full bg-transparent font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] border-b border-white/10 focus:border-[#B8AB84] focus:outline-none pb-1 transition-colors"
+              placeholder="Enter property value"
+              className="w-full bg-transparent font-archivo font-bold text-white text-3xl sm:text-4xl tracking-[-0.02em] border-b border-white/10 focus:border-[#B8AB84] focus:outline-none pb-1 transition-colors placeholder:font-outfit placeholder:font-medium placeholder:text-[17px] sm:placeholder:text-[19px] placeholder:text-white/40 placeholder:tracking-normal"
               aria-label="Property value in GBP"
               data-testid={`${testidPrefix}-value-input`}
             />

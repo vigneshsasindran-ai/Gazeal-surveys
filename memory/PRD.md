@@ -73,6 +73,11 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Calculator "Enter property value" placeholder (VERIFIED)
+- All pricing calculators (Gazeal + Balgores, /pricing, home, agreement pages) now start with an EMPTY value input showing grey placeholder "Enter property value" instead of a default number, making typing obvious. Summary card shows "Set your property value" until interaction.
+- Calculator: initialValue default changed 600_000 → null; touched derived from initialValue presence; onTextBlur only reformats when touched. Agreement pages pass initialValue=undefined when no prefill (unset flow unchanged); prefilled agreements still show the value immediately.
+- Screenshot verified: /pricing placeholder + typing 450000 → £776; Balgores agreement prefill 450,000 → £1,006.
+
 ## Aug 2026: Property value guardrail — no more silent £600k defaults (VERIFIED, iteration_11 100%)
 - Root cause: agreement calculator always started at £600,000 default; untouched value was silently recorded on accept.
 - Fix (user choices 1b, 2a+2b, 3):
