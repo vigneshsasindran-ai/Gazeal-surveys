@@ -9,6 +9,7 @@ Resend (Gazeal + seller) and the webhook delivery system (RPSA).
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 import secrets
@@ -39,6 +40,14 @@ SENDER_EMAIL = os.environ["SENDER_EMAIL"]
 NOTIFY_EMAIL = os.environ["NOTIFY_EMAIL"]
 NOTIFY_CC = [e.strip() for e in os.environ.get("NOTIFY_CC", "").split(",") if e.strip()]
 RPSA_EMAIL = os.environ.get("RPSA_EMAIL", NOTIFY_EMAIL)
+# Live endpoint: https://www.rpsapanel.co.uk/rpsagazealwebhook.php
+# Left unset in dev/test so we never commission real surveys by accident.
+RPSA_WEBHOOK_URL = os.environ.get("RPSA_WEBHOOK_URL", "")
+# ProcessMaker endpoint that keeps a copy of each signed order and the id
+# RPSA gave it. Live:
+# https://reservation.gazeal.co.uk/api/1.0/workflow/extraRest/rpsa/saveRpsaEntry/
+# Left unset in dev/test so nothing is written to the live PM database.
+PM_RPSA_SAVE_URL = os.environ.get("PM_RPSA_SAVE_URL", "")
 
 
 # --------------------------- helpers ---------------------------
@@ -364,6 +373,231 @@ def _sale_room_package(ctx: dict, pricing_snapshot) -> dict:
     }
 
 
+def _digits_only(value) -> str:
+    return "".join(ch for ch in str(value or "") if ch.isdigit())
+
+
+def _rpsa_webhook_payload(package: dict) -> dict:
+    """Payload for the RPSA panel: the flat fields their endpoint expects,
+    plus the full sale-room package so they have everything from the form."""
+    seller = package.get("seller") or {}
+    prop = package.get("property") or {}
+    snap = package.get("pricing_snapshot") or {}
+    price = _digits_only(prop.get("asking_price")) or _digits_only(
+        snap.get("property_value")
+    )
+    return {
+        "ClientName": seller.get("name") or "",
+        "ClientLandline": "",
+        "ClientMobile": seller.get("phone") or "",
+        "ClientEmail": seller.get("email") or "",
+        "PropertyAddress": prop.get("address_line_1") or "",
+        "PropertyPostcode": prop.get("postcode") or "",
+        "PropertyPrice": price,
+        "GazealReference": package.get("reference_number") or "",
+        **package,
+    }
+
+
+def _parse_rpsa_response(text: str):
+    """RPSA's reply wraps a JSON object in debug text
+    ("Webhook received<br>...{...json...}"), so dig the JSON out."""
+    if not text:
+        return None
+    for candidate in (text, text[text.find("{"): text.rfind("}") + 1]):
+        try:
+            parsed = json.loads(candidate)
+        except Exception:
+            continue
+        if isinstance(parsed, (dict, list)):
+            return parsed
+    return None
+
+
+def _extract_rpsa_id(data) -> Optional[str]:
+    """RPSA's record id from their response. They call it `rpsaref`;
+    the other keys are fallbacks in case the format changes.
+    (`reference` is our own reference echoed back, so it doesn't count.)"""
+    if not isinstance(data, dict):
+        return None
+    for key in (
+        "rpsaref", "RPSARef", "rpsa_ref",
+        "RPSAReference", "rpsa_reference",
+        "SurveyId", "SurveyID", "survey_id",
+        "id", "Id", "ID",
+    ):
+        value = data.get(key)
+        if value not in (None, ""):
+            return str(value)
+    return None
+
+
+def _pm_rpsa_entry(payload: dict, response_json, rpsa_id) -> dict:
+    """Row for the RPSA_ENTRY table in ProcessMaker."""
+    return {
+        "gazealref": payload.get("GazealReference") or "",
+        "rpsaref": rpsa_id or "",
+        "clientname": payload.get("ClientName") or "",
+        "clientemail": payload.get("ClientEmail") or "",
+        "clientmobile": payload.get("ClientMobile") or "",
+        "propertyaddress": payload.get("PropertyAddress") or "",
+        "propertypostcode": payload.get("PropertyPostcode") or "",
+        "propertyprice": payload.get("PropertyPrice") or "",
+        "rpsaresponse": (
+            json.dumps(response_json) if response_json is not None else ""
+        ),
+    }
+
+
+async def _save_rpsa_entry_in_pm(
+    db: AsyncIOMotorDatabase, token: str, entry: dict
+) -> None:
+    """Save our reference and RPSA's id into ProcessMaker.
+
+    Three attempts (immediately, +30s, +120s); the outcome is recorded on
+    the agreement under `rpsa_webhook.pm_save`.
+    """
+    last_error = None
+    for n, delay in enumerate([0, 30, 120], start=1):
+        if delay:
+            await asyncio.sleep(delay)
+        at = datetime.now(timezone.utc).isoformat()
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(PM_RPSA_SAVE_URL, json=entry)
+            if 200 <= resp.status_code < 300:
+                await db.agreements.update_one(
+                    {"token": token},
+                    {
+                        "$set": {
+                            "rpsa_webhook.pm_save": {
+                                "status": "saved",
+                                "at": at,
+                                "attempts": n,
+                                "response": resp.text[:500],
+                            }
+                        }
+                    },
+                )
+                return
+            last_error = f"HTTP {resp.status_code}: {resp.text[:200]}"
+        except Exception as exc:  # noqa: BLE001
+            last_error = str(exc)[:500]
+        await db.agreements.update_one(
+            {"token": token},
+            {
+                "$set": {
+                    "rpsa_webhook.pm_save": {
+                        "status": "retrying" if n < 3 else "failed",
+                        "at": at,
+                        "attempts": n,
+                        "error": last_error,
+                    }
+                }
+            },
+        )
+    logger.error(
+        "ProcessMaker save failed after 3 attempts for %s: %s", token, last_error
+    )
+
+
+async def _deliver_rpsa_webhook(
+    db: AsyncIOMotorDatabase, token: str, payload: dict
+) -> None:
+    """POST the signed order to the RPSA panel.
+
+    Three attempts (immediately, +60s, +300s). Every attempt is recorded on
+    the agreement under `rpsa_webhook` so the outcome is auditable, and on
+    success RPSA's response (and their id, if we can spot one) is kept too.
+    If all three attempts fail we email NOTIFY_EMAIL so someone can chase it.
+    """
+    last_error = None
+    for n, delay in enumerate([0, 60, 300], start=1):
+        if delay:
+            await asyncio.sleep(delay)
+        attempt = {
+            "n": n,
+            "at": datetime.now(timezone.utc).isoformat(),
+            "ok": False,
+            "status_code": None,
+            "error": None,
+        }
+        response_json = None
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.post(RPSA_WEBHOOK_URL, json=payload)
+            attempt["status_code"] = resp.status_code
+            attempt["response"] = resp.text[:1000]
+            attempt["ok"] = 200 <= resp.status_code < 300
+            response_json = _parse_rpsa_response(resp.text)
+        except Exception as exc:  # noqa: BLE001
+            attempt["error"] = str(exc)[:500]
+        if attempt["ok"]:
+            delivered_set = {
+                "rpsa_webhook.status": "delivered",
+                "rpsa_webhook.delivered_at": attempt["at"],
+                "rpsa_webhook.response": attempt.get("response"),
+            }
+            if response_json is not None:
+                delivered_set["rpsa_webhook.response_json"] = response_json
+            rpsa_id = _extract_rpsa_id(response_json)
+            if rpsa_id:
+                delivered_set["rpsa_webhook.rpsa_id"] = rpsa_id
+            await db.agreements.update_one(
+                {"token": token},
+                {
+                    "$push": {"rpsa_webhook.attempts": attempt},
+                    "$set": delivered_set,
+                },
+            )
+            if PM_RPSA_SAVE_URL:
+                await _save_rpsa_entry_in_pm(
+                    db, token, _pm_rpsa_entry(payload, response_json, rpsa_id)
+                )
+            return
+        last_error = attempt["error"] or f"HTTP {attempt['status_code']}"
+        await db.agreements.update_one(
+            {"token": token},
+            {
+                "$push": {"rpsa_webhook.attempts": attempt},
+                "$set": {
+                    "rpsa_webhook.status": "retrying",
+                    "rpsa_webhook.last_error": last_error,
+                },
+            },
+        )
+
+    await db.agreements.update_one(
+        {"token": token},
+        {
+            "$set": {
+                "rpsa_webhook.status": "failed",
+                "rpsa_webhook.last_error": last_error,
+            }
+        },
+    )
+    logger.error(
+        "RPSA webhook failed after 3 attempts for %s: %s", token, last_error
+    )
+    try:
+        ref = payload.get("GazealReference") or token
+        await _send(
+            subject=f"[Gazeal Surveys] RPSA webhook failed — {ref}",
+            to=[NOTIFY_EMAIL],
+            html=(
+                f"<p>The signed order <strong>{ref}</strong> could not be "
+                "delivered to the RPSA panel after 3 attempts.</p>"
+                f"<p>Endpoint: {RPSA_WEBHOOK_URL}</p>"
+                f"<p>Last error: {last_error}</p>"
+                "<p>RPSA has still received the instruction email, but the "
+                "panel entry will need to be created manually or the order "
+                "re-sent.</p>"
+            ),
+        )
+    except Exception:
+        logger.exception("RPSA webhook failure alert email failed")
+
+
 def _fanout_payload(ctx: dict) -> dict:
     doc = ctx["doc"]
     return {
@@ -516,6 +750,33 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             logger.info("SALE_ROOM_PACKAGE %s", _json.dumps(sale_room_package))
         except Exception:
             pass
+
+        # Push the signed order to the RPSA panel so the survey is
+        # commissioned. Fires only here — never at order time.
+        if RPSA_WEBHOOK_URL:
+            await db.agreements.update_one(
+                {"token": token},
+                {
+                    "$set": {
+                        "rpsa_webhook": {
+                            "status": "pending",
+                            "url": RPSA_WEBHOOK_URL,
+                            "attempts": [],
+                        }
+                    }
+                },
+            )
+            asyncio.create_task(
+                _deliver_rpsa_webhook(
+                    db, token, _rpsa_webhook_payload(sale_room_package)
+                )
+            )
+        else:
+            logger.warning(
+                "RPSA_WEBHOOK_URL not set — signed order %s was not pushed "
+                "to the RPSA panel",
+                token,
+            )
 
         # Webhook fan-out to RPSA
         await fan_out(db, "agreement.signed", _fanout_payload(ctx))
