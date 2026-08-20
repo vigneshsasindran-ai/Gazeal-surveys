@@ -73,6 +73,12 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Excel export gained "Reservation" and "Fee Due By" columns.
 - Tested: PATCH 200/422/401 via curl, persistence verified, export 200, UI screenshot verified badge + dropdown + optimistic badge update, countdown math checked for green/amber/overdue states.
 
+## Aug 2026: Tech team RPSA/ProcessMaker webhook merged (VERIFIED)
+- Merged external commit e3a0310 from user's GitHub repo (github.com/vigneshsasindran-ai/Gazeal-surveys) via fetched remote `teamrepo`. Clean merge, no conflicts.
+- On seller signing: POSTs order to RPSA panel webhook (RPSA_WEBHOOK_URL env), extracts rpsaref from their quirky response, saves pairing to ProcessMaker (PM_RPSA_SAVE_URL env). Retries 3x each, full audit under agreement.rpsa_webhook, failure alert email to NOTIFY_EMAIL. Panel stages expose rpsa_webhook_status/delivered_at/rpsa_id.
+- SAFE BY DEFAULT: both URLs unset in preview .env → nothing fires. Live values (from code comments): RPSA_WEBHOOK_URL=https://www.rpsapanel.co.uk/rpsagazealwebhook.php, PM_RPSA_SAVE_URL=https://reservation.gazeal.co.uk/api/1.0/workflow/extraRest/rpsa/saveRpsaEntry/ — user must add these two secrets in production Secrets tab before/at deploy.
+- Tested: 31/31 (16 new tests/test_rpsa_webhook.py + 15 test_agreements.py) with redirected emails; recipients restored after.
+
 ## Aug 2026: Agent name on admin order rows (VERIFIED)
 - Each order row in /admin now shows the estate agency name (or "Balgores · Branch" for seller-direct) between the address and brand badge. testid: order-agent-label-{ref}. Screenshot verified.
 
