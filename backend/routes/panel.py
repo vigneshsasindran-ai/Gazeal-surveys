@@ -100,6 +100,9 @@ def _stage_timestamps(lead: dict, ag: dict | None) -> dict:
         "reopened_at": ag.get("reopened_at"),
         "previously_declined_at": ag.get("previously_declined_at"),
         "rpsa_instructed_at": ag.get("rpsa_instructed_at"),
+        "rpsa_webhook_status": (ag.get("rpsa_webhook") or {}).get("status"),
+        "rpsa_webhook_delivered_at": (ag.get("rpsa_webhook") or {}).get("delivered_at"),
+        "rpsa_id": (ag.get("rpsa_webhook") or {}).get("rpsa_id"),
     }
 
 
