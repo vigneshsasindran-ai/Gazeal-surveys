@@ -89,7 +89,7 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
               className="font-archivo font-bold tracking-[-0.02em] leading-[1.05] text-white text-[36px] sm:text-[44px] lg:text-[52px] xl:text-[56px]"
               data-testid="surveys-hero-heading"
             >
-              Britain, meet
+              England, meet
               <br />
               how Scotland
               <br />
