@@ -58,7 +58,7 @@ class LearnMoreLead(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=120)
     agency: str = Field(..., min_length=1, max_length=160)
     email: EmailStr
-    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores)$")
+    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp)$")
 
 
 class IntroEmailLead(BaseModel):
@@ -88,7 +88,7 @@ class OrderSurveyLead(BaseModel):
     confirmation: bool = False
     # Branding — which product surface the lead was captured from.
     # Defaults to "gazeal" for backwards-compat with any existing clients.
-    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores)$")
+    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp)$")
     # "agent" = agent orders + seller receives invite email (default).
     # "seller_direct" = seller orders for themselves and signs on-page.
     flow: str = Field(default="agent", pattern="^(agent|seller_direct)$")
@@ -105,6 +105,12 @@ _LOGO_URL = (
 _BALGORES_LOGO_URL = (
     "https://customer-assets.emergentagent.com/job_survey-pro-10/"
     "artifacts/mtuv9mso_download%20%281%29.webp"
+)
+
+# White eXp UK wordmark — reads on the navy #0C0F25 band only.
+_EXP_LOGO_URL = (
+    "https://customer-assets.emergentagent.com/job_survey-pro-10/"
+    "artifacts/4lb77dpb_Gazeal%20Linkedin%20Post%20%2863%29.png"
 )
 
 # Per-brand palette for HTML emails. Keep the shape identical so template
@@ -125,6 +131,17 @@ BRAND_TOKENS = {
         "route_prefix":   "",
         "brand_label":    "Gazeal Surveys",
         "partner_logo":   "",
+    },
+    "exp": {
+        "primary":        "#B9BFD6",
+        "primary_dark":   "#0C0F25",
+        "hero_bg_image":  "none",
+        "cta_bg":         "#0C0F25",
+        "cta_bg_image":   "none",
+        "route_prefix":   "/exp",
+        "brand_label":    "Gazeal Surveys × eXp UK",
+        "partner_logo":   _EXP_LOGO_URL,
+        "partner_logo_wide": True,
     },
     "balgores": {
         "primary":        "#B8AB84",
@@ -257,15 +274,20 @@ def _partner_logo_html(tokens: dict) -> str:
     """Render a small divider + partner logo cell when a co-brand is set."""
     if not tokens.get("partner_logo"):
         return ""
+    wide = tokens.get("partner_logo_wide")
+    size_attrs = (
+        'width="96" style="display:block;border:0;outline:none;'
+        'text-decoration:none;height:auto;"'
+        if wide else
+        'width="36" height="36" style="display:block;border:0;outline:none;'
+        'text-decoration:none;border-radius:4px;"'
+    )
     return (
         '<td valign="middle" style="padding-left:14px;">'
         '  <table cellpadding="0" cellspacing="0" border="0"><tr>'
         '    <td style="width:1px;background:rgba(255,255,255,0.35);height:28px;"></td>'
         '    <td style="padding-left:14px;" valign="middle">'
-        f'      <img src="{tokens["partner_logo"]}" alt="Partner"'
-        '           width="36" height="36"'
-        '           style="display:block;border:0;outline:none;text-decoration:none;'
-        '                  border-radius:4px;">'
+        f'      <img src="{tokens["partner_logo"]}" alt="Partner" {size_attrs}>'
         '    </td>'
         '  </tr></table>'
         '</td>'
@@ -834,23 +856,201 @@ def _render_balgores_direct_order(lead: OrderSurveyLead, agreement_url: str) -> 
 """
 
 
+def _render_exp_direct_order(lead: OrderSurveyLead, agreement_url: str) -> str:
+    """White-labelled eXp UK internal notification. Clean navy #0C0F25 band
+    with the white eXp UK wordmark, white CTA, no Gazeal chrome. Sent when a
+    seller orders directly through the /exp funnel."""
+    pd = "#0C0F25"
+    mist = "#B9BFD6"
+    reference = agreement_url.rstrip("/").split("/")[-1] if agreement_url else ""
+    address = lead.address_line_1
+    if lead.postcode:
+        address = f"{address}, {lead.postcode}"
+
+    body = (
+        f'<div style="background:#F4F5F9;border:1px solid rgba(12,15,37,0.14);'
+        'border-radius:10px;padding:14px 18px;margin:0 0 12px;">'
+        '<p style="margin:0;font-size:14px;color:#0B1220;line-height:1.65;">'
+        '<strong>A seller has ordered their survey directly through the '
+        'eXp UK funnel.</strong> They were taken straight to the agreement '
+        'to sign online. The acceptance notification will follow separately. '
+        'Details go to RPSA only after the seller accepts the terms.'
+        '</p>'
+        '</div>'
+        + _section_title("The seller", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Name", lead.seller_name, primary_dark=pd)
+        + _row("Email", lead.seller_email,
+               link=f"mailto:{lead.seller_email}", primary_dark=pd)
+        + _row("Phone", lead.seller_phone or "",
+               link=(f"tel:{lead.seller_phone}" if lead.seller_phone else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("The property", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Address", lead.address_line_1, primary_dark=pd)
+        + _row("Postcode", lead.postcode, primary_dark=pd)
+        + _row("Asking price", lead.asking_price or "", primary_dark=pd)
+        + _row("Bedrooms", lead.bedrooms or "", primary_dark=pd)
+        + _row("Listed building", lead.listed_status or "", primary_dark=pd)
+        + _row("Listing", lead.listing_url or "",
+               link=lead.listing_url or None, primary_dark=pd)
+        + '</table>'
+        + _section_title("The eXp UK agent", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Agent name", lead.agent_name or "", primary_dark=pd)
+        + _row("Agent email", lead.email or "",
+               link=(f"mailto:{lead.email}" if lead.email else None),
+               primary_dark=pd)
+        + _row("Agent phone", lead.phone or "",
+               link=(f"tel:{lead.phone}" if lead.phone else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("Confirmation", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
+        + (
+            'The seller has confirmed they are happy for RPSA to contact '
+            'them about arranging their survey.'
+            if lead.confirmation
+            else
+            '<span style="color:#B23A3A;font-weight:600;">The seller '
+            'confirmation checkbox was not ticked.</span>'
+        )
+        + '</p>'
+        + _section_title("Seller survey agreement", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#0B1220;line-height:1.6;">'
+          'Use this link to track the status of the agreement for this sale.'
+          '</p>'
+          f'<p style="margin:10px 0 0;font-size:13px;line-height:1.6;">'
+          f'<a href="{agreement_url}" style="color:{pd};text-decoration:none;'
+          f'font-weight:600;word-break:break-all;">{agreement_url}</a></p>'
+          f'<p style="margin:8px 0 0;font-size:12px;color:#6B7280;">'
+          f'Reference: <code>{reference}</code></p>'
+    )
+
+    return f"""\
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New eXp UK seller survey order</title>
+</head>
+<body style="margin:0;padding:0;background:#050505;font-family:-apple-system,
+             BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+             color:#0B1220;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+         style="background:#050505;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+               style="max-width:600px;background:#ffffff;border-radius:20px;
+                      overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+          <!-- Hero band, flat eXp navy -->
+          <tr>
+            <td style="background:{pd};padding:32px 36px;color:#ffffff;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td valign="middle">
+                    <img src="{_EXP_LOGO_URL}" alt="eXp UK" width="110"
+                         style="display:block;border:0;outline:none;
+                                text-decoration:none;height:auto;">
+                  </td>
+                  <td align="right" valign="middle"
+                      style="font-size:11px;letter-spacing:2.4px;
+                             text-transform:uppercase;color:rgba(255,255,255,0.75);
+                             font-weight:600;">
+                    Seller order
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:24px;font-size:24px;line-height:1.2;
+                          font-weight:700;letter-spacing:-0.5px;
+                          color:#ffffff;max-width:480px;">
+                New seller survey order
+              </div>
+              <div style="margin-top:10px;font-size:14px;line-height:1.6;
+                          color:rgba(255,255,255,0.85);max-width:480px;">
+                {lead.seller_name} has ordered a Home Insight Survey for
+                {address} through the eXp UK funnel.
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 36px 8px 36px;font-size:14px;
+                       line-height:1.65;color:#0B1220;">
+              {body}
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="padding:8px 36px 32px 36px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:{pd};border-radius:999px;">
+                    <a href="{agreement_url}"
+                       style="display:inline-block;padding:12px 24px;
+                              font-size:14px;font-weight:600;color:#ffffff;
+                              text-decoration:none;letter-spacing:0.2px;">
+                      View the agreement
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer, flat eXp navy -->
+          <tr>
+            <td style="padding:20px 36px 26px 36px;background:{pd};
+                       font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;">
+              <strong style="color:{mist};font-weight:700;">eXp UK</strong>
+              &nbsp;·&nbsp; Home Insights powered by Gazeal.
+              <br>
+              Captured by the eXp UK seller funnel &nbsp;·&nbsp; sent {datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")}.
+            </td>
+          </tr>
+        </table>
+
+        <div style="margin-top:18px;font-size:11px;color:#6B7280;
+                    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                    Helvetica,Arial,sans-serif;">
+          This is an automated notification from the eXp UK seller survey funnel.
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
+
+
 async def _dispatch_order_emails(lead: OrderSurveyLead, agreement_url: str) -> tuple:
     """Send the order emails for either flow.
     Returns (email_id, email_error, seller_email_id, seller_email_error)."""
     email_id = email_error = seller_email_id = seller_email_error = None
 
     if lead.flow == "seller_direct":
-        # Balgores seller-direct: the seller signs the agreement on-page
-        # immediately after submitting — no invite email loop. Internal
-        # team gets a white-labelled Balgores notification instead.
-        try:
-            email_id = await _send_email(
-                subject=(
-                    f"New Balgores seller survey order — "
-                    f"{lead.seller_name} ({lead.branch or 'branch not set'})"
-                ),
-                html=_render_balgores_direct_order(lead, agreement_url),
+        # Seller-direct funnels (Balgores, eXp UK): the seller signs the
+        # agreement on-page immediately after submitting — no invite email
+        # loop. Internal team gets a white-labelled partner notification.
+        if lead.brand == "exp":
+            subject = (
+                f"New eXp UK seller survey order — {lead.seller_name}"
+                f"{f' ({lead.agent_name})' if lead.agent_name else ''}"
             )
+            html = _render_exp_direct_order(lead, agreement_url)
+        else:
+            subject = (
+                f"New Balgores seller survey order — "
+                f"{lead.seller_name} ({lead.branch or 'branch not set'})"
+            )
+            html = _render_balgores_direct_order(lead, agreement_url)
+        try:
+            email_id = await _send_email(subject=subject, html=html)
         except Exception as exc:
             email_error = str(exc)
         return email_id, email_error, seller_email_id, seller_email_error

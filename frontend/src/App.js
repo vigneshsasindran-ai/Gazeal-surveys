@@ -36,6 +36,22 @@ import BOrderSurveyPage from "@/pages/balgores/order-survey-balgores";
 import BAgreementPage from "@/pages/balgores/agreement-balgores";
 import BPricingPage from "@/pages/balgores/pricing-balgores";
 
+// ─── eXp UK (co-brand) ──────────────────────────────────────────────────────
+import XSurveysHeader from "@/components/ui/exp/surveys-header-exp";
+import XSurveysHero from "@/components/ui/exp/surveys-hero-exp";
+import XSurveysBento from "@/components/ui/exp/surveys-bento-exp";
+import XSurveysSaleAgreed from "@/components/ui/exp/surveys-sale-agreed-exp";
+import XReservationExplainer from "@/components/ui/exp/reservation-explainer-exp";
+import XSurveysBenefits from "@/components/ui/exp/surveys-benefits-exp";
+import XSellerAdvantage from "@/components/ui/exp/seller-advantage-exp";
+import XSurveyPricingTable from "@/components/ui/exp/survey-pricing-table-exp";
+import XSurveysFAQ from "@/components/ui/exp/surveys-faq-exp";
+import XSurveysFooterReveal from "@/components/ui/exp/surveys-footer-reveal-exp";
+import XSurveysLearnMoreModal from "@/components/ui/exp/surveys-learn-more-modal-exp";
+import XOrderSurveyPage from "@/pages/exp/order-survey-exp";
+import XAgreementPage from "@/pages/exp/agreement-exp";
+import XPricingPage from "@/pages/exp/pricing-exp";
+
 const SurveysLanding = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -152,6 +168,66 @@ const SurveysLandingBalgores = () => {
   );
 };
 
+/**
+ * eXp UK landing — mirrors the Balgores pattern, scoped to `/exp/*`.
+ * Fully separate funnel; no shared components with the Gazeal side.
+ */
+const SurveysLandingExp = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+
+  const handleOrderSurvey = () => navigate("/exp/order-survey");
+  const handleLearnMore = () => setLearnMoreOpen(true);
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const t = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("learn") === "1") {
+      setLearnMoreOpen(true);
+      navigate("/exp", { replace: true });
+    }
+  }, [location.search, navigate]);
+
+  return (
+    <div className="App min-h-screen bg-black" data-testid="exp-landing">
+      <XSurveysHeader onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <main className="relative z-10 bg-black">
+        <XSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <XSurveysBento />
+        <XSellerAdvantage onOrderSurvey={handleOrderSurvey} />
+        <XSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
+        <section
+          className="relative bg-black pt-2 pb-20 md:pt-4 md:pb-28"
+          data-testid="exp-reservation-compare-section"
+        >
+          <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+            <XReservationExplainer variant="agent" />
+          </div>
+        </section>
+        <XSurveysBenefits />
+        <XSurveyPricingTable />
+        <XSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      </main>
+      <XSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <XSurveysLearnMoreModal open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
+    </div>
+  );
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -171,6 +247,12 @@ function App() {
         <Route path="/balgores/order-survey" element={<BOrderSurveyPage />} />
         <Route path="/balgores/agreement/:token" element={<BAgreementPage />} />
         <Route path="/balgores/pricing" element={<BPricingPage />} />
+
+        {/* eXp UK (separate funnel — duplicated components) */}
+        <Route path="/exp" element={<SurveysLandingExp />} />
+        <Route path="/exp/order-survey" element={<XOrderSurveyPage />} />
+        <Route path="/exp/agreement/:token" element={<XAgreementPage />} />
+        <Route path="/exp/pricing" element={<XPricingPage />} />
       </Routes>
     </BrowserRouter>
   );

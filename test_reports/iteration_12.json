@@ -1,0 +1,48 @@
+{
+  "summary": "Full e2e test of the new eXp UK (/exp) seller-direct funnel plus Balgores/Gazeal regression. Backend: 16/16 new pytest cases pass (/app/backend/tests/test_exp_seller_direct.py, test_exp_email_template.py, test_panel_auth_guardrails.py) covering POST /api/leads/order-survey with brand=exp + flow=seller_direct (returns agreement_token, /exp/agreement/{tok} url, email_error=null, NO seller invite email), GET /api/agreements/{token} echoing brand='exp' (also for the pre-existing token gpvGPRPfPjI), 422 guards (invalid brand 'expuk', missing seller_email, agent flow without agent details), full decline -> 409 accept-block -> reopen -> 422 accept-without-risk_ack -> accept with pricing_snapshot -> already_accepted idempotency -> 409 decline-after-accept, exp internal email template (eXp UK wordmark, #0C0F25 navy, agent name, no Balgores/Gazeal colour leakage), and panel auth guardrails (bcrypt env hash, JWT bearer, 5-attempt lockout returning 429). Frontend: /exp landing renders (exp-landing, white eXp UK wordmark, nav links, mobile menu, no horizontal overflow at 390px, zero console errors); Learn More modal submits to /api/leads/learn-more (200) and swaps to the Calendly booking state; /exp/pricing table + calculator are byte-identical to /balgores (same 4 bands, same notes, GBP776 at 725,000/1to3/N-A) and the empty calculator shows the grey 'Enter property value' placeholder; the 4-step seller-direct order form works end to end (step 1 shows inline 'Required' errors on empty submit, step 3 blocks Continue with an empty agent name and shows 'Please tell us which eXp UK agent you're selling with', agent email/phone are optional, NO branch dropdown or 'branch' copy anywhere, submit blocked with 'Please confirm to continue' until the RPSA checkbox is ticked) and POST /api/leads/order-survey 200 redirects straight to /exp/agreement/z31LJIj4zO8; the agreement page keeps Agree disabled until agreement-sentinel is scrolled into view, the property-details confirm modal gates agreement-confirm-accept behind agreement-details-ok-checkbox, accept returns 200 and the timeline moves to ordered/accepted/RPSA-instructed with the accepted banner (IP + reference + GBP776); decline -> declined banner + agreement-reopen -> back to pending with Agree available. Admin /admin login works and exp rows show 'eXp UK . TEST_QA eXp Agent' in order-agent-label-{reference} with an 'EXP' brand chip. Regression: /balgores/order-survey still has the required order-input-branch dropdown (15 options, 'Please select your branch' validation), /balgores and / landings and /order-survey (agent invite flow) all load 200 with correct H1s and no console errors. All emails were sent only to vignesh.sasindran@gazeal.co.uk; RPSA_WEBHOOK_URL and PM_RPSA_SAVE_URL remain blank (untouched).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/agreements/{token} (exp, agency_name empty)", "issue": "When a seller_direct exp lead is created without agency_name (API clients), the agreement intro copy renders 'arranged on your behalf by <agent> at .' with a dangling ' at .'. The /exp UI always sends agency 'eXp UK' so this is not user-visible today, but a fallback to 'eXp UK' when agency_name is blank would be safer."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "agreement-exp.jsx decline confirmation modal", "issue": "Modal heading 'Decline the survey terms?' is styled text-[#0C0F25] on the #0C0F25 navy modal background, so the title is completely invisible (computed color rgb(12,15,37) on bg rgb(12,15,37)).", "selector": "[data-testid=\"agreement-decline\"] modal h3 (agreement-exp.jsx ~line 548)", "priority": "HIGH"},
+      {"component": "agreement-exp.jsx decline confirmation modal", "issue": "The prominent 'Go back' button has white text on a white background (color rgb(255,255,255), background #FFFFFF), so the label is invisible and the button reads as a blank white pill. It is clickable and does close the modal, but users cannot read it.", "selector": "[data-testid=\"agreement-decline-back\"] (agreement-exp.jsx ~lines 553-557)", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/exp/order-survey step 4 review summary and /exp agreement confirm modal", "issues": ["Em dash characters (U+2014) are used as the empty-value placeholder in customer-facing copy ('Property details —', 'Asking price —', 'Agent contact —', and the same in the agreement property-details summary). The brief asked for no em dashes in customer-facing copy; use 'Not provided' or a hyphen instead."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_exp_seller_direct.py",
+    "/app/backend/tests/test_exp_email_template.py",
+    "/app/backend/tests/test_panel_auth_guardrails.py",
+    "/app/test_reports/pytest/pytest_exp.xml"
+  ],
+  "action_items": [
+    "Fix the /exp decline modal contrast: change the h3 from text-[#0C0F25] to white/light-mist and give the 'agreement-decline-back' button navy text (#0C0F25) on its white background (currently white-on-white, label invisible).",
+    "Replace the em dash empty-value placeholders in /exp/order-survey review rows and the exp agreement details summary with 'Not provided' (no em dashes in customer-facing copy).",
+    "Optional hardening: fall back to 'eXp UK' when agency_name is blank so the agreement intro never renders 'at .' for API-created exp leads."
+  ],
+  "critical_code_review_comments": [
+    "agreement-exp.jsx is 577 lines and order-survey-exp.jsx 714 lines with fully duplicated Balgores logic; any future clause/pricing change now has to be made in 3 places (gazeal, balgores, exp). Consider a brand-token prop on shared components before a 4th brand is added.",
+    "Pre-existing (not exp related) stale backend tests fail in the repo suite and should be updated or quarantined by the dev agent: tests/test_slack_email_status.py asserts SENDER_EMAIL == info@gazeal.co.uk (env is survey@gazeal.co.uk), and tests/test_new_features.py, test_pricing_snapshot_and_package.py, test_sale_room_link.py post /accept without risk_ack and now get 422 (risk_ack became mandatory). Repo-wide run: 69 passed, 19 failed, 9 errors, all failures traced to these two stale expectations, not to product regressions.",
+    "The exp decline modal styling regression shows the duplicated files were not colour-audited after the palette swap; a quick contrast pass over all exp components is worth doing."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_exp_seller_direct.py",
+    "/app/backend/tests/test_exp_email_template.py",
+    "/app/backend/tests/test_panel_auth_guardrails.py",
+    "/app/test_reports/iteration_12.json"
+  ],
+  "success_rate": {"backend": "100% (16/16 new exp + auth cases)", "frontend": "95% (all flows pass; 2 contrast bugs + 1 copy deviation in the exp decline modal / review copy)"},
+  "seed_data_creation": "Preview DB now contains exp seller_direct test leads: z31LJIj4zO8 (ACCEPTED via UI, seller TEST_QA Seller eXp), QLCesCkucVU (declined then reopened via UI, TEST_QA DeclineUI), plus API-created TEST_ExpSeller QA / TEST_ExpLifecycle QA orders and a TEST_QA NoTick pending draft. One learn-more lead 'TEST_QA eXp' was created. All emails went to vignesh.sasindran@gazeal.co.uk only.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "Admin /admin: gazeal / G@zeal!Adm1n#2026 (from /app/memory/test_credentials.md). New exp tokens: accepted z31LJIj4zO8, pending-after-reopen QLCesCkucVU.",
+  "context_for_next_testing_agent": "The /exp funnel is functionally complete and verified end to end (order -> redirect -> sign/decline/reopen -> admin visibility -> exp branded internal email). Only cosmetic fixes remain: decline-modal contrast (h3 + agreement-decline-back) and em dash placeholders. Re-verify by opening /exp/agreement/QLCesCkucVU and clicking agreement-decline (do NOT confirm) to inspect the modal. RPSA_WEBHOOK_URL and PM_RPSA_SAVE_URL are still blank in backend/.env so accepts are safe; restore before production. Repo suite failures in test_slack_email_status/test_new_features/test_pricing_snapshot_and_package/test_sale_room_link are pre-existing stale expectations (risk_ack now required, SENDER_EMAIL changed), not exp regressions.",
+  "rca_of_the_issue": "Decline-modal contrast: in /app/frontend/src/pages/exp/agreement-exp.jsx the Balgores modal was duplicated and the palette swapped globally; the heading kept a dark-on-light class (text-[#0C0F25]) while the modal background became navy #0C0F25, and the 'Go back' button retained className 'text-white' while its inline style sets background '#FFFFFF'. Both are pure styling regressions of the copy-paste; behaviour (close modal, decline POST, reopen) is correct."
+}

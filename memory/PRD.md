@@ -122,6 +122,22 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - The comparison table appears on: home page, Balgores home, pricing page, Balgores pricing, and both agreement pages (shared component).
 - LESSON: do not extend copy changes beyond the section the user names. Screenshot verified table + restored bento card.
 
+
+## Aug 2026: eXp UK white-label funnel at /exp (VERIFIED, testing agent iteration_12)
+- Built as a FULLY ISOLATED duplicate of the Balgores funnel (no shared components):
+  - Pages: /app/frontend/src/pages/exp/{order-survey-exp,agreement-exp,pricing-exp}.jsx
+  - Components: /app/frontend/src/components/ui/exp/*-exp.jsx (14 files)
+  - Routes in App.js: /exp, /exp/order-survey, /exp/agreement/:token, /exp/pricing (SurveysLandingExp, data-testid exp-landing)
+- Journey: SELLER-DIRECT (seller orders + signs on-page, no invite email loop), same as Balgores.
+- Branch dropdown REPLACED by free-text "eXp UK agent name" (required) + optional agent email/phone. agency_name always posted as "eXp UK", branch stays "".
+- Brand: navy #0C0F25 base, light-mist #B9BFD6 accents, filled CTAs are white with #0C0F25 text. White eXp UK wordmark logo (artifacts/4lb77dpb_...png). Hero headline changed from "Essex, meet" to "Britain, meet" (eXp is nationwide).
+- Pricing identical to Gazeal/Balgores. No em dashes in customer-facing copy ("Not provided" used for empty review values).
+- Backend: BRAND_TOKENS["exp"] in routes/leads.py (route_prefix /exp, brand_label "Gazeal Surveys x eXp UK", wide partner logo flag), brand pattern now ^(gazeal|balgores|exp)$, new _render_exp_direct_order() eXp-branded internal order email, _dispatch_order_emails branches on brand for seller_direct.
+- Admin: exp seller-direct rows show "eXp UK - <agent name>" plus an EXP brand chip.
+- Testing: iteration_12 — backend 16/16 new pytest cases, full frontend e2e (order form validation, accept, decline + reopen, pricing parity, learn-more modal), Balgores + Gazeal regression clean. Two contrast bugs found and FIXED after the run (decline modal heading, white-on-white Go back / Agree labels).
+- Test emails only to vignesh.sasindran@gazeal.co.uk; RPSA_WEBHOOK_URL / PM_RPSA_SAVE_URL were blanked during tests and RESTORED afterwards.
+- PENDING USER ACTION: redeploy so /exp is live on survey.gazeal.co.uk.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.
