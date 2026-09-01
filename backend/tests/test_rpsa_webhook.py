@@ -6,6 +6,7 @@ skips itself otherwise.
 """
 import os
 import sys
+import json
 import uuid
 
 import pytest
@@ -158,11 +159,17 @@ class TestPmRpsaEntry:
         assert entry["propertyprice"] == "1620000"
         assert '"rpsaref": 44249' in entry["rpsaresponse"]
 
+    def test_saves_the_request_we_sent(self):
+        payload = _rpsa_webhook_payload(_package())
+        entry = _pm_rpsa_entry(payload, None, None)
+        assert json.loads(entry["rpsarequest"]) == payload
+
     def test_missing_rpsa_id_and_response(self):
         entry = _pm_rpsa_entry({"GazealReference": "ABC-123"}, None, None)
         assert entry["gazealref"] == "ABC-123"
         assert entry["rpsaref"] == ""
         assert entry["rpsaresponse"] == ""
+        assert json.loads(entry["rpsarequest"]) == {"GazealReference": "ABC-123"}
 
 
 class TestRpsaWebhookIntegration:
@@ -204,3 +211,4 @@ class TestRpsaWebhookIntegration:
             return
         assert rw["status"] in {"pending", "retrying", "delivered", "failed"}
         assert rw["url"], "webhook audit should record the endpoint used"
+        assert rw["payload"]["GazealReference"], "the JSON sent to RPSA should be kept"

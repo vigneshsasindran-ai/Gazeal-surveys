@@ -446,6 +446,9 @@ def _pm_rpsa_entry(payload: dict, response_json, rpsa_id) -> dict:
         "rpsaresponse": (
             json.dumps(response_json) if response_json is not None else ""
         ),
+        # The exact JSON we sent to RPSA, so the request and the reply sit
+        # side by side in the same row.
+        "rpsarequest": json.dumps(payload, default=str),
     }
 
 
@@ -754,6 +757,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # Push the signed order to the RPSA panel so the survey is
         # commissioned. Fires only here — never at order time.
         if RPSA_WEBHOOK_URL:
+            rpsa_payload = _rpsa_webhook_payload(sale_room_package)
             await db.agreements.update_one(
                 {"token": token},
                 {
@@ -761,16 +765,14 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                         "rpsa_webhook": {
                             "status": "pending",
                             "url": RPSA_WEBHOOK_URL,
+                            # Exactly what goes to RPSA, kept for the record.
+                            "payload": rpsa_payload,
                             "attempts": [],
                         }
                     }
                 },
             )
-            asyncio.create_task(
-                _deliver_rpsa_webhook(
-                    db, token, _rpsa_webhook_payload(sale_room_package)
-                )
-            )
+            asyncio.create_task(_deliver_rpsa_webhook(db, token, rpsa_payload))
         else:
             logger.warning(
                 "RPSA_WEBHOOK_URL not set — signed order %s was not pushed "
