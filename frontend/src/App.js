@@ -52,6 +52,22 @@ import XOrderSurveyPage from "@/pages/exp/order-survey-exp";
 import XAgreementPage from "@/pages/exp/agreement-exp";
 import XPricingPage from "@/pages/exp/pricing-exp";
 
+// ─── David Astburys (co-brand) ──────────────────────────────────────────────
+import DSurveysHeader from "@/components/ui/da/surveys-header-da";
+import DSurveysHero from "@/components/ui/da/surveys-hero-da";
+import DSurveysBento from "@/components/ui/da/surveys-bento-da";
+import DSurveysSaleAgreed from "@/components/ui/da/surveys-sale-agreed-da";
+import DReservationExplainer from "@/components/ui/da/reservation-explainer-da";
+import DSurveysBenefits from "@/components/ui/da/surveys-benefits-da";
+import DSellerAdvantage from "@/components/ui/da/seller-advantage-da";
+import DSurveyPricingTable from "@/components/ui/da/survey-pricing-table-da";
+import DSurveysFAQ from "@/components/ui/da/surveys-faq-da";
+import DSurveysFooterReveal from "@/components/ui/da/surveys-footer-reveal-da";
+import DSurveysLearnMoreModal from "@/components/ui/da/surveys-learn-more-modal-da";
+import DOrderSurveyPage from "@/pages/da/order-survey-da";
+import DAgreementPage from "@/pages/da/agreement-da";
+import DPricingPage from "@/pages/da/pricing-da";
+
 const SurveysLanding = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -228,6 +244,67 @@ const SurveysLandingExp = () => {
   );
 };
 
+/**
+ * David Astburys landing — scoped to `/davidastburys/*`. Light brand theme:
+ * burgundy #9B2743 hero + advantage band, white bento section, #ccbfb9
+ * everywhere else. Fully separate funnel.
+ */
+const SurveysLandingDa = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+
+  const handleOrderSurvey = () => navigate("/davidastburys/order-survey");
+  const handleLearnMore = () => setLearnMoreOpen(true);
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const t = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("learn") === "1") {
+      setLearnMoreOpen(true);
+      navigate("/davidastburys", { replace: true });
+    }
+  }, [location.search, navigate]);
+
+  return (
+    <div className="App min-h-screen bg-[#ccbfb9]" data-testid="da-landing">
+      <DSurveysHeader onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <main className="relative z-10 bg-[#ccbfb9]">
+        <DSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <DSurveysBento />
+        <DSellerAdvantage onOrderSurvey={handleOrderSurvey} />
+        <DSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
+        <section
+          className="relative bg-[#ccbfb9] pt-2 pb-20 md:pt-4 md:pb-28"
+          data-testid="da-reservation-compare-section"
+        >
+          <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+            <DReservationExplainer variant="agent" />
+          </div>
+        </section>
+        <DSurveysBenefits />
+        <DSurveyPricingTable />
+        <DSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      </main>
+      <DSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <DSurveysLearnMoreModal open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
+    </div>
+  );
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -253,6 +330,12 @@ function App() {
         <Route path="/exp/order-survey" element={<XOrderSurveyPage />} />
         <Route path="/exp/agreement/:token" element={<XAgreementPage />} />
         <Route path="/exp/pricing" element={<XPricingPage />} />
+
+        {/* David Astburys (separate funnel — duplicated components) */}
+        <Route path="/davidastburys" element={<SurveysLandingDa />} />
+        <Route path="/davidastburys/order-survey" element={<DOrderSurveyPage />} />
+        <Route path="/davidastburys/agreement/:token" element={<DAgreementPage />} />
+        <Route path="/davidastburys/pricing" element={<DPricingPage />} />
       </Routes>
     </BrowserRouter>
   );

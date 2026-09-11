@@ -506,10 +506,10 @@ export default function AdminPage() {
                   <span className="font-outfit text-[12px] text-white/45 w-[130px] shrink-0">{fmt(o.stages?.ordered_at)}</span>
                   <span className="font-archivo font-bold text-white text-[14.5px] min-w-[140px]">{o.seller_name || "—"}</span>
                   <span className="font-outfit text-[13px] text-white/65 flex-1 min-w-[180px] truncate">{o.address}{o.postcode ? `, ${o.postcode}` : ""}</span>
-                  <span className="font-outfit text-[12.5px] text-white/50 min-w-[140px] max-w-[220px] truncate" title={o.flow === "seller_direct" ? (o.brand === "exp" ? `eXp UK${o.agent_name ? ` · ${o.agent_name}` : ""}` : `Balgores${o.branch ? ` · ${o.branch}` : ""}`) : o.agency_name || o.agent_name || ""} data-testid={`order-agent-label-${o.reference}`}>
-                    {o.flow === "seller_direct" ? (o.brand === "exp" ? `eXp UK${o.agent_name ? ` · ${o.agent_name}` : ""}` : `Balgores${o.branch ? ` · ${o.branch}` : ""}`) : (o.agency_name || o.agent_name || "—")}
+                  <span className="font-outfit text-[12.5px] text-white/50 min-w-[140px] max-w-[220px] truncate" title={o.flow === "seller_direct" ? (o.brand === "exp" ? `eXp UK${o.agent_name ? ` · ${o.agent_name}` : ""}` : o.brand === "davidastburys" ? `David Astburys${o.branch ? ` · ${o.branch}` : ""}` : `Balgores${o.branch ? ` · ${o.branch}` : ""}`) : o.agency_name || o.agent_name || ""} data-testid={`order-agent-label-${o.reference}`}>
+                    {o.flow === "seller_direct" ? (o.brand === "exp" ? `eXp UK${o.agent_name ? ` · ${o.agent_name}` : ""}` : o.brand === "davidastburys" ? `David Astburys${o.branch ? ` · ${o.branch}` : ""}` : `Balgores${o.branch ? ` · ${o.branch}` : ""}`) : (o.agency_name || o.agent_name || "—")}
                   </span>
-                  <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : o.brand === "exp" ? "text-[#B9BFD6]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
+                  <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : o.brand === "exp" ? "text-[#B9BFD6]" : o.brand === "davidastburys" ? "text-[#D9788F]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
                   <StatusBadge status={o.status} />
                   {o.status === "accepted" && <FeeDueBadge acceptedAt={o.stages?.accepted_at} />}
                   <ReservationBadge value={o.reservation} />
@@ -574,7 +574,7 @@ export default function AdminPage() {
                 <span className="font-archivo font-bold text-white text-[14px] min-w-[140px]">{o.seller_name || "—"}</span>
                 <span className="font-outfit text-[13px] text-white/65 flex-1 min-w-[180px] truncate">{o.address}{o.postcode ? `, ${o.postcode}` : ""}</span>
                 <span className="font-outfit text-[13px] text-white/65 min-w-[180px]">{o.seller_email || "—"}</span>
-                <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : o.brand === "exp" ? "text-[#B9BFD6]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
+                <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : o.brand === "exp" ? "text-[#B9BFD6]" : o.brand === "davidastburys" ? "text-[#D9788F]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
                 {o.agreement_url && (
                   <a href={o.agreement_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-outfit text-[12px] font-semibold text-white/60 hover:text-white transition-colors" data-testid={`interest-agreement-link-${o.reference}`}>
                     <ExternalLink className="w-3.5 h-3.5" /> Agreement

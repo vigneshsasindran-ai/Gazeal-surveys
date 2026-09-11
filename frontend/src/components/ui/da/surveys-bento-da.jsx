@@ -1,0 +1,185 @@
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+
+/*
+ * Gazeal Surveys — Features Bento
+ * Three dark glassmorphic cards, ported from the Elite bento pattern,
+ * rebranded with the Surveys blue gradient (#9B2743 → #9B2743) and the
+ * three 3D illustrations supplied with the flyer.
+ */
+
+const ICON_LOCK = "/brand-assets/da-lock.png";
+const ICON_CLIPBOARD = "/brand-assets/da-lens.png";
+const ICON_SHIELD = "/brand-assets/da-shield.png";
+
+const Visual = ({ src, alt, delay = "0s" }) => (
+  <div className="relative mx-auto flex aspect-square size-28 sm:size-32 rounded-full border border-[#2B1B20]/10 before:absolute before:-inset-2 before:rounded-full before:border before:border-[#2B1B20]/5 after:absolute after:-inset-5 after:rounded-full after:border after:border-[#2B1B20]/[0.03]">
+    <img
+      src={src}
+      alt={alt}
+      draggable={false}
+      className="surveys-bento-icon m-auto h-[78%] w-[78%] object-contain select-none"
+      style={{
+        animationDelay: delay,
+        filter: "drop-shadow(0 12px 30px rgba(155,39,67,0.35))",
+      }}
+    />
+  </div>
+);
+
+const SurveysCard = ({ children, className = "", ...props }) => (
+  <Card
+    className={`relative overflow-hidden border-[#2B1B20]/10 bg-gradient-to-b from-white/75 to-white/50 backdrop-blur-sm hover:border-[#9B2743]/30 transition-colors duration-300 ${className}`}
+    {...props}
+  >
+    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#9B2743]/40 to-transparent pointer-events-none" />
+    {children}
+  </Card>
+);
+
+const SurveysBento = () => {
+  return (
+    <section
+      id="features"
+      className="relative bg-white pt-16 md:pt-20 pb-8 md:pb-12 overflow-hidden"
+      data-testid="surveys-bento-section"
+    >
+      {/* Ambient blue backdrop */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[400px] w-[600px] bg-gradient-to-b from-[#9B2743]/20 to-transparent blur-3xl pointer-events-none opacity-50" />
+
+      <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+        {/* Heading */}
+        <div className="mx-auto max-w-4xl text-center mb-10 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-archivo font-bold tracking-[-0.025em] leading-[1.18]">
+            <span className="text-[#2B1B20]">Fix survey problems </span>
+            <span className="text-[#9B2743]">
+              before they break the sale.
+            </span>
+          </h2>
+          <p className="mt-5 font-outfit text-[14px] sm:text-[15px] text-[#2B1B20]/70 leading-relaxed max-w-2xl mx-auto">
+            In Scotland, buyers understand the condition of the home before
+            they offer, which means fewer surprises, fewer late
+            renegotiations and stronger sales from the start.
+          </p>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+          {/* Card 1 — No upfront cost */}
+          <SurveysCard className="h-full" data-testid="surveys-card-no-upfront-cost">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual src={ICON_LOCK} alt="Padlock with Gazeal G" delay="0s" />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-[#2B1B20]">
+                No upfront cost
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-[#2B1B20]/70 font-outfit leading-relaxed">
+                Your survey is arranged at the start of marketing and shared
+                with buyers during your sale, but you pay no money upfront.
+                The fee is settled at completion or within six months,
+                whichever comes first, and if the deal collapses through no
+                fault of your own, the survey costs you nothing at all.
+                <span className="text-[#2B1B20]/45 align-super text-[0.75em] ml-0.5">*</span>
+              </p>
+              <p
+                className="mt-auto pt-5 text-[12px] text-[#2B1B20]/50 font-outfit italic leading-relaxed"
+                data-testid="surveys-card-no-upfront-cost-footnote"
+              >
+                *When using a Gazeal Reservation Agreement
+              </p>
+            </CardContent>
+          </SurveysCard>
+
+          {/* Card 2 — Critical property information */}
+          <SurveysCard className="h-full" data-testid="surveys-card-critical-info">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual
+                src={ICON_CLIPBOARD}
+                alt="Magnifying lens over property"
+                delay="0.8s"
+              />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-[#2B1B20]">
+                Critical property information
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-[#2B1B20]/70 font-outfit leading-relaxed">
+                Buyers have to make offers before they know enough about the
+                condition of the home, and that creates real risk later in
+                the process when something unexpected turns up. The Gazeal
+                Survey puts the key property information in front of buyers
+                before they offer, so they can make a clearer, more
+                confident decision from the start. That tends to mean fewer
+                late surprises, fewer renegotiations and a stronger sale
+                from the moment the offer is made.
+              </p>
+            </CardContent>
+          </SurveysCard>
+
+          {/* Card 3 — 98% sale success */}
+          <SurveysCard className="h-full" data-testid="surveys-card-success">
+            <CardContent className="h-full flex flex-col items-center text-center pt-10 pb-8 px-6">
+              <Visual
+                src={ICON_SHIELD}
+                alt="Glass shield with a checkmark"
+                delay="1.6s"
+              />
+              <h3 className="mt-6 text-2xl sm:text-[26px] font-archivo font-bold tracking-[-0.025em] text-[#2B1B20]">
+                Up to{" "}
+                <span className="text-[#9B2743]">
+                  98%
+                </span>{" "}
+                sale success
+              </h3>
+              <p className="mt-3 text-sm sm:text-[15px] text-[#2B1B20]/70 font-outfit leading-relaxed">
+                Gazeal already helps sellers reach around 95% sale success by
+                securing commitment at the point of offer. Of the small
+                number of sales that still fall apart, survey issues are one
+                of the biggest causes. Ordering your survey upfront fixes
+                this earlier by giving buyers the information they need
+                before they offer, so commitment and transparency work
+                together to give your sale the strongest possible chance of
+                completing, with success rates reaching up to 98%.
+              </p>
+            </CardContent>
+          </SurveysCard>
+        </div>
+
+        {/* Horizontal indemnification row */}
+        <div
+          className="relative z-10 mt-4 sm:mt-5"
+          data-testid="surveys-indemnifies-row"
+        >
+          <SurveysCard>
+            <CardContent className="pt-8 pb-8 px-6 sm:px-10">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
+                <h3
+                  className="md:col-span-5 text-3xl sm:text-4xl lg:text-[42px] font-archivo font-bold tracking-[-0.025em] leading-[1.1] text-[#2B1B20]"
+                  data-testid="surveys-indemnifies-heading"
+                >
+                  Professional Indemnity{" "}
+                  <span className="text-[#9B2743]">
+                    protects both seller and buyer.
+                  </span>
+                </h3>
+                <p
+                  className="md:col-span-7 text-sm sm:text-[15px] text-[#2B1B20]/75 font-outfit leading-relaxed"
+                  data-testid="surveys-indemnifies-copy"
+                >
+                  The surveyor&apos;s indemnity covers both the buyer and
+                  the seller. The seller is protected on what they
+                  disclose, and the buyer can rely on the findings with
+                  confidence. Neither side carries the risk alone, so
+                  buyers trust the survey instead of commissioning their
+                  own, and sellers share information without fear of
+                  comeback. This gives agents fewer renegotiations, fewer
+                  late surprises, and a sale both sides are committed to
+                  from day one.
+                </p>
+              </div>
+            </CardContent>
+          </SurveysCard>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SurveysBento;

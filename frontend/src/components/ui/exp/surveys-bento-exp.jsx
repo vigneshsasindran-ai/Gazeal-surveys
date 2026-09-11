@@ -8,12 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
  * three 3D illustrations supplied with the flyer.
  */
 
-const ICON_LOCK =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/uqsdzkqi_Lock.png";
-const ICON_CLIPBOARD =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/ygnrrekg_Magnifying%20lens.png";
-const ICON_SHIELD =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/1b7nhpqa_Shield.png";
+const ICON_LOCK = "/brand-assets/exp-lock.png";
+const ICON_CLIPBOARD = "/brand-assets/exp-lens.png";
+const ICON_SHIELD = "/brand-assets/exp-shield.png";
 
 const Visual = ({ src, alt, delay = "0s" }) => (
   <div className="relative mx-auto flex aspect-square size-28 sm:size-32 rounded-full border border-white/10 before:absolute before:-inset-2 before:rounded-full before:border before:border-white/5 after:absolute after:-inset-5 after:rounded-full after:border after:border-white/[0.03]">

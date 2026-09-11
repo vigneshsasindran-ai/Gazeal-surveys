@@ -138,6 +138,21 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Test emails only to vignesh.sasindran@gazeal.co.uk; RPSA_WEBHOOK_URL / PM_RPSA_SAVE_URL were blanked during tests and RESTORED afterwards.
 - PENDING USER ACTION: redeploy so /exp is live on survey.gazeal.co.uk.
 
+
+## Sep 2026: David Astburys funnel at /davidastburys + brand imagery swap (VERIFIED, iteration_13)
+- New isolated seller-direct funnel: /davidastburys, /davidastburys/order-survey, /davidastburys/agreement/:token, /davidastburys/pricing (SurveysLandingDa, data-testid da-landing).
+  Files: /app/frontend/src/pages/da/*.jsx (3) and /app/frontend/src/components/ui/da/*-da.jsx (14).
+- Brand theme (light): hero section 1 solid #9B2743; section 2 (Fix survey problems) white with ink #2B1B20 text; section 3 (Why order your survey before you sell) #9B2743; ALL remaining previously-black sections #ccbfb9 with ink text. Burgundy fills always carry white labels.
+- Logo: supplied burgundy-on-white mark. Generated /brand-assets/da-logo.png (transparent burgundy) and da-logo-white.png (white knockout). Header uses the white mark over the burgundy hero and burgundy scrolled pill, the colour mark on light pages. /brand-assets/gazeal-logo-ink.png and rpsa-logo-ink.png added for DA light sections.
+- Branch dropdown: Crouch End, Islington, Hampstead (required). Optional agent name/email. Hero headline "London, meet how Scotland sells homes." No em dashes ("Not provided" for empty review values).
+- Backend: BRAND_TOKENS["davidastburys"], brand pattern ^(gazeal|balgores|exp|davidastburys)$, new _render_da_direct_order() internal email — plain WHITE card, burgundy logo lock-up, burgundy section labels and single burgundy CTA. Admin shows "David Astburys - <branch>" plus a brand chip.
+- Brand imagery swap (all four funnels): supplied 3D renders resized/optimised into /app/frontend/public/brand-assets/. surveys-bento{,-balgores,-exp,-da}.jsx ICON_LOCK/ICON_CLIPBOARD/ICON_SHIELD and surveys-sale-agreed*.jsx SCENE_IMAGE now point at /brand-assets/<brand>-{lock,lens,shield,house}.png. All 20 assets return 200.
+- Testing: iteration_13 — backend 7/7 (new /app/backend/tests/test_da_seller_direct.py), frontend 100% (landing, pricing parity, 4-step form, accept, decline + reopen, admin, regression on /, /balgores, /exp). No issues found.
+- Test safety during the run: Slack webhook blanked, RPSA/ProcessMaker endpoints blanked, all mail to vignesh.sasindran@gazeal.co.uk. ALL RESTORED afterwards.
+- Tech team commit 9da13ff (keep a copy of the JSON sent to RPSA) merged earlier in this session.
+- PENDING USER ACTION: redeploy so /davidastburys and the new imagery go live.
+- KNOWN DEBT (flagged by review): brand components are now duplicated 4x. Consolidate behind theme tokens before adding a 5th brand.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

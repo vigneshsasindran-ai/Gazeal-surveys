@@ -11,8 +11,7 @@ import { ChevronRight } from "lucide-react";
  * Rebranded with the Surveys blue gradient (#B9BFD6 → #0C0F25).
  */
 
-const SCENE_IMAGE =
-  "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/tgbgjbo6_House%20lens.png";
+const SCENE_IMAGE = "/brand-assets/exp-house.png";
 
 const SurveysSaleAgreed = ({ onOrderSurvey }) => {
   return (

@@ -58,7 +58,7 @@ class LearnMoreLead(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=120)
     agency: str = Field(..., min_length=1, max_length=160)
     email: EmailStr
-    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp)$")
+    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp|davidastburys)$")
 
 
 class IntroEmailLead(BaseModel):
@@ -88,7 +88,7 @@ class OrderSurveyLead(BaseModel):
     confirmation: bool = False
     # Branding — which product surface the lead was captured from.
     # Defaults to "gazeal" for backwards-compat with any existing clients.
-    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp)$")
+    brand: str = Field(default="gazeal", pattern="^(gazeal|balgores|exp|davidastburys)$")
     # "agent" = agent orders + seller receives invite email (default).
     # "seller_direct" = seller orders for themselves and signs on-page.
     flow: str = Field(default="agent", pattern="^(agent|seller_direct)$")
@@ -112,6 +112,12 @@ _EXP_LOGO_URL = (
     "https://customer-assets.emergentagent.com/job_survey-pro-10/"
     "artifacts/4lb77dpb_Gazeal%20Linkedin%20Post%20%2863%29.png"
 )
+
+# David Astburys brand assets live in the frontend build, so the email
+# templates reference them through the public site URL.
+_SITE_BASE = os.environ.get("FRONTEND_BASE_URL", "").rstrip("/")
+_DA_LOGO_URL = f"{_SITE_BASE}/brand-assets/da-logo.png"
+_DA_LOGO_WHITE_URL = f"{_SITE_BASE}/brand-assets/da-logo-white.png"
 
 # Per-brand palette for HTML emails. Keep the shape identical so template
 # blocks can just `.format(**BRAND_TOKENS[brand])`.
@@ -141,6 +147,17 @@ BRAND_TOKENS = {
         "route_prefix":   "/exp",
         "brand_label":    "Gazeal Surveys × eXp UK",
         "partner_logo":   _EXP_LOGO_URL,
+        "partner_logo_wide": True,
+    },
+    "davidastburys": {
+        "primary":        "#9B2743",
+        "primary_dark":   "#9B2743",
+        "hero_bg_image":  "none",
+        "cta_bg":         "#9B2743",
+        "cta_bg_image":   "none",
+        "route_prefix":   "/davidastburys",
+        "brand_label":    "Gazeal Surveys × David Astburys",
+        "partner_logo":   _DA_LOGO_WHITE_URL,
         "partner_logo_wide": True,
     },
     "balgores": {
@@ -1028,6 +1045,182 @@ def _render_exp_direct_order(lead: OrderSurveyLead, agreement_url: str) -> str:
 """
 
 
+def _render_da_direct_order(lead: OrderSurveyLead, agreement_url: str) -> str:
+    """White-labelled David Astburys internal notification. Plain white card
+    (their secondary colour) with the burgundy #9B2743 used for the logo lock-up,
+    section labels and the single button. Sent when a seller orders directly
+    through the /davidastburys funnel."""
+    pd = "#9B2743"
+    reference = agreement_url.rstrip("/").split("/")[-1] if agreement_url else ""
+    address = lead.address_line_1
+    if lead.postcode:
+        address = f"{address}, {lead.postcode}"
+
+    agent_rows = ""
+    if lead.agent_name or lead.email:
+        agent_rows = (
+            _row("Agent name", lead.agent_name or "", primary_dark=pd)
+            + _row("Agent email", lead.email or "",
+                   link=(f"mailto:{lead.email}" if lead.email else None),
+                   primary_dark=pd)
+        )
+
+    body = (
+        f'<div style="border:1px solid rgba(155,39,67,0.25);border-left:3px solid {pd};'
+        'border-radius:8px;padding:14px 18px;margin:0 0 12px;background:#FFFFFF;">'
+        '<p style="margin:0;font-size:14px;color:#2B1B20;line-height:1.65;">'
+        '<strong>A seller has ordered their survey directly through the '
+        'David Astburys funnel.</strong> They were taken straight to the '
+        'agreement to sign online. The acceptance notification will follow '
+        'separately. Details go to RPSA only after the seller accepts the terms.'
+        '</p>'
+        '</div>'
+        + _section_title("The seller", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Name", lead.seller_name, primary_dark=pd)
+        + _row("Email", lead.seller_email,
+               link=f"mailto:{lead.seller_email}", primary_dark=pd)
+        + _row("Phone", lead.seller_phone or "",
+               link=(f"tel:{lead.seller_phone}" if lead.seller_phone else None),
+               primary_dark=pd)
+        + '</table>'
+        + _section_title("The property", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Address", lead.address_line_1, primary_dark=pd)
+        + _row("Postcode", lead.postcode, primary_dark=pd)
+        + _row("Asking price", lead.asking_price or "", primary_dark=pd)
+        + _row("Bedrooms", lead.bedrooms or "", primary_dark=pd)
+        + _row("Listed building", lead.listed_status or "", primary_dark=pd)
+        + _row("Listing", lead.listing_url or "",
+               link=lead.listing_url or None, primary_dark=pd)
+        + '</table>'
+        + _section_title("David Astburys", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + _row("Branch", lead.branch or "", primary_dark=pd)
+        + agent_rows
+        + '</table>'
+        + _section_title("Confirmation", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#2B1B20;line-height:1.6;">'
+        + (
+            'The seller has confirmed they are happy for RPSA to contact '
+            'them about arranging their survey.'
+            if lead.confirmation
+            else
+            '<span style="color:#B23A3A;font-weight:600;">The seller '
+            'confirmation checkbox was not ticked.</span>'
+        )
+        + '</p>'
+        + _section_title("Seller survey agreement", pd)
+        + '<p style="margin:6px 0 0;font-size:13px;color:#2B1B20;line-height:1.6;">'
+          'Use this link to track the status of the agreement for this sale.'
+          '</p>'
+          f'<p style="margin:10px 0 0;font-size:13px;line-height:1.6;">'
+          f'<a href="{agreement_url}" style="color:{pd};text-decoration:none;'
+          f'font-weight:600;word-break:break-all;">{agreement_url}</a></p>'
+          f'<p style="margin:8px 0 0;font-size:12px;color:#7A6B6F;">'
+          f'Reference: <code>{reference}</code></p>'
+    )
+
+    return f"""\
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New David Astburys seller survey order</title>
+</head>
+<body style="margin:0;padding:0;background:#F4EFED;font-family:-apple-system,
+             BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+             color:#2B1B20;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+         style="background:#F4EFED;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+               style="max-width:600px;background:#ffffff;border-radius:14px;
+                      overflow:hidden;border:1px solid rgba(155,39,67,0.15);">
+          <!-- Header, plain white with the David Astburys mark -->
+          <tr>
+            <td style="padding:28px 36px 20px;background:#ffffff;
+                       border-bottom:1px solid rgba(155,39,67,0.15);">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td valign="middle">
+                    <img src="{_DA_LOGO_URL}" alt="David Astburys" width="180"
+                         style="display:block;border:0;outline:none;
+                                text-decoration:none;height:auto;">
+                  </td>
+                  <td align="right" valign="middle"
+                      style="font-size:11px;letter-spacing:2.2px;
+                             text-transform:uppercase;color:{pd};font-weight:700;">
+                    Seller order
+                  </td>
+                </tr>
+              </table>
+              <div style="margin-top:22px;font-size:23px;line-height:1.25;
+                          font-weight:700;letter-spacing:-0.4px;color:{pd};">
+                New seller survey order
+              </div>
+              <div style="margin-top:8px;font-size:14px;line-height:1.6;
+                          color:#5C4A4E;">
+                {lead.seller_name} has ordered a Home Insight Survey for
+                {address}.
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:26px 36px 8px 36px;font-size:14px;
+                       line-height:1.65;color:#2B1B20;">
+              {body}
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="padding:8px 36px 30px 36px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:{pd};border-radius:999px;">
+                    <a href="{agreement_url}"
+                       style="display:inline-block;padding:12px 24px;
+                              font-size:14px;font-weight:600;color:#ffffff;
+                              text-decoration:none;letter-spacing:0.2px;">
+                      View the agreement
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:18px 36px 24px 36px;background:#ffffff;
+                       border-top:1px solid rgba(155,39,67,0.15);
+                       font-size:11px;color:#7A6B6F;line-height:1.6;">
+              <strong style="color:{pd};font-weight:700;">David Astburys</strong>
+              &nbsp;·&nbsp; Home Insights powered by Gazeal.
+              <br>
+              Captured by the David Astburys seller funnel &nbsp;·&nbsp; sent {datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")}.
+            </td>
+          </tr>
+        </table>
+
+        <div style="margin-top:16px;font-size:11px;color:#7A6B6F;
+                    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',
+                    Helvetica,Arial,sans-serif;">
+          This is an automated notification from the David Astburys seller survey funnel.
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
+
+
 async def _dispatch_order_emails(lead: OrderSurveyLead, agreement_url: str) -> tuple:
     """Send the order emails for either flow.
     Returns (email_id, email_error, seller_email_id, seller_email_error)."""
@@ -1043,6 +1236,12 @@ async def _dispatch_order_emails(lead: OrderSurveyLead, agreement_url: str) -> t
                 f"{f' ({lead.agent_name})' if lead.agent_name else ''}"
             )
             html = _render_exp_direct_order(lead, agreement_url)
+        elif lead.brand == "davidastburys":
+            subject = (
+                f"New David Astburys seller survey order — "
+                f"{lead.seller_name} ({lead.branch or 'branch not set'})"
+            )
+            html = _render_da_direct_order(lead, agreement_url)
         else:
             subject = (
                 f"New Balgores seller survey order — "
