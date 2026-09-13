@@ -119,7 +119,7 @@ class TestAcceptRiskAckAndPricingSnapshot:
         }
         r = requests.post(
             f"{API}/agreements/{token}/accept",
-            json={"risk_ack": True, "pricing_snapshot": snapshot},
+            json={"risk_ack": True, "payment_ack": True, "pricing_snapshot": snapshot},
             timeout=30,
         )
         assert r.status_code == 200, r.text

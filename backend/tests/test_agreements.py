@@ -152,7 +152,7 @@ class TestAcceptFlow:
 
     def test_accept_then_idempotent(self):
         token, _ = _create_agreement()
-        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True}, timeout=30)
+        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True, "payment_ack": True}, timeout=30)
         assert r.status_code == 200, r.text
         body = r.json()
         assert body["status"] == "accepted"
@@ -170,7 +170,7 @@ class TestAcceptFlow:
 
     def test_decline_on_accepted_returns_409(self):
         token, _ = _create_agreement()
-        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True}, timeout=30)
+        r = requests.post(f"{API}/agreements/{token}/accept", json={"risk_ack": True, "payment_ack": True}, timeout=30)
         assert r.status_code == 200
         r2 = requests.post(f"{API}/agreements/{token}/decline", timeout=15)
         assert r2.status_code == 409, f"Expected 409 on decline-after-accept, got {r2.status_code}: {r2.text}"

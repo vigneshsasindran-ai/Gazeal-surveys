@@ -198,7 +198,7 @@ class TestRpsaWebhookIntegration:
         token = r.json()["agreement_token"]
 
         r = requests.post(
-            f"{API}/agreements/{token}/accept", json={"risk_ack": True}, timeout=45
+            f"{API}/agreements/{token}/accept", json={"risk_ack": True, "payment_ack": True}, timeout=45
         )
         assert r.status_code == 200, r.text
 

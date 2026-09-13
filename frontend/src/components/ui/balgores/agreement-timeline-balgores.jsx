@@ -81,6 +81,13 @@ const AgreementTimeline = ({ data }) => {
     date: accepted ? fmtDate(data.rpsa_instructed_at || data.accepted_at) : null,
     state: accepted ? "done" : "upcoming",
   });
+  if (accepted && data.fee_due_at) {
+    steps.push({
+      label: "Survey fee payable, or on completion",
+      date: fmtDate(data.fee_due_at),
+      state: "upcoming",
+    });
+  }
 
   return (
     <div

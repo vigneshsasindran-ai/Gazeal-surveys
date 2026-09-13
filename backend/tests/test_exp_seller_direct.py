@@ -146,7 +146,7 @@ class TestExpAgreementLifecycle:
 
         # accept must be blocked while declined
         blocked = api.post(f"{BASE_URL}/api/agreements/{token}/accept",
-                           json={"risk_ack": True})
+                           json={"risk_ack": True, "payment_ack": True})
         assert blocked.status_code == 409, blocked.text
 
         rp = api.post(f"{BASE_URL}/api/agreements/{token}/reopen", json={})
@@ -159,7 +159,7 @@ class TestExpAgreementLifecycle:
         assert bad.status_code == 422, bad.text
 
         ok = api.post(f"{BASE_URL}/api/agreements/{token}/accept", json={
-            "risk_ack": True,
+            "risk_ack": True, "payment_ack": True,
             "pricing_snapshot": {
                 "property_value": 450000, "bedrooms": "3",
                 "listed_status": "not_listed", "band": "400k-500k",
@@ -174,7 +174,7 @@ class TestExpAgreementLifecycle:
 
         # idempotent
         again = api.post(f"{BASE_URL}/api/agreements/{token}/accept",
-                         json={"risk_ack": True})
+                         json={"risk_ack": True, "payment_ack": True})
         assert again.status_code == 200
         assert again.json()["status"] == "already_accepted"
 

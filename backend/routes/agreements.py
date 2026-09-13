@@ -18,9 +18,13 @@ from typing import Optional
 
 import httpx
 import resend
-from fastapi import APIRouter, HTTPException, Request
+import base64
+from fastapi import APIRouter, HTTPException, Request, Response
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
+
+import terms as terms_mod
+from pdf_terms import build_agreement_pdf
 
 from webhooks import fan_out
 from slack_notify import notify_agreement_accepted, notify_reservation_interest
@@ -91,11 +95,17 @@ def public_context(agreement: dict, lead: dict | None = None) -> dict:
         "reservation_interest_at": agreement.get("reservation_interest_at"),
         "pricing_snapshot": agreement.get("pricing_snapshot"),
         "brand": agreement.get("brand") or "gazeal",
+        "fee_due_at": agreement.get("fee_due_at"),
+        "terms_version": agreement.get("terms_version"),
+        "terms_sha256": agreement.get("terms_sha256"),
+        "payment_acknowledged": bool(agreement.get("payment_acknowledged")),
+        "terms_pdf_available": bool(agreement.get("terms_text")),
     }
 
 
 async def _send(subject: str, html: str, to: list[str],
-                cc: Optional[list[str]] = None) -> Optional[str]:
+                cc: Optional[list[str]] = None,
+                attachments: Optional[list[dict]] = None) -> Optional[str]:
     params = {
         "from": SENDER_EMAIL,
         "to": to,
@@ -104,6 +114,8 @@ async def _send(subject: str, html: str, to: list[str],
     }
     if cc:
         params["cc"] = cc
+    if attachments:
+        params["attachments"] = attachments
     email = await asyncio.to_thread(resend.Emails.send, params)
     return email.get("id") if isinstance(email, dict) else None
 
@@ -113,6 +125,30 @@ def _fmt_dt(iso: str) -> str:
         return datetime.fromisoformat(iso).strftime("%d %b %Y, %H:%M UTC")
     except Exception:
         return iso
+
+
+def _fmt_date(iso: str) -> str:
+    try:
+        return datetime.fromisoformat(iso).strftime("%d %B %Y")
+    except Exception:
+        return iso
+
+
+def _plus_six_months(iso: str) -> str:
+    """Six calendar months from the acceptance date, clamped to month end."""
+    try:
+        d = datetime.fromisoformat(iso)
+    except Exception:
+        return ""
+    month = d.month + 6
+    year = d.year + (month - 1) // 12
+    month = (month - 1) % 12 + 1
+    day = d.day
+    while True:
+        try:
+            return d.replace(year=year, month=month, day=day).isoformat()
+        except ValueError:
+            day -= 1
 
 
 def _wrapped(brand: str, title: str, eyebrow: str, kicker: str, body: str,
@@ -156,11 +192,14 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
     tokens = _tokens(brand)
     pd = tokens["primary_dark"]
     accepted_label = _fmt_dt(now)
+    fee_due_at = doc.get("fee_due_at") or _plus_six_months(now)
+    fee_due_label = _fmt_date(fee_due_at)
     acceptance_rows = (
         '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
         + _row("Accepted", accepted_label, primary_dark=pd)
         + _row("IP address", ip or "unknown", primary_dark=pd)
         + _row("Reference", token, primary_dark=pd)
+        + _row("Fee payable by", fee_due_label, primary_dark=pd)
         + "</table>"
     )
     return {
@@ -182,8 +221,50 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
         or f"{os.environ.get('FRONTEND_BASE_URL','')}/agreement/{token}",
         "accepted_label": accepted_label,
         "acceptance_rows": acceptance_rows,
+        "fee_due_at": fee_due_at,
+        "fee_due_label": fee_due_label,
+        "terms_label": doc.get("terms_version") or terms_mod.TERMS_LABEL,
+        "terms_sha256": doc.get("terms_sha256") or "",
         "previously_declined_at": doc.get("previously_declined_at"),
     }
+
+
+def _payment_block(ctx: dict) -> str:
+    """The payment term, restated in the emails with the exact due date."""
+    pd = ctx["pd"]
+    return (
+        f'<div style="border:1px solid rgba(17,24,39,0.18);border-left:3px solid {pd};'
+        'border-radius:8px;padding:14px 16px;margin:14px 0 4px;background:#FAFAFA;">'
+        '<p style="margin:0 0 6px;font-size:11px;letter-spacing:1.6px;'
+        f'text-transform:uppercase;font-weight:700;color:{pd};">'
+        'When the survey fee is payable</p>'
+        '<p style="margin:0 0 8px;font-size:14px;color:#111827;line-height:1.65;">'
+        '<strong>Nothing is payable today.</strong> The fee is payable to Gazeal on '
+        'completion of the sale of the Property, or by '
+        f'<strong>{ctx["fee_due_label"]}</strong> (six months from the date the terms '
+        'were accepted), whichever comes first. If the sale completes before that date, '
+        'the fee becomes payable on completion.'
+        '</p>'
+        '<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">'
+        'The fee remains payable if the sale does not complete, unless a Gazeal '
+        'Reservation Agreement applies and the sale falls through no fault of the '
+        'seller, as per the terms set in the Gazeal Reservation Agreement. '
+        'All prices include VAT.'
+        '</p>'
+        '</div>'
+    )
+
+
+def _terms_pdf_attachment(ctx: dict) -> list[dict]:
+    """Sealed PDF of the agreed terms, ready for Resend."""
+    pdf = ctx.get("terms_pdf")
+    if not pdf:
+        return []
+    return [{
+        "filename": f"Signed-Survey-Terms-{ctx['token']}.pdf",
+        "content": base64.b64encode(pdf).decode("ascii"),
+        "content_type": "application/pdf",
+    }]
 
 
 def _prev_declined_note(ctx: dict) -> str:
@@ -209,8 +290,12 @@ def _agent_signed_email(ctx: dict) -> tuple:
         'contact the seller directly to arrange the survey visit.'
         '</p>'
         + _prev_declined_note(ctx)
+        + _payment_block(ctx)
         + _section_title("Acceptance record", pd)
         + ctx["acceptance_rows"]
+        + '<p style="margin:10px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">'
+          'The sealed PDF of the terms the seller agreed to is attached for the file.'
+          '</p>'
         + _agreement_link_html(ctx["agreement_url"], pd)
     )
     html = _wrapped(
@@ -242,12 +327,17 @@ def _seller_confirmed_email(ctx: dict) -> tuple:
         f'<p style="margin:0 0 8px;font-size:14px;color:#0B1220;">Hi {seller_first},</p>'
         '<p style="margin:0 0 8px;font-size:14px;color:#0B1220;line-height:1.65;">'
         'Thank you. Your acceptance of the Home Insight Survey Service Terms '
-        '(Version 1.0, dated 14 July 2026) for '
+        f'({ctx["terms_label"]}) for '
         f'<strong>{ctx["address"]}</strong> has been recorded. RPSA will be in '
         'touch shortly to arrange your survey.'
         '</p>'
+        + _payment_block(ctx)
         + _section_title("For your records", pd)
         + ctx["acceptance_rows"]
+        + '<p style="margin:10px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">'
+          'A PDF copy of the exact terms you agreed to is attached to this email '
+          'for your records.'
+          '</p>'
         + _agreement_link_html(ctx["agreement_url"], pd)
     )
     html = _wrapped(
@@ -640,6 +730,73 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             lead = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
         return public_context(doc, lead)
 
+    @router.get("/{token}/terms.pdf")
+    async def terms_pdf(token: str):
+        """Re-issue the sealed PDF from the terms text stored at acceptance."""
+        doc = await db.agreements.find_one({"token": token})
+        if not doc:
+            raise HTTPException(404, "Agreement not found")
+        if doc.get("status") != "accepted":
+            raise HTTPException(409, "The terms have not been accepted yet")
+        sealed = doc.get("terms_text")
+        if not sealed or doc.get("terms_sha256") != terms_mod.terms_sha256(sealed):
+            raise HTTPException(
+                409,
+                "No sealed copy is available for this agreement. The PDF issued at "
+                "the time of acceptance is attached to the confirmation email.",
+            )
+        if doc.get("terms_sha256") != terms_mod.terms_sha256():
+            raise HTTPException(
+                409,
+                "This agreement was signed against an earlier version of the terms. "
+                "Use the PDF attached to the confirmation email for that version.",
+            )
+
+        lead = None
+        if doc.get("lead_id"):
+            lead = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
+        ctx = _build_accept_ctx(doc, lead, token, doc.get("accepted_at") or "",
+                                doc.get("accepted_ip") or "", doc.get("accepted_ua") or "")
+        snap = doc.get("pricing_snapshot") or {}
+        fee_summary = []
+        if snap.get("property_value"):
+            fee_summary.append(("Property value", f"£{int(snap['property_value']):,}"))
+        if snap.get("bedrooms"):
+            fee_summary.append(("Bedrooms", str(snap["bedrooms"])))
+        if snap.get("listed_status"):
+            fee_summary.append(("Registered listed building", str(snap["listed_status"])))
+        if snap.get("quote"):
+            fee_summary.append(("Survey fee", "Bespoke quote"))
+        elif snap.get("price"):
+            fee_summary.append(("Survey fee", f"£{round(float(snap['price'])):,} including VAT"))
+
+        pdf = build_agreement_pdf(
+            brand_label=ctx["tokens"]["brand_label"],
+            seller_name=ctx["seller_name"],
+            seller_email=doc.get("seller_email") or "",
+            address=ctx["address"],
+            agent_label=ctx["agent_label"],
+            reference=doc.get("reference_number") or token,
+            accepted_label=ctx["accepted_label"],
+            ip=doc.get("accepted_ip") or "",
+            device=doc.get("accepted_ua") or "",
+            fee_due_label=ctx["fee_due_label"],
+            fee_summary=fee_summary,
+            terms_label=doc.get("terms_version") or terms_mod.TERMS_LABEL,
+            clauses=terms_mod.CLAUSES,
+            payment_section=terms_mod.PAYMENT_SECTION,
+            terms_sha256=doc.get("terms_sha256") or terms_mod.terms_sha256(),
+        )
+        return Response(
+            content=pdf,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition":
+                    f'inline; filename="Signed-Survey-Terms-{token}.pdf"',
+                "X-Robots-Tag": "noindex, nofollow",
+            },
+        )
+
     @router.post("/{token}/accept")
     async def accept(token: str, request: Request):
         doc = await db.agreements.find_one({"token": token})
@@ -653,10 +810,12 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         # Optional pricing snapshot captured from the calculator on the page.
         pricing_snapshot: Optional[dict] = None
         risk_ack = False
+        payment_ack = False
         try:
             body = await request.json()
             if isinstance(body, dict):
                 risk_ack = bool(body.get("risk_ack"))
+                payment_ack = bool(body.get("payment_ack"))
             snap = body.get("pricing_snapshot") if isinstance(body, dict) else None
             if isinstance(snap, dict):
                 pricing_snapshot = {
@@ -677,8 +836,17 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 "Please confirm you understand the risk of proceeding without a "
                 "Gazeal Reservation Agreement before agreeing to the terms.",
             )
+        if not payment_ack:
+            raise HTTPException(
+                422,
+                "Please confirm you understand when the survey fee becomes payable "
+                "before agreeing to the terms.",
+            )
 
         now = datetime.now(timezone.utc).isoformat()
+        fee_due_at = _plus_six_months(now)
+        terms_text = terms_mod.terms_plain_text()
+        terms_hash = terms_mod.terms_sha256(terms_text)
         ip = (
             request.headers.get("x-forwarded-for", "").split(",")[0].strip()
             or (request.client.host if request.client else "")
@@ -689,8 +857,12 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "accepted_at": now,
             "accepted_ip": ip,
             "accepted_ua": ua,
-            "terms_version": "1.0 (14 July 2026)",
+            "terms_version": terms_mod.TERMS_LABEL,
+            "terms_text": terms_text,
+            "terms_sha256": terms_hash,
             "risk_acknowledged": risk_ack,
+            "payment_acknowledged": payment_ack,
+            "fee_due_at": fee_due_at,
         }
         if pricing_snapshot is not None:
             update_set["pricing_snapshot"] = pricing_snapshot
@@ -701,12 +873,50 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             lead_doc = await db.leads.find_one({"id": doc["lead_id"]}, {"_id": 0})
         ctx = _build_accept_ctx(doc, lead_doc, token, now, ip, ua)
 
+        # Seal the terms into a PDF so the seller and the file both keep an
+        # immutable copy of exactly what was agreed.
+        snap = pricing_snapshot or {}
+        fee_summary = []
+        if snap.get("property_value"):
+            fee_summary.append(("Property value", f"£{int(snap['property_value']):,}"))
+        if snap.get("bedrooms"):
+            fee_summary.append(("Bedrooms", str(snap["bedrooms"])))
+        if snap.get("listed_status"):
+            fee_summary.append(("Registered listed building", str(snap["listed_status"])))
+        if snap.get("quote"):
+            fee_summary.append(("Survey fee", "Bespoke quote"))
+        elif snap.get("price"):
+            fee_summary.append(("Survey fee", f"£{round(float(snap['price'])):,} including VAT"))
+        try:
+            ctx["terms_pdf"] = build_agreement_pdf(
+                brand_label=ctx["tokens"]["brand_label"],
+                seller_name=ctx["seller_name"],
+                seller_email=doc.get("seller_email") or "",
+                address=ctx["address"],
+                agent_label=ctx["agent_label"],
+                reference=doc.get("reference_number") or token,
+                accepted_label=ctx["accepted_label"],
+                ip=ip,
+                device=ua,
+                fee_due_label=ctx["fee_due_label"],
+                fee_summary=fee_summary,
+                terms_label=terms_mod.TERMS_LABEL,
+                clauses=terms_mod.CLAUSES,
+                payment_section=terms_mod.PAYMENT_SECTION,
+                terms_sha256=terms_hash,
+            )
+        except Exception:
+            logger.exception("Sealed terms PDF could not be generated")
+            ctx["terms_pdf"] = None
+        attachments = _terms_pdf_attachment(ctx)
+
         # Notify the listing agent — internal team CC'd on the same email
         agent_email_id: Optional[str] = None
         agent_email_error: Optional[str] = None
         try:
             subject, to, cc, html = _agent_signed_email(ctx)
-            agent_email_id = await _send(subject=subject, to=to, cc=cc, html=html)
+            agent_email_id = await _send(subject=subject, to=to, cc=cc, html=html,
+                                         attachments=attachments)
         except Exception as exc:
             agent_email_error = str(exc)
             logger.exception("Agent notify email failed")
@@ -716,7 +926,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         seller_email_error: Optional[str] = None
         try:
             subject, to, cc, html = _seller_confirmed_email(ctx)
-            seller_email_id = await _send(subject=subject, to=to, cc=cc, html=html)
+            seller_email_id = await _send(subject=subject, to=to, cc=cc, html=html,
+                                          attachments=attachments)
         except Exception as exc:
             seller_email_error = str(exc)
             logger.exception("Seller confirmation email failed")

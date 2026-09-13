@@ -153,6 +153,21 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - PENDING USER ACTION: redeploy so /davidastburys and the new imagery go live.
 - KNOWN DEBT (flagged by review): brand components are now duplicated 4x. Consolidate behind theme tokens before adding a 5th brand.
 
+
+## Sep 2026: Payment framework, sealed terms PDF, Terms v1.1 (VERIFIED, iteration_14)
+- Terms bumped to **Version 1.1, dated 13 September 2026**. The 15 numbered clauses are unchanged; a new highlighted, print-visible section sits after clause 15 on all four agreement pages: "The fee, when you pay, and cancellation" (data-testid agreement-payment-terms).
+  Wording: nothing payable today; fee payable to Gazeal on completion or six months from acceptance, whichever comes first; fee still payable if the sale fails unless a Gazeal Reservation Agreement applies and it fails through no fault of the seller; VAT + invoicing; 14 day cancellation right with express-request wording (CCRs 2013 / CRA 2015).
+- SINGLE SOURCE OF TRUTH: /app/backend/terms.py (TERMS_VERSION, TERMS_LABEL, CLAUSES, PAYMENT_SECTION, terms_plain_text(), terms_sha256()). The frontend copies must stay in step with this file when wording changes.
+- Acceptance now REQUIRES two acknowledgements: risk_ack (existing) and the new payment_ack. Missing either returns 422. The confirm modal has a second checkbox (agreement-payment-ok-checkbox) framed as "I pay nothing today" showing the exact six month date.
+- At acceptance the backend stores: fee_due_at (six calendar months, month-end clamped), terms_version, sealed terms_text, terms_sha256, payment_acknowledged.
+- Sealed PDF: /app/backend/pdf_terms.py (reportlab) builds the signed terms PDF. Attached to the seller confirmation email AND the internal "seller has signed" email. Re-issuable at GET /api/agreements/{token}/terms.pdf (409 if pending, or if the stored hash no longer matches the current wording, so old versions are never misrepresented).
+- Emails: seller confirmation and agent/internal signed email both carry a payment block with the exact payable-by date and the completion trigger; acceptance rows now include "Fee payable by".
+- Agreement page after signing: fee countdown card (green >30 days, amber <=30, red overdue), payable-by date, signed-copy version + SHA-256, PDF download link, and a timeline step "Survey fee payable, or on completion".
+- Also in this session: Gazeal Elite link and the Learn More CTA removed from all branded seller pages (kept on the main agent page).
+- Testing: iteration_14 — backend 11/11 (/app/backend/tests/test_payment_framework.py), frontend 100% across all four brands. No issues. Test run used an intentionally invalid RESEND_API_KEY plus blank Slack/RPSA/ProcessMaker so NOTHING was sent; all values RESTORED after.
+- Email/PDF previews for the user live in /app/frontend/public/email-previews/ (10-seller-confirmation-v11.html, 11-agent-signed-v11.html, 12-rpsa-instruction-v11.html, signed-terms-sample.pdf).
+- PENDING USER ACTION: redeploy. Legal sign-off on the new clause wording is still recommended.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

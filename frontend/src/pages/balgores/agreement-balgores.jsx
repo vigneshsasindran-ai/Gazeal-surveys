@@ -64,6 +64,20 @@ const CLAUSES = [
   { no: "15", title: "General", body: "Except for the permitted reliance expressly granted to the first successful purchaser, the Contract is between you and the Surveyor, and no other person has any right to enforce its terms under the Contracts (Rights of Third Parties) Act 1999. Each provision operates independently; if any is found to be unlawful, unenforceable or invalid, the remaining provisions continue in full force. The Contract is governed by the law of England and Wales, and any dispute may be brought in the courts of England and Wales; if you live in Scotland or Northern Ireland, you may bring proceedings in your local courts or the English courts. Nothing in these Terms or the Order removes or limits any right you have under applicable consumer protection legislation, including the Consumer Rights Act 2015 and the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013; where any provision conflicts with such legislation, the legislation prevails. These Terms are issued by the RPSA for use with panel instructions, and the Surveyor is responsible for providing the Service in accordance with them." },
 ];
 
+const addSixMonths = (from) => {
+  const d = new Date(from);
+  const day = d.getDate();
+  d.setMonth(d.getMonth() + 6);
+  if (d.getDate() !== day) d.setDate(0);
+  return d;
+};
+
+const fmtLongDate = (d) =>
+  d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+const daysUntil = (d) =>
+  Math.ceil((d.getTime() - Date.now()) / 86400000);
+
 const parseAskingPrice = (raw) => {
   if (!raw) return null;
   const m = String(raw).toLowerCase().replace(/,/g, "").match(/(\d+(?:\.\d+)?)\s*(k|m)?/);
@@ -125,6 +139,7 @@ const AgreementPage = () => {
   const [confirmStep, setConfirmStep] = useState(null);
   const [moreInfo, setMoreInfo] = useState(false);
   const [detailsOk, setDetailsOk] = useState(false);
+  const [paymentOk, setPaymentOk] = useState(false);
   const calcRef = useRef(null);
 
   const post = async (action) => {
@@ -138,7 +153,7 @@ const AgreementPage = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             action === "accept"
-              ? { risk_ack: true, ...(pricingSnapshot ? { pricing_snapshot: { ...pricingSnapshot, details_confirmed: true } } : {}) }
+              ? { risk_ack: true, payment_ack: true, ...(pricingSnapshot ? { pricing_snapshot: { ...pricingSnapshot, details_confirmed: true } } : {}) }
               : {}
           ),
         }
@@ -189,6 +204,9 @@ const AgreementPage = () => {
   const declined = data.status === "declined";
   const stampDate = accepted ? new Date(data.accepted_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" }) : null;
   const pending = !accepted && !declined;
+  const sixMonthIfToday = fmtLongDate(addSixMonths(new Date()));
+  const feeDueDate = data.fee_due_at ? new Date(data.fee_due_at) : null;
+  const feeDaysLeft = feeDueDate ? daysUntil(feeDueDate) : 0;
 
   return (
     <div className="min-h-screen bg-black text-white" data-testid="agreement-page">
@@ -242,6 +260,63 @@ const AgreementPage = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+          {/* Fee countdown — shown once signed, included in print */}
+          {accepted && feeDueDate && (
+            <div
+              className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+              data-testid="agreement-fee-countdown"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#B8AB84]">
+                    Survey fee
+                  </p>
+                  <p className="mt-2 font-archivo font-bold text-white text-2xl sm:text-[28px] leading-none tracking-[-0.02em]"
+                     data-testid="agreement-fee-due-date">
+                    Payable by {fmtLongDate(feeDueDate)}
+                  </p>
+                  <p className="mt-2 font-outfit text-[13px] text-white/70">
+                    Or on completion of your sale, whichever comes first. You paid nothing today.
+                  </p>
+                </div>
+                <span
+                  className="shrink-0 rounded-full px-3.5 py-1.5 font-outfit font-semibold text-[12px] border"
+                  style={feeDaysLeft < 0
+                    ? { borderColor: "rgba(255,138,138,0.55)", color: "#FF8A8A", background: "rgba(255,138,138,0.10)" }
+                    : feeDaysLeft <= 30
+                    ? { borderColor: "rgba(245,183,107,0.55)", color: "#F5B76B", background: "rgba(245,183,107,0.10)" }
+                    : { borderColor: "rgba(93,201,141,0.55)", color: "#5DC98D", background: "rgba(93,201,141,0.10)" }}
+                  data-testid="agreement-fee-countdown-pill"
+                >
+                  {feeDaysLeft < 0
+                    ? "Fee overdue"
+                    : feeDaysLeft === 0
+                    ? "Due today"
+                    : `${feeDaysLeft} day${feeDaysLeft === 1 ? "" : "s"} remaining`}
+                </span>
+              </div>
+              {data.terms_pdf_available && (
+                <div className={`mt-4 pt-4 border-t ${"border-white/[0.08]"} flex flex-wrap items-center justify-between gap-3`}>
+                  <p className="font-outfit text-[12px] text-white/50">
+                    Signed copy: {data.terms_version}
+                    {data.terms_sha256 ? (
+                      <> · SHA-256 <span className="font-mono">{data.terms_sha256.slice(0, 16)}…</span></>
+                    ) : null}
+                  </p>
+                  <a
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/terms.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="print-hide inline-flex items-center gap-2 rounded-full border px-4 py-2 font-outfit font-semibold text-[12px] text-white/70 hover:text-white transition-all"
+                    style={{ borderColor: "#B8AB84" }}
+                    data-testid="agreement-terms-pdf-link"
+                  >
+                    Download signed terms (PDF)
+                  </a>
+                </div>
+              )}
             </div>
           )}
           {declined && (
@@ -311,7 +386,7 @@ const AgreementPage = () => {
             <p className="mt-4 pt-4 border-t border-white/10 font-outfit text-[13px] text-white/60 leading-relaxed" data-testid="agreement-about-summary">
               These Service Terms explain the Home Insight Survey, what the Surveyor will inspect and report
               upon, who may rely on the Report, and the limits of the Service.{" "}
-              <span className="text-white/85 font-semibold">Version 1.0, dated 14th July 2026.</span>
+              <span className="text-white/85 font-semibold">Version 1.1, dated 13th September 2026.</span>
             </p>
           </div>
 
@@ -336,9 +411,58 @@ const AgreementPage = () => {
                 <p className="font-outfit text-[14px] leading-[1.7] text-white/70 pl-8">{c.body}</p>
               </section>
             ))}
+            {/* Fee, payment and cancellation — part of the terms, included in print */}
+            <section
+              className="rounded-xl border-2 border-[#B8AB84]/40 bg-[#B8AB84]/[0.07] p-5 sm:p-6"
+              data-testid="agreement-payment-terms"
+            >
+              <h2 className="flex items-baseline gap-3 mb-2">
+                <span className="font-archivo font-bold text-[#B8AB84] text-[14px]">Fee</span>
+                <span className="font-archivo font-bold text-white text-[16px] tracking-[-0.01em]">
+                  The fee, when you pay, and cancellation
+                </span>
+              </h2>
+              <div className="pl-8 space-y-2.5 font-outfit text-[14px] leading-[1.7] text-white/70">
+                <p>
+                  <span className="text-white font-semibold">Nothing is payable today.</span> The fee is
+                  payable to Gazeal on completion of the sale of the Property, or six months from the
+                  date you accept these terms, whichever comes first.
+                </p>
+                <p>
+                  The fee remains payable if the sale does not complete, unless a Gazeal Reservation
+                  Agreement applies and the sale falls through no fault of the seller, as per the terms
+                  set in the Gazeal Reservation Agreement.
+                </p>
+                <p>
+                  All prices include VAT. Gazeal will invoice you at the point the fee becomes payable,
+                  using the contact details on your Order. If the Property is sold and completion takes
+                  place before the six month date, the fee becomes payable on completion.
+                </p>
+                <p>
+                  You have the right to cancel this Contract within 14 days of accepting these terms,
+                  without giving a reason and at no cost, by writing to info@gazeal.co.uk. If you ask
+                  for the survey to be carried out within that 14 day period, you are making an express
+                  request for the service to begin during the cancellation period, and if you then
+                  cancel after the survey has been carried out you remain liable for the fee for the
+                  service already supplied. Nothing in this section removes or limits your rights under
+                  the Consumer Rights Act 2015 or the Consumer Contracts (Information, Cancellation and
+                  Additional Charges) Regulations 2013.
+                </p>
+                <p className="text-white/50 text-[13px] pt-1" data-testid="agreement-payment-date-note">
+                  {pending ? (
+                    <>Accept today and the six month date is{" "}
+                    <span className="text-white font-semibold">{sixMonthIfToday}</span>.</>
+                  ) : feeDueDate ? (
+                    <>Fee payable by{" "}
+                    <span className="text-white font-semibold">{fmtLongDate(feeDueDate)}</span>, or on
+                    completion of your sale, whichever comes first.</>
+                  ) : null}
+                </p>
+              </div>
+            </section>
             <p className="font-outfit text-[12px] text-white/45 pl-8 pt-2 border-t border-white/[0.06]">
               By accepting, you confirm that you have read and agree to these Home Insight Survey Service
-              Terms <span className="text-white/70 font-semibold">(Version 1.0, dated 14 July 2026)</span> and
+              Terms <span className="text-white/70 font-semibold">(Version 1.1, dated 13 September 2026)</span> and
               your Order.
             </p>
             {/* Sentinel for the unlock observer */}
@@ -414,7 +538,7 @@ const AgreementPage = () => {
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => { setDetailsOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
+                  <button type="button" onClick={() => { setDetailsOk(false); setPaymentOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                           data-testid="agreement-accept">
@@ -488,6 +612,34 @@ const AgreementPage = () => {
                       I confirm these property details are correct.
                     </span>
                   </label>
+                  <label
+                    className={`mt-3 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
+                      paymentOk ? "border-[#B8AB84]/50 bg-[#B8AB84]/[0.06]" : "border-white/15 bg-white/[0.02] hover:border-white/30"
+                    }`}
+                    data-testid="agreement-payment-ok-label"
+                  >
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={paymentOk}
+                      onChange={(e) => setPaymentOk(e.target.checked)}
+                      data-testid="agreement-payment-ok-checkbox"
+                    />
+                    <span
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                        paymentOk ? "border-transparent" : "border-white/35"
+                      }`}
+                      style={paymentOk ? { background: "#B8AB84" } : {}}
+                    >
+                      {paymentOk && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                    </span>
+                    <span className="font-outfit text-[13px] text-white/70 leading-relaxed">
+                      <span className="text-white font-semibold">I pay nothing today.</span> I understand the
+                      survey fee is payable on completion of my sale, or by{" "}
+                      <span className="text-white font-semibold">{sixMonthIfToday}</span>, whichever comes
+                      first.
+                    </span>
+                  </label>
                   {!data.reservation_interest && (
                     <label
                       className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
@@ -526,7 +678,7 @@ const AgreementPage = () => {
                               }
                               post("accept");
                             }}
-                            disabled={busy || !detailsOk}
+                            disabled={busy || !detailsOk || !paymentOk}
                             className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                             style={{ background: "#B8AB84", boxShadow: "0 6px 22px rgba(26,20,52,0.4)" }}
                             data-testid="agreement-confirm-accept">
