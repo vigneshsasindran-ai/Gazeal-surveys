@@ -19,7 +19,7 @@ const NAV_LINKS = [
 const DA_LOGO_WHITE = "/brand-assets/da-logo-white.png";
 const DA_LOGO_COLOUR = "/brand-assets/da-logo.png";
 
-const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
+const SurveysHeader = ({ onOrderSurvey }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -69,11 +69,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
     setIsMobileMenuOpen(false);
     if (onOrderSurvey) return onOrderSurvey();
     navigate("/davidastburys/order-survey");
-  };
-  const handleLearnMore = () => {
-    setIsMobileMenuOpen(false);
-    if (onLearnMore) return onLearnMore();
-    navigate("/davidastburys?learn=1");
   };
 
   return (
@@ -150,14 +145,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
 
               {/* Desktop CTAs */}
               <div className="hidden lg:flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleLearnMore}
-                  className={`text-[14px] px-4 py-2.5 font-medium rounded-full transition-all font-outfit ${isScrolled || isHome ? "text-white/85 hover:text-white border border-white/25 hover:border-white/50" : "text-[#2B1B20]/80 hover:text-[#2B1B20] border border-[#2B1B20]/20 hover:border-[#2B1B20]/40"}`}
-                  data-testid="surveys-nav-learn-more"
-                >
-                  Learn More
-                </button>
                 <button
                   type="button"
                   onClick={handleOrderSurvey}
@@ -256,14 +243,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
 
               <div className="h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
 
-              <button
-                type="button"
-                onClick={handleLearnMore}
-                className="w-full text-center py-4 text-base font-semibold rounded-2xl transition-all duration-300 text-white/85 hover:text-white border border-white/15 hover:border-white/35 font-outfit mb-3"
-                data-testid="surveys-mobile-learn-more"
-              >
-                Learn More
-              </button>
               <button
                 type="button"
                 onClick={handleOrderSurvey}

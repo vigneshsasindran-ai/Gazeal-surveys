@@ -62,7 +62,7 @@ const FAQ_ITEMS = [
   },
 ];
 
-const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
+const SurveysFAQ = ({ onOrderSurvey }) => {
   return (
     <section
       id="faq"
@@ -139,14 +139,6 @@ const SurveysFAQ = ({ onOrderSurvey, onLearnMore }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={onLearnMore}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-full text-[#2B1B20]/85 hover:text-[#2B1B20] font-medium px-4 py-2.5 text-sm border border-[#2B1B20]/15 hover:border-[#2B1B20]/35 transition-all font-outfit"
-                    data-testid="surveys-faq-learn-more"
-                  >
-                    Learn More
-                  </button>
                   <button
                     type="button"
                     onClick={onOrderSurvey}

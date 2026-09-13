@@ -45,7 +45,7 @@ const CheckedBadge = ({ label, className = "", floatClass = "", testid }) => (
   </div>
 );
 
-const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
+const SurveysHero = ({ onOrderSurvey }) => {
   return (
     <section
       id="hero"
@@ -170,16 +170,6 @@ const SurveysHero = ({ onOrderSurvey, onLearnMore }) => {
               <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </button>
 
-            <button
-              type="button"
-              onClick={() =>
-                onLearnMore ? onLearnMore() : scrollToId("features")
-              }
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-transparent text-white font-outfit font-semibold px-7 py-3.5 text-[15px] border border-white/35 hover:border-white hover:bg-white/[0.06] transition-all duration-300"
-              data-testid="surveys-hero-cta-secondary"
-            >
-              Learn More
-            </button>
           </div>
         </div>
       </div>

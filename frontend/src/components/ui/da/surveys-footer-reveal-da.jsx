@@ -12,7 +12,7 @@ const FOOTER_HEIGHT = 600;
 const LOGO_SRC =
   "/brand-assets/gazeal-logo-ink.png";
 
-const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
+const SurveysFooterReveal = ({ onOrderSurvey }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const revealRef = useRef(null);
 
@@ -114,27 +114,10 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
                 >
                   Gazeal Main Site <ArrowUpRight className="w-3 h-3" />
                 </a>
-                <a
-                  href="https://elite.gazeal.co.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#2B1B20]/75 hover:text-[#9B2743] transition-colors text-sm flex items-center gap-1"
-                  data-testid="footer-nav-elite"
-                >
-                  Gazeal Elite <ArrowUpRight className="w-3 h-3" />
-                </a>
               </div>
 
               {/* CTAs */}
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={onLearnMore}
-                  className="text-[13px] px-4 py-2.5 font-medium rounded-full text-[#2B1B20]/80 hover:text-[#2B1B20] border border-[#2B1B20]/15 hover:border-[#2B1B20]/35 transition-all font-outfit"
-                  data-testid="surveys-footer-learn-more"
-                >
-                  Learn More
-                </button>
                 <button
                   type="button"
                   onClick={onOrderSurvey}

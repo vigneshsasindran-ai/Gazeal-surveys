@@ -19,7 +19,7 @@ const NAV_LINKS = [
 const BALGORES_LOGO =
   "https://customer-assets.emergentagent.com/job_survey-pro-10/artifacts/mtuv9mso_download%20%281%29.webp";
 
-const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
+const SurveysHeader = ({ onOrderSurvey }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -69,11 +69,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
     setIsMobileMenuOpen(false);
     if (onOrderSurvey) return onOrderSurvey();
     navigate("/balgores/order-survey");
-  };
-  const handleLearnMore = () => {
-    setIsMobileMenuOpen(false);
-    if (onLearnMore) return onLearnMore();
-    navigate("/balgores?learn=1");
   };
 
   return (
@@ -161,14 +156,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
 
               {/* Desktop CTAs */}
               <div className="hidden lg:flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleLearnMore}
-                  className="text-[14px] px-4 py-2.5 font-medium rounded-full text-white/80 hover:text-white border border-white/15 hover:border-white/35 transition-all font-outfit"
-                  data-testid="surveys-nav-learn-more"
-                >
-                  Learn More
-                </button>
                 <button
                   type="button"
                   onClick={handleOrderSurvey}
@@ -267,14 +254,6 @@ const SurveysHeader = ({ onOrderSurvey, onLearnMore }) => {
 
               <div className="h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
 
-              <button
-                type="button"
-                onClick={handleLearnMore}
-                className="w-full text-center py-4 text-base font-semibold rounded-2xl transition-all duration-300 text-white/85 hover:text-white border border-white/15 hover:border-white/35 font-outfit mb-3"
-                data-testid="surveys-mobile-learn-more"
-              >
-                Learn More
-              </button>
               <button
                 type="button"
                 onClick={handleOrderSurvey}

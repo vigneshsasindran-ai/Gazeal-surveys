@@ -31,7 +31,6 @@ import BSellerAdvantage from "@/components/ui/balgores/seller-advantage-balgores
 import BSurveyPricingTable from "@/components/ui/balgores/survey-pricing-table-balgores";
 import BSurveysFAQ from "@/components/ui/balgores/surveys-faq-balgores";
 import BSurveysFooterReveal from "@/components/ui/balgores/surveys-footer-reveal-balgores";
-import BSurveysLearnMoreModal from "@/components/ui/balgores/surveys-learn-more-modal-balgores";
 import BOrderSurveyPage from "@/pages/balgores/order-survey-balgores";
 import BAgreementPage from "@/pages/balgores/agreement-balgores";
 import BPricingPage from "@/pages/balgores/pricing-balgores";
@@ -47,7 +46,6 @@ import XSellerAdvantage from "@/components/ui/exp/seller-advantage-exp";
 import XSurveyPricingTable from "@/components/ui/exp/survey-pricing-table-exp";
 import XSurveysFAQ from "@/components/ui/exp/surveys-faq-exp";
 import XSurveysFooterReveal from "@/components/ui/exp/surveys-footer-reveal-exp";
-import XSurveysLearnMoreModal from "@/components/ui/exp/surveys-learn-more-modal-exp";
 import XOrderSurveyPage from "@/pages/exp/order-survey-exp";
 import XAgreementPage from "@/pages/exp/agreement-exp";
 import XPricingPage from "@/pages/exp/pricing-exp";
@@ -63,7 +61,6 @@ import DSellerAdvantage from "@/components/ui/da/seller-advantage-da";
 import DSurveyPricingTable from "@/components/ui/da/survey-pricing-table-da";
 import DSurveysFAQ from "@/components/ui/da/surveys-faq-da";
 import DSurveysFooterReveal from "@/components/ui/da/surveys-footer-reveal-da";
-import DSurveysLearnMoreModal from "@/components/ui/da/surveys-learn-more-modal-da";
 import DOrderSurveyPage from "@/pages/da/order-survey-da";
 import DAgreementPage from "@/pages/da/agreement-da";
 import DPricingPage from "@/pages/da/pricing-da";
@@ -131,10 +128,8 @@ const SurveysLanding = () => {
 const SurveysLandingBalgores = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   const handleOrderSurvey = () => navigate("/balgores/order-survey");
-  const handleLearnMore = () => setLearnMoreOpen(true);
 
   useEffect(() => {
     if (location.hash) {
@@ -150,19 +145,11 @@ const SurveysLandingBalgores = () => {
     }
   }, [location.hash]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("learn") === "1") {
-      setLearnMoreOpen(true);
-      navigate("/balgores", { replace: true });
-    }
-  }, [location.search, navigate]);
-
   return (
     <div className="App min-h-screen bg-black" data-testid="balgores-landing">
-      <BSurveysHeader onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <BSurveysHeader onOrderSurvey={handleOrderSurvey} />
       <main className="relative z-10 bg-black">
-        <BSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <BSurveysHero onOrderSurvey={handleOrderSurvey} />
         <BSurveysBento />
         <BSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <BSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
@@ -176,10 +163,9 @@ const SurveysLandingBalgores = () => {
         </section>
         <BSurveysBenefits />
         <BSurveyPricingTable />
-        <BSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <BSurveysFAQ onOrderSurvey={handleOrderSurvey} />
       </main>
-      <BSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
-      <BSurveysLearnMoreModal open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
+      <BSurveysFooterReveal onOrderSurvey={handleOrderSurvey} />
     </div>
   );
 };
@@ -191,10 +177,8 @@ const SurveysLandingBalgores = () => {
 const SurveysLandingExp = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   const handleOrderSurvey = () => navigate("/exp/order-survey");
-  const handleLearnMore = () => setLearnMoreOpen(true);
 
   useEffect(() => {
     if (location.hash) {
@@ -210,19 +194,11 @@ const SurveysLandingExp = () => {
     }
   }, [location.hash]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("learn") === "1") {
-      setLearnMoreOpen(true);
-      navigate("/exp", { replace: true });
-    }
-  }, [location.search, navigate]);
-
   return (
     <div className="App min-h-screen bg-black" data-testid="exp-landing">
-      <XSurveysHeader onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <XSurveysHeader onOrderSurvey={handleOrderSurvey} />
       <main className="relative z-10 bg-black">
-        <XSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <XSurveysHero onOrderSurvey={handleOrderSurvey} />
         <XSurveysBento />
         <XSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <XSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
@@ -236,10 +212,9 @@ const SurveysLandingExp = () => {
         </section>
         <XSurveysBenefits />
         <XSurveyPricingTable />
-        <XSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <XSurveysFAQ onOrderSurvey={handleOrderSurvey} />
       </main>
-      <XSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
-      <XSurveysLearnMoreModal open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
+      <XSurveysFooterReveal onOrderSurvey={handleOrderSurvey} />
     </div>
   );
 };
@@ -252,10 +227,8 @@ const SurveysLandingExp = () => {
 const SurveysLandingDa = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
 
   const handleOrderSurvey = () => navigate("/davidastburys/order-survey");
-  const handleLearnMore = () => setLearnMoreOpen(true);
 
   useEffect(() => {
     if (location.hash) {
@@ -271,19 +244,11 @@ const SurveysLandingDa = () => {
     }
   }, [location.hash]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("learn") === "1") {
-      setLearnMoreOpen(true);
-      navigate("/davidastburys", { replace: true });
-    }
-  }, [location.search, navigate]);
-
   return (
     <div className="App min-h-screen bg-[#ccbfb9]" data-testid="da-landing">
-      <DSurveysHeader onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+      <DSurveysHeader onOrderSurvey={handleOrderSurvey} />
       <main className="relative z-10 bg-[#ccbfb9]">
-        <DSurveysHero onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <DSurveysHero onOrderSurvey={handleOrderSurvey} />
         <DSurveysBento />
         <DSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <DSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
@@ -297,10 +262,9 @@ const SurveysLandingDa = () => {
         </section>
         <DSurveysBenefits />
         <DSurveyPricingTable />
-        <DSurveysFAQ onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
+        <DSurveysFAQ onOrderSurvey={handleOrderSurvey} />
       </main>
-      <DSurveysFooterReveal onOrderSurvey={handleOrderSurvey} onLearnMore={handleLearnMore} />
-      <DSurveysLearnMoreModal open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
+      <DSurveysFooterReveal onOrderSurvey={handleOrderSurvey} />
     </div>
   );
 };

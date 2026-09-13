@@ -34,10 +34,6 @@ const AgreementFooter = () => (
            className="text-[#2B1B20]/55 hover:text-[#9B2743] transition-colors inline-flex items-center gap-1">
           Gazeal Main Site <ArrowUpRight className="w-3 h-3" />
         </a>
-        <a href="https://elite.gazeal.co.uk" target="_blank" rel="noopener noreferrer"
-           className="text-[#2B1B20]/55 hover:text-[#9B2743] transition-colors inline-flex items-center gap-1">
-          Gazeal Elite <ArrowUpRight className="w-3 h-3" />
-        </a>
         <a href="mailto:info@gazeal.co.uk"
            className="text-[#2B1B20]/55 hover:text-[#9B2743] transition-colors inline-flex items-center gap-1">
           <Mail className="w-3.5 h-3.5" /> info@gazeal.co.uk
