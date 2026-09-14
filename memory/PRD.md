@@ -155,8 +155,8 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 
 
 ## Sep 2026: Payment framework, sealed terms PDF, Terms v1.1 (VERIFIED, iteration_14)
-- Terms bumped to **Version 1.1, dated 13 September 2026**. The 15 numbered clauses are unchanged; a new highlighted, print-visible section sits after clause 15 on all four agreement pages: "The fee, when you pay, and cancellation" (data-testid agreement-payment-terms).
-  Wording: nothing payable today; fee payable to Gazeal on completion or six months from acceptance, whichever comes first; fee still payable if the sale fails unless a Gazeal Reservation Agreement applies and it fails through no fault of the seller; VAT + invoicing; 14 day cancellation right with express-request wording (CCRs 2013 / CRA 2015).
+- Terms bumped to **Version 1.1, dated 13 September 2026**. The 15 numbered clauses are unchanged; a new highlighted, print-visible section sits after clause 15 on all four agreement pages: "The fee and when you pay" (data-testid agreement-payment-terms).
+  Wording: nothing payable today; fee payable to Gazeal on completion or six months from acceptance, whichever comes first; fee still payable if the sale fails unless a Gazeal Reservation Agreement applies and it fails through no fault of the seller; VAT + invoicing. (The 14 day cancellation paragraph was added then REMOVED at the user's request on 14 Sep 2026, and the decorative "Fee" eyebrow tag was removed; the section now has exactly 3 paragraphs.)
 - SINGLE SOURCE OF TRUTH: /app/backend/terms.py (TERMS_VERSION, TERMS_LABEL, CLAUSES, PAYMENT_SECTION, terms_plain_text(), terms_sha256()). The frontend copies must stay in step with this file when wording changes.
 - Acceptance now REQUIRES two acknowledgements: risk_ack (existing) and the new payment_ack. Missing either returns 422. The confirm modal has a second checkbox (agreement-payment-ok-checkbox) framed as "I pay nothing today" showing the exact six month date.
 - At acceptance the backend stores: fee_due_at (six calendar months, month-end clamped), terms_version, sealed terms_text, terms_sha256, payment_acknowledged.

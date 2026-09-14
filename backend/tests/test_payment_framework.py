@@ -38,7 +38,7 @@ def test_terms_module_version_and_clauses():
     numbers = [c["no"] for c in terms_mod.CLAUSES]
     assert numbers == [f"{i:02d}" for i in range(1, 16)]
     ps = terms_mod.PAYMENT_SECTION
-    assert ps["title"] == "The fee, when you pay, and cancellation"
+    assert ps["title"] == "The fee and when you pay"
     assert len(ps["paragraphs"]) == 3
     joined = " ".join(ps["paragraphs"])
     assert "Nothing is payable today" in joined

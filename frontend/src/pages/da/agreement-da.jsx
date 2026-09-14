@@ -404,7 +404,7 @@ const AgreementPage = () => {
             {CLAUSES.map((c) => (
               <section key={c.no} data-testid={`agreement-clause-${c.no}`}
                        className="rounded-xl border border-[#2B1B20]/[0.06] bg-white/70 p-5 sm:p-6">
-                <h2 className="flex items-baseline gap-3 mb-2">
+                <h2 className="mb-2">
                   <span className="font-archivo font-bold text-[#9B2743] text-[14px]">{c.no}</span>
                   <span className="font-archivo font-bold text-[#2B1B20] text-[16px] tracking-[-0.01em]">{c.title}</span>
                 </h2>
@@ -416,13 +416,12 @@ const AgreementPage = () => {
               className="rounded-xl border-2 border-[#9B2743]/40 bg-white p-5 sm:p-6"
               data-testid="agreement-payment-terms"
             >
-              <h2 className="flex items-baseline gap-3 mb-2">
-                <span className="font-archivo font-bold text-[#9B2743] text-[14px]">Fee</span>
+              <h2 className="mb-2">
                 <span className="font-archivo font-bold text-[#2B1B20] text-[16px] tracking-[-0.01em]">
-                  The fee, when you pay, and cancellation
+                  The fee and when you pay
                 </span>
               </h2>
-              <div className="pl-8 space-y-2.5 font-outfit text-[14px] leading-[1.7] text-[#2B1B20]/75">
+              <div className="space-y-2.5 font-outfit text-[14px] leading-[1.7] text-[#2B1B20]/75">
                 <p>
                   <span className="text-[#2B1B20] font-semibold">Nothing is payable today.</span> The fee is
                   payable to Gazeal on completion of the sale of the Property, or six months from the

@@ -127,7 +127,7 @@ CLAUSES = [
 ]
 
 PAYMENT_SECTION = {
-    "title": 'The fee, when you pay, and cancellation',
+    "title": "The fee and when you pay",
     "paragraphs": [
         'Nothing is payable today. The fee is payable to Gazeal on completion of the sale of the Property, or six months from the date you accept these terms, whichever comes first.',
         'The fee remains payable if the sale does not complete, unless a Gazeal Reservation Agreement applies and the sale falls through no fault of the seller, as per the terms set in the Gazeal Reservation Agreement.',
