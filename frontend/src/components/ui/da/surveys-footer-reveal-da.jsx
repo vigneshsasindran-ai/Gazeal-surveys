@@ -48,7 +48,7 @@ const SurveysFooterReveal = ({ onOrderSurvey }) => {
     >
       {/* Fixed footer underneath */}
       <div
-        className="fixed bottom-0 left-0 right-0 bg-[#ccbfb9]"
+        className="fixed bottom-0 left-0 right-0 bg-white"
         style={{
           height: `${FOOTER_HEIGHT}px`,
           zIndex: 1,
@@ -163,7 +163,7 @@ const SurveysFooterReveal = ({ onOrderSurvey }) => {
 
       {/* Slide-up overlay (reveals the fixed footer as the user scrolls) */}
       <div
-        className="relative bg-[#ccbfb9] z-10"
+        className="relative bg-white z-10"
         style={{
           transform: `translateY(-${scrollProgress * 100}%)`,
           transition: "transform 0.1s linear",

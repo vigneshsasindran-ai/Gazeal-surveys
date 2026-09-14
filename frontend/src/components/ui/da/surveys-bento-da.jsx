@@ -29,7 +29,7 @@ const Visual = ({ src, alt, delay = "0s" }) => (
 
 const SurveysCard = ({ children, className = "", ...props }) => (
   <Card
-    className={`relative overflow-hidden border-[#2B1B20]/10 bg-gradient-to-b from-white/75 to-white/50 backdrop-blur-sm hover:border-[#9B2743]/30 transition-colors duration-300 ${className}`}
+    className={`relative overflow-hidden border-[#2B1B20]/10 bg-gradient-to-b from-[#ccbfb9]/45 to-[#ccbfb9]/10 backdrop-blur-sm hover:border-[#9B2743]/30 transition-colors duration-300 ${className}`}
     {...props}
   >
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#9B2743]/40 to-transparent pointer-events-none" />

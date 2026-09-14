@@ -72,7 +72,7 @@ const Segmented = ({ options, value, onChange, testid }) => (
           className={`relative px-3 py-3 rounded-xl font-outfit font-semibold text-[13px] sm:text-[14px] transition-all border ${
             active
               ? "text-white border-transparent"
-              : "text-[#2B1B20]/70 border-[#2B1B20]/10 bg-white/70 hover:border-[#2B1B20]/25 hover:text-[#2B1B20]"
+              : "text-[#2B1B20]/70 border-[#2B1B20]/10 bg-[#ccbfb9]/35 hover:border-[#2B1B20]/25 hover:text-[#2B1B20]"
           }`}
           style={active ? {
             background: "#9B2743",
@@ -154,7 +154,7 @@ const PricingCalculator = ({
 
   const controlsCard = (
     <div
-      className={`rounded-3xl border border-[#2B1B20]/10 bg-white/70 backdrop-blur-sm p-6 sm:p-8 ${variant === "embedded" ? "" : ""}`}
+      className={`rounded-3xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 backdrop-blur-sm p-6 sm:p-8 ${variant === "embedded" ? "" : ""}`}
       data-testid={`${testidPrefix}-controls`}
     >
       <div className="space-y-8">

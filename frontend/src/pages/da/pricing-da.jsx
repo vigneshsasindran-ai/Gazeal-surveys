@@ -13,7 +13,7 @@ import PricingCalculator from "@/components/ui/da/pricing-calculator-da";
  */
 
 const PricingPage = () => (
-  <div className="min-h-screen bg-[#ccbfb9] text-[#2B1B20]" data-testid="pricing-page">
+  <div className="min-h-screen bg-white text-[#2B1B20]" data-testid="pricing-page">
     <SurveysHeader />
 
     <main className="relative pt-32 lg:pt-40 pb-24">

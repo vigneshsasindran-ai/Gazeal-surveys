@@ -66,7 +66,7 @@ const SurveysFAQ = ({ onOrderSurvey }) => {
   return (
     <section
       id="faq"
-      className="relative py-16 md:py-24 bg-[#ccbfb9] overflow-hidden"
+      className="relative py-16 md:py-24 bg-white overflow-hidden"
       data-testid="surveys-faq-section"
     >
       {/* Ambient blue backdrop */}
@@ -112,7 +112,7 @@ const SurveysFAQ = ({ onOrderSurvey }) => {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="border border-[#2B1B20]/[0.08] bg-white/70 px-5 rounded-xl data-[state=open]:border-[#9B2743]/30 data-[state=open]:bg-[#9B2743]/[0.06] transition-all overflow-hidden"
+                  className="border border-[#2B1B20]/[0.08] bg-[#ccbfb9]/35 px-5 rounded-xl data-[state=open]:border-[#9B2743]/30 data-[state=open]:bg-[#9B2743]/[0.06] transition-all overflow-hidden"
                   data-testid={`surveys-faq-item-${index}`}
                 >
                   <AccordionTrigger className="text-left text-[#2B1B20] hover:text-[#9B2743] hover:no-underline py-4 text-[15px] font-medium font-outfit">

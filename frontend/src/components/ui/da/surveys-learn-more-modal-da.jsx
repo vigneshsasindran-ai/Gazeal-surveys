@@ -55,7 +55,7 @@ const HubSpotMeetingsEmbed = ({ formData = {} }) => {
   return (
     <div
       ref={containerRef}
-      className="w-full rounded-xl overflow-hidden bg-white/70 border border-[#2B1B20]/10"
+      className="w-full rounded-xl overflow-hidden bg-[#ccbfb9]/35 border border-[#2B1B20]/10"
       style={{ minHeight: "640px" }}
       data-testid="hubspot-meetings-embed"
     />
@@ -191,7 +191,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, fullName: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/70 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[#ccbfb9]/35 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
                   placeholder="Enter your full name"
                   data-testid="learn-more-input-name"
                 />
@@ -207,7 +207,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, agency: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/70 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[#ccbfb9]/35 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
                   placeholder="e.g. David Astburys Islington"
                   data-testid="learn-more-input-agency"
                 />
@@ -223,7 +223,7 @@ const SurveysLearnMoreModal = ({ open, onClose }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-white/70 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-[#ccbfb9]/35 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors"
                   placeholder="you@agency.co.uk"
                   data-testid="learn-more-input-email"
                 />

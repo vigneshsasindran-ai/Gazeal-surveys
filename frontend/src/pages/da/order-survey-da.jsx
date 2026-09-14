@@ -41,7 +41,7 @@ const STEPS = [
 ];
 
 const inputCls =
-  "w-full px-4 py-3 rounded-xl bg-white/70 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors";
+  "w-full px-4 py-3 rounded-xl bg-[#ccbfb9]/35 border border-[#2B1B20]/15 text-[#2B1B20] placeholder-[#2B1B20]/40 font-outfit text-[14px] focus:outline-none focus:border-[#9B2743]/60 transition-colors";
 
 const labelCls = "block text-sm text-[#2B1B20]/65 mb-2 font-outfit";
 
@@ -170,7 +170,7 @@ const OrderSurveyPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#ccbfb9]" data-testid="order-survey-page">
+    <div className="min-h-screen bg-white" data-testid="order-survey-page">
       {/* Slim header */}
       <header className="w-full">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
@@ -214,7 +214,7 @@ const OrderSurveyPage = () => {
 
           {/* Before you start intro */}
           <div
-            className="mb-10 rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-6 md:p-7"
+            className="mb-10 rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-6 md:p-7"
             data-testid="order-survey-intro"
           >
             <h2 className="font-archivo font-bold tracking-[-0.025em] text-[22px] text-[#2B1B20] mb-3">
@@ -263,8 +263,8 @@ const OrderSurveyPage = () => {
                         isActive
                           ? "border-transparent"
                           : isComplete
-                          ? "border-[#9B2743]/40 bg-white/70"
-                          : "border-[#2B1B20]/15 bg-white/70"
+                          ? "border-[#9B2743]/40 bg-[#ccbfb9]/35"
+                          : "border-[#2B1B20]/15 bg-[#ccbfb9]/35"
                       }`}
                       style={
                         isActive
@@ -317,7 +317,7 @@ const OrderSurveyPage = () => {
 
           {/* Form card */}
           <div
-            className="rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-white/75 to-white/50 backdrop-blur-sm p-7 md:p-10 relative overflow-hidden"
+            className="rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-[#ccbfb9]/45 to-[#ccbfb9]/10 backdrop-blur-sm p-7 md:p-10 relative overflow-hidden"
             data-testid="order-survey-form"
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#9B2743]/40 to-transparent pointer-events-none" />
@@ -574,7 +574,7 @@ const OrderSurveyPage = () => {
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-white/70 border border-[#2B1B20]/10 p-5">
+                <div className="rounded-xl bg-[#ccbfb9]/35 border border-[#2B1B20]/10 p-5">
                   <p className="font-outfit text-[11px] uppercase tracking-[0.18em] text-[#2B1B20]/40 mb-3">
                     Summary
                   </p>
@@ -627,7 +627,7 @@ const OrderSurveyPage = () => {
                 </div>
 
                 <label
-                  className="flex items-start gap-4 cursor-pointer p-5 rounded-xl border border-[#2B1B20]/10 bg-white/70 hover:border-[#9B2743]/30 transition-colors"
+                  className="flex items-start gap-4 cursor-pointer p-5 rounded-xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 hover:border-[#9B2743]/30 transition-colors"
                   data-testid="order-confirmation-checkbox"
                 >
                   <input

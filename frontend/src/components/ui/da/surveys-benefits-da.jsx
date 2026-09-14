@@ -45,7 +45,7 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
     data-testid={`how-step-${index + 1}`}
   >
     <div
-      className="relative h-full rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-white/75 to-white/50 backdrop-blur-sm p-7 sm:p-8 overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-[#9B2743]/35"
+      className="relative h-full rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-[#ccbfb9]/45 to-[#ccbfb9]/10 backdrop-blur-sm p-7 sm:p-8 overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-[#9B2743]/35"
       style={{
         boxShadow: "0 0 0 rgba(155,39,67,0)",
       }}
@@ -73,7 +73,7 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
           {String(index + 1).padStart(2, "0")}
         </span>
         <span
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#2B1B20]/10 bg-white/70 transition-all duration-500 group-hover:border-[#9B2743]/40 group-hover:bg-[#9B2743]/[0.08] group-hover:-rotate-6"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 transition-all duration-500 group-hover:border-[#9B2743]/40 group-hover:bg-[#9B2743]/[0.08] group-hover:-rotate-6"
         >
           <Icon
             className="w-5 h-5 text-[#9B2743]"
@@ -109,7 +109,7 @@ const StepCard = ({ index, icon: Icon, title, body }) => (
 
 const SegmentedLabel = ({ audience }) => (
   <div
-    className="inline-flex items-center rounded-full p-1 border border-[#2B1B20]/10 bg-white/70"
+    className="inline-flex items-center rounded-full p-1 border border-[#2B1B20]/10 bg-[#ccbfb9]/35"
     data-testid={`benefits-label-${audience.toLowerCase()}`}
   >
     <span className="px-3 py-0.5 text-[10px] tracking-[0.22em] uppercase text-[#2B1B20]/55 font-outfit font-semibold">
@@ -129,7 +129,7 @@ const SegmentedLabel = ({ audience }) => (
 
 const BenefitColumn = ({ audience, headline, body }) => (
   <div
-    className="relative rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-white/75 to-white/50 backdrop-blur-sm p-8 sm:p-10"
+    className="relative rounded-2xl border border-[#2B1B20]/10 bg-gradient-to-b from-[#ccbfb9]/45 to-[#ccbfb9]/10 backdrop-blur-sm p-8 sm:p-10"
     data-testid={`benefits-${audience.toLowerCase()}-column`}
   >
     <div
@@ -161,7 +161,7 @@ const SurveysBenefits = () => {
   return (
     <section
       id="benefits"
-      className="relative bg-[#ccbfb9] pt-4 pb-20 md:pt-6 md:pb-28 overflow-hidden"
+      className="relative bg-white pt-4 pb-20 md:pt-6 md:pb-28 overflow-hidden"
       data-testid="surveys-benefits-section"
     >
       <div className="pointer-events-none absolute -right-32 top-1/4 h-[420px] w-[420px] rounded-full bg-white/12 blur-3xl opacity-60" />

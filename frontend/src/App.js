@@ -245,15 +245,15 @@ const SurveysLandingDa = () => {
   }, [location.hash]);
 
   return (
-    <div className="App min-h-screen bg-[#ccbfb9]" data-testid="da-landing">
+    <div className="App min-h-screen bg-white" data-testid="da-landing">
       <DSurveysHeader onOrderSurvey={handleOrderSurvey} />
-      <main className="relative z-10 bg-[#ccbfb9]">
+      <main className="relative z-10 bg-white">
         <DSurveysHero onOrderSurvey={handleOrderSurvey} />
         <DSurveysBento />
         <DSellerAdvantage onOrderSurvey={handleOrderSurvey} />
         <DSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
         <section
-          className="relative bg-[#ccbfb9] pt-2 pb-20 md:pt-4 md:pb-28"
+          className="relative bg-white pt-2 pb-20 md:pt-4 md:pb-28"
           data-testid="da-reservation-compare-section"
         >
           <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">

@@ -39,7 +39,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
       className={`relative rounded-2xl border p-7 sm:p-8 backdrop-blur-sm transition-all duration-500 ${
         isPositive
           ? "border-[#9B2743]/35 bg-[#9B2743]/[0.06] hover:border-[#9B2743]/55"
-          : "border-[#2B1B20]/10 bg-white/70 hover:border-[#2B1B20]/20"
+          : "border-[#2B1B20]/10 bg-[#ccbfb9]/35 hover:border-[#2B1B20]/20"
       }`}
       data-testid={testid}
     >
@@ -70,7 +70,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
           <li key={b} className="flex items-start gap-2.5">
             <span
               className={`mt-0.5 inline-flex items-center justify-center rounded-full shrink-0 ${
-                isPositive ? "bg-[#9B2743]/15" : "bg-white/70"
+                isPositive ? "bg-[#9B2743]/15" : "bg-[#ccbfb9]/35"
               }`}
               style={{ height: 20, width: 20 }}
             >
@@ -90,7 +90,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
         className={`mt-5 rounded-xl p-4 sm:p-5 ${
           isPositive
             ? "border border-[#9B2743]/45 bg-[#9B2743]/[0.10]"
-            : "border border-[#2B1B20]/15 bg-white/70"
+            : "border border-[#2B1B20]/15 bg-[#ccbfb9]/35"
         }`}
         data-testid={`${testid}-note`}
       >
@@ -99,7 +99,7 @@ const Box = ({ tone, title, items, feeNote, icon: Icon, testid }) => {
             className={`mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full shrink-0 ${
               isPositive
                 ? "bg-[#9B2743]"
-                : "bg-white/70 border border-[#2B1B20]/15"
+                : "bg-[#ccbfb9]/35 border border-[#2B1B20]/15"
             }`}
           >
             {isPositive ? (
@@ -214,7 +214,7 @@ const ReservationExplainer = ({ variant = "seller", token, initialInterest = fal
                   checked={interested}
                   onChange={(e) => toggleInterest(e.target.checked)}
                   disabled={submitting}
-                  className="mt-1 h-4 w-4 rounded border-[#2B1B20]/30 bg-white/70 accent-[#9B2743] cursor-pointer disabled:opacity-60"
+                  className="mt-1 h-4 w-4 rounded border-[#2B1B20]/30 bg-[#ccbfb9]/35 accent-[#9B2743] cursor-pointer disabled:opacity-60"
                   data-testid="re-interest-checkbox"
                 />
                 <span>

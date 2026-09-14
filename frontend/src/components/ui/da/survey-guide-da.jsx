@@ -33,7 +33,7 @@ export const SurveyGuideModal = ({ open, onClose }) => {
         data-testid="survey-guide-backdrop"
       />
       <div className="relative w-full max-w-4xl h-[96vh] sm:h-[94vh] rounded-2xl overflow-hidden border border-[#2B1B20]/15 bg-white flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-[#2B1B20]/10 bg-white/70">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-[#2B1B20]/10 bg-[#ccbfb9]/35">
           <p className="font-archivo font-bold text-[#2B1B20] text-[14px] sm:text-[15px] truncate">
             Home Insight Survey Guide
           </p>
@@ -83,7 +83,7 @@ const SurveyGuide = ({ testidPrefix = "survey-guide" }) => {
   return (
     <>
       <div
-        className="rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-6 sm:p-8"
+        className="rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-6 sm:p-8"
         data-testid={`${testidPrefix}-card`}
       >
         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">

@@ -39,7 +39,7 @@ const AccentRule = () => <div className="h-px w-full bg-[#9B2743]/40" />;
 const SurveyPricingTable = () => (
   <section
     id="pricing"
-    className="relative bg-[#ccbfb9] pt-4 pb-20 md:pt-6 md:pb-28"
+    className="relative bg-white pt-4 pb-20 md:pt-6 md:pb-28"
     data-testid="survey-pricing-section"
   >
     <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
@@ -56,7 +56,7 @@ const SurveyPricingTable = () => (
 
       {/* Table card */}
       <div
-        className="rounded-3xl border border-[#2B1B20]/10 bg-white/70 p-6 sm:p-10"
+        className="rounded-3xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-6 sm:p-10"
         data-testid="survey-pricing-table"
       >
         <p
@@ -95,7 +95,7 @@ const SurveyPricingTable = () => (
           {ROWS.map((r) => (
             <div
               key={r.band}
-              className="rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-5"
+              className="rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-5"
             >
               <p className="font-archivo font-bold text-[#2B1B20] text-[16px] mb-4">{r.band}</p>
               <div className="space-y-3 font-outfit text-[14px]">
@@ -121,7 +121,7 @@ const SurveyPricingTable = () => (
           {NOTES.map((n) => (
             <div
               key={n.title}
-              className="rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-5"
+              className="rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-5"
               data-testid={`pricing-note-${n.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`}
             >
               <p className="font-archivo font-bold text-[#2B1B20] text-[15px] mb-1.5">{n.title}</p>

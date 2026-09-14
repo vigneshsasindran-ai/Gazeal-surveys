@@ -26,7 +26,7 @@ const LOGO_SRC =
   "/brand-assets/gazeal-logo-ink.png";
 
 const AgreementFooter = () => (
-  <footer className="relative bg-[#ccbfb9] border-t border-[#2B1B20]/10 mt-12" data-testid="agreement-footer">
+  <footer className="relative bg-white border-t border-[#2B1B20]/10 mt-12" data-testid="agreement-footer">
     <div className="max-w-3xl mx-auto px-6 py-12 flex flex-col items-center gap-6">
       <img src={LOGO_SRC} alt="Gazeal Surveys" className="h-10 w-auto opacity-70" />
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-outfit text-[13px]">
@@ -180,7 +180,7 @@ const AgreementPage = () => {
 
   if (loadErr) {
     return (
-      <div className="min-h-screen bg-[#ccbfb9] text-[#2B1B20]">
+      <div className="min-h-screen bg-white text-[#2B1B20]">
         <SurveysHeader />
         <main className="max-w-2xl mx-auto px-6 pt-40 pb-32 text-center">
           <h1 className="font-archivo font-bold text-3xl mb-4">Agreement not found</h1>
@@ -192,7 +192,7 @@ const AgreementPage = () => {
   }
   if (!data) {
     return (
-      <div className="min-h-screen bg-[#ccbfb9] text-[#2B1B20]">
+      <div className="min-h-screen bg-white text-[#2B1B20]">
         <SurveysHeader />
         <main className="max-w-2xl mx-auto px-6 pt-40 pb-32 text-center font-outfit text-[#2B1B20]/65">Loading…</main>
       </div>
@@ -209,7 +209,7 @@ const AgreementPage = () => {
   const feeDaysLeft = feeDueDate ? daysUntil(feeDueDate) : 0;
 
   return (
-    <div className="min-h-screen bg-[#ccbfb9] text-[#2B1B20]" data-testid="agreement-page">
+    <div className="min-h-screen bg-white text-[#2B1B20]" data-testid="agreement-page">
       <SurveysHeader />
 
       <main className="relative">
@@ -265,7 +265,7 @@ const AgreementPage = () => {
           {/* Fee countdown — shown once signed, included in print */}
           {accepted && feeDueDate && (
             <div
-              className="mb-8 rounded-2xl border border-[#2B1B20]/12 bg-white/70 p-5"
+              className="mb-8 rounded-2xl border border-[#2B1B20]/12 bg-[#ccbfb9]/35 p-5"
               data-testid="agreement-fee-countdown"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -361,7 +361,7 @@ const AgreementPage = () => {
           </h1>
 
           {/* Hi panel */}
-          <div className="mt-8 rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-6">
+          <div className="mt-8 rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-6">
             <p className="font-outfit text-[15px] text-[#2B1B20]/80 leading-relaxed">
               Hi <span className="text-[#2B1B20] font-semibold">{data.seller?.first_name}</span>, these are the Service Terms for your
               <strong className="text-[#2B1B20]"> RPSA Home Insight Survey</strong> for{" "}
@@ -403,7 +403,7 @@ const AgreementPage = () => {
           <div className="mt-10 space-y-7" data-testid="agreement-clauses">
             {CLAUSES.map((c) => (
               <section key={c.no} data-testid={`agreement-clause-${c.no}`}
-                       className="rounded-xl border border-[#2B1B20]/[0.06] bg-white/70 p-5 sm:p-6">
+                       className="rounded-xl border border-[#2B1B20]/[0.06] bg-[#ccbfb9]/35 p-5 sm:p-6">
                 <h2 className="mb-2">
                   <span className="font-archivo font-bold text-[#9B2743] text-[14px]">{c.no}</span>
                   <span className="font-archivo font-bold text-[#2B1B20] text-[16px] tracking-[-0.01em]">{c.title}</span>
@@ -504,7 +504,7 @@ const AgreementPage = () => {
         {/* Sticky action bar — only shown while pending */}
         {pending && (
           <div className="fixed bottom-0 inset-x-0 z-30 pointer-events-none">
-            <div className="pointer-events-auto bg-gradient-to-t from-[#ccbfb9] via-[#ccbfb9]/95 to-[#ccbfb9]/0 backdrop-blur-sm">
+            <div className="pointer-events-auto bg-gradient-to-t from-white via-white/95 to-white/0 backdrop-blur-sm">
               <div className="max-w-3xl mx-auto px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                 <div className="flex items-center gap-2 text-[12px] font-outfit text-[#2B1B20]/55"
                      data-testid="agreement-scroll-hint">
@@ -557,7 +557,7 @@ const AgreementPage = () => {
                     allows your buyer to walk away or renegotiate at any point, without any protection for you.
                     Remember to ask your agent to secure your sale when a buyer is found.
                   </p>
-                  <div className="mt-4 rounded-xl border border-[#2B1B20]/12 bg-white/70 p-4" data-testid="agreement-details-summary">
+                  <div className="mt-4 rounded-xl border border-[#2B1B20]/12 bg-[#ccbfb9]/35 p-4" data-testid="agreement-details-summary">
                     <div className="flex items-center justify-between mb-2">
                       <p className="font-outfit font-semibold text-[11px] tracking-[0.18em] uppercase text-[#2B1B20]/55">Your property details</p>
                       <button
@@ -578,7 +578,7 @@ const AgreementPage = () => {
                   </div>
                   <label
                     className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
-                      detailsOk ? "border-[#9B2743]/60 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-white/70 hover:border-[#2B1B20]/30"
+                      detailsOk ? "border-[#9B2743]/60 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-[#ccbfb9]/35 hover:border-[#2B1B20]/30"
                     }`}
                     data-testid="agreement-details-ok-label"
                   >
@@ -603,7 +603,7 @@ const AgreementPage = () => {
                   </label>
                   <label
                     className={`mt-3 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
-                      paymentOk ? "border-[#9B2743]/50 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-white/70 hover:border-[#2B1B20]/30"
+                      paymentOk ? "border-[#9B2743]/50 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-[#ccbfb9]/35 hover:border-[#2B1B20]/30"
                     }`}
                     data-testid="agreement-payment-ok-label"
                   >
@@ -632,7 +632,7 @@ const AgreementPage = () => {
                   {!data.reservation_interest && (
                     <label
                       className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
-                        moreInfo ? "border-[#9B2743]/60 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-white/70 hover:border-[#2B1B20]/30"
+                        moreInfo ? "border-[#9B2743]/60 bg-[#9B2743]/[0.06]" : "border-[#2B1B20]/15 bg-[#ccbfb9]/35 hover:border-[#2B1B20]/30"
                       }`}
                       data-testid="agreement-more-info-label"
                     >

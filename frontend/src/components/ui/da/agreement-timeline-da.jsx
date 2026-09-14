@@ -91,7 +91,7 @@ const AgreementTimeline = ({ data }) => {
 
   return (
     <div
-      className="mt-6 rounded-2xl border border-[#2B1B20]/10 bg-white/70 p-5 sm:p-6"
+      className="mt-6 rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 p-5 sm:p-6"
       data-testid="agreement-timeline"
     >
       <p className="font-outfit text-[11px] font-semibold tracking-[0.22em] uppercase text-[#9B2743]">

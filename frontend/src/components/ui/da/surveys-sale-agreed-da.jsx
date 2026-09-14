@@ -17,7 +17,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
   return (
     <section
       id="sale-agreed"
-      className="relative bg-[#ccbfb9] pt-4 pb-20 md:pt-6 md:pb-28 overflow-hidden"
+      className="relative bg-white pt-4 pb-20 md:pt-6 md:pb-28 overflow-hidden"
       data-testid="surveys-sale-agreed-section"
     >
       {/* Ambient blue glow */}
@@ -72,7 +72,7 @@ const SurveysSaleAgreed = ({ onOrderSurvey }) => {
             <div className="relative w-full max-w-[420px]">
               <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[#9B2743]/10 blur-2xl" />
 
-              <div className="relative rounded-2xl border border-[#2B1B20]/10 bg-white/70 backdrop-blur-sm p-4 sm:p-6">
+              <div className="relative rounded-2xl border border-[#2B1B20]/10 bg-[#ccbfb9]/35 backdrop-blur-sm p-4 sm:p-6">
                 <img
                   src={SCENE_IMAGE}
                   alt="A 3D illustration of a house with a magnifying lens revealing the front door — representing property transparency."
