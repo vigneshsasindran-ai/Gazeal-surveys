@@ -39,13 +39,12 @@ def test_terms_module_version_and_clauses():
     assert numbers == [f"{i:02d}" for i in range(1, 16)]
     ps = terms_mod.PAYMENT_SECTION
     assert ps["title"] == "The fee, when you pay, and cancellation"
-    assert len(ps["paragraphs"]) == 4
+    assert len(ps["paragraphs"]) == 3
     joined = " ".join(ps["paragraphs"])
     assert "Nothing is payable today" in joined
     assert "six months" in joined
     assert "Reservation Agreement" in joined
     assert "VAT" in joined
-    assert "14 days" in joined or "14 day" in joined
     text = terms_mod.terms_plain_text()
     assert "Version 1.1, dated 13 September 2026" in text
     h = terms_mod.terms_sha256(text)

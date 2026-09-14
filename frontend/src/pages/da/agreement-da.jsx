@@ -438,16 +438,6 @@ const AgreementPage = () => {
                   using the contact details on your Order. If the Property is sold and completion takes
                   place before the six month date, the fee becomes payable on completion.
                 </p>
-                <p>
-                  You have the right to cancel this Contract within 14 days of accepting these terms,
-                  without giving a reason and at no cost, by writing to info@gazeal.co.uk. If you ask
-                  for the survey to be carried out within that 14 day period, you are making an express
-                  request for the service to begin during the cancellation period, and if you then
-                  cancel after the survey has been carried out you remain liable for the fee for the
-                  service already supplied. Nothing in this section removes or limits your rights under
-                  the Consumer Rights Act 2015 or the Consumer Contracts (Information, Cancellation and
-                  Additional Charges) Regulations 2013.
-                </p>
                 <p className="text-[#2B1B20]/55 text-[13px] pt-1" data-testid="agreement-payment-date-note">
                   {pending ? (
                     <>Accept today and the six month date is{" "}

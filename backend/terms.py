@@ -132,7 +132,6 @@ PAYMENT_SECTION = {
         'Nothing is payable today. The fee is payable to Gazeal on completion of the sale of the Property, or six months from the date you accept these terms, whichever comes first.',
         'The fee remains payable if the sale does not complete, unless a Gazeal Reservation Agreement applies and the sale falls through no fault of the seller, as per the terms set in the Gazeal Reservation Agreement.',
         'All prices include VAT. Gazeal will invoice you at the point the fee becomes payable, using the contact details on your Order. If the Property is sold and completion takes place before the six month date, the fee becomes payable on completion.',
-        'You have the right to cancel this Contract within 14 days of accepting these terms, without giving a reason and at no cost, by writing to info@gazeal.co.uk. If you ask for the survey to be carried out within that 14 day period, you are making an express request for the service to begin during the cancellation period, and if you then cancel after the survey has been carried out you remain liable for the fee for the service already supplied. Nothing in this section removes or limits your rights under the Consumer Rights Act 2015 or the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013.',
     ],
 }
 
