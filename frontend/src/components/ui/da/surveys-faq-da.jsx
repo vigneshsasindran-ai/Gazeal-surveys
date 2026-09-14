@@ -95,11 +95,11 @@ const SurveysFAQ = ({ onOrderSurvey }) => {
                   Still have questions?
                 </p>
                 <a
-                  href="mailto:info@gazeal.co.uk"
+                  href="mailto:survey@gazeal.co.uk"
                   className="text-[#9B2743] font-semibold text-sm hover:opacity-80 font-outfit"
                   data-testid="surveys-faq-contact"
                 >
-                  info@gazeal.co.uk →
+                  survey@gazeal.co.uk →
                 </a>
               </div>
             </div>

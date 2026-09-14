@@ -155,10 +155,10 @@ const SurveysFooterReveal = ({ onOrderSurvey, onLearnMore }) => {
               </p>
               <div className="flex items-center gap-6">
                 <a
-                  href="mailto:info@gazeal.co.uk"
+                  href="mailto:survey@gazeal.co.uk"
                   className="text-white/35 hover:text-white/70 text-sm flex items-center gap-2 transition-colors"
                 >
-                  <Mail className="w-4 h-4" /> info@gazeal.co.uk
+                  <Mail className="w-4 h-4" /> survey@gazeal.co.uk
                 </a>
                 <a
                   href="#"

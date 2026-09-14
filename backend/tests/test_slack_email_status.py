@@ -88,7 +88,7 @@ def _patch_slack(monkeypatch):
 # ===========================================================================
 class TestSenderEnv:
     def test_sender_is_info_at_gazeal(self):
-        assert os.environ.get("SENDER_EMAIL") == "info@gazeal.co.uk"
+        assert os.environ.get("SENDER_EMAIL") == "survey@gazeal.co.uk"
 
 
 class TestNotifyOrderSubmitted:

@@ -21,7 +21,7 @@ LOCAL_API = "http://localhost:8001/api"
 # ---------------------- SENDER_EMAIL env ----------------------
 class TestSenderEmail:
     def test_sender_email_is_info_at_gazeal(self):
-        assert os.environ.get("SENDER_EMAIL") == "info@gazeal.co.uk"
+        assert os.environ.get("SENDER_EMAIL") == "survey@gazeal.co.uk"
 
 
 # ---------------------- Seller invite email rendering ----------------------
