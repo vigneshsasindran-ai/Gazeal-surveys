@@ -37,6 +37,36 @@ const BUCKETS = {
   year: { start: startOfYear, each: eachYearOfInterval, back: (n) => startOfYear(new Date(2026, 0, 1)), fmt: "yyyy" },
 };
 
+/* ---------- survey pipeline ---------- */
+export const PIPELINE_STAGES = [
+  { key: "ordered", label: "Survey ordered", color: "#4FB6FF" },
+  { key: "agreed", label: "Seller agreed terms", color: "#6EA8FF" },
+  { key: "agreed_no_ra", label: "Seller agreed, not interested in RA", color: "#8B93F8" },
+  { key: "agreed_ra", label: "Seller agreed, interested in RA", color: "#A78BFA" },
+  { key: "no_reservation", label: "No reservation", color: "#94A3B8" },
+  { key: "reservation_agreed", label: "Reservation agreed", color: "#38BDF8" },
+  { key: "reservation_signed", label: "Reservation signed", color: "#34D399" },
+  { key: "paid", label: "Paid survey fee", color: "#FBBF24" },
+  { key: "declined", label: "Seller declined", color: "#F87171" },
+];
+
+export const STAGE_LABELS = PIPELINE_STAGES.reduce((m, s) => ({ ...m, [s.key]: s.label }), {});
+export const STAGE_COLORS = PIPELINE_STAGES.reduce((m, s) => ({ ...m, [s.key]: s.color }), {});
+
+/* Each order sits in exactly one current stage — the furthest point it has reached. */
+export const orderStage = (o) => {
+  if (o.payment_received) return "paid";
+  if (o.status === "declined") return "declined";
+  if (o.status !== "accepted") return "ordered";
+  const r = o.reservation || "";
+  if (r === "signed") return "reservation_signed";
+  if (r === "agreed") return "reservation_agreed";
+  if (r === "none") return "no_reservation";
+  if (r === "interested" || o.reservation_interest) return "agreed_ra";
+  if (r === "not_interested") return "agreed_no_ra";
+  return "agreed";
+};
+
 const tooltipStyle = {
   background: "#111114",
   border: "1px solid rgba(255,255,255,0.15)",
@@ -122,6 +152,17 @@ export const AdminInsights = ({ orders }) => {
 
   const totalInterest = useMemo(() => orders.filter((o) => o.reservation_interest).length, [orders]);
 
+  const pipeline = useMemo(() => {
+    const m = {};
+    orders.forEach((o) => {
+      const k = orderStage(o);
+      m[k] = (m[k] || 0) + 1;
+    });
+    return m;
+  }, [orders]);
+
+  const pipelineMax = useMemo(() => Math.max(1, ...Object.values(pipeline)), [pipeline]);
+
   return (
     <div className="mb-8" data-testid="admin-insights">
       <button
@@ -138,6 +179,30 @@ export const AdminInsights = ({ orders }) => {
 
       {open && (
         <div className="mt-3 space-y-3" data-testid="admin-insights-panel">
+          {/* Survey pipeline */}
+          <Card title="Survey pipeline" testid="chart-pipeline">
+            <div className="space-y-2.5">
+              {PIPELINE_STAGES.map((s) => {
+                const count = pipeline[s.key] || 0;
+                const pct = orders.length ? Math.round((count / orders.length) * 100) : 0;
+                const width = pipelineMax ? Math.max((count / pipelineMax) * 100, count ? 2 : 0) : 0;
+                return (
+                  <div key={s.key} className="flex items-center gap-3" data-testid={`pipeline-stage-${s.key}`}>
+                    <span className="font-outfit text-[12.5px] text-white/60 w-[200px] shrink-0 sm:w-[240px]">{s.label}</span>
+                    <div className="flex-1 h-6 rounded-md bg-white/[0.04] overflow-hidden">
+                      <div
+                        className="h-full rounded-md transition-all duration-500"
+                        style={{ width: `${width}%`, background: s.color, opacity: count ? 0.85 : 0 }}
+                      />
+                    </div>
+                    <span className="font-archivo font-bold text-white text-[14px] w-8 text-right" data-testid={`pipeline-count-${s.key}`}>{count}</span>
+                    <span className="font-outfit text-[11px] text-white/40 w-9 text-right">{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+
           {/* Orders over time */}
           <Card
             testid="chart-orders-over-time"

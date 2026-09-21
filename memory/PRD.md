@@ -185,6 +185,15 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - NOT YET DONE: no testing-agent regression pass on /harrisonshomes (only self-tested), and the Harrisons brand has no /harrisonshomes learn-more modal wiring (removed with the other seller funnels).
 - PENDING USER ACTION: redeploy.
 
+## 21 Sep 2026: Admin survey pipeline + accounts payment toggle
+- Insights now opens with a "Survey pipeline" card (data-testid chart-pipeline). Each order sits in exactly ONE current stage (furthest reached), so counts sum to total orders. Stages + testids pipeline-stage-{key}: ordered, agreed (Seller agreed terms), agreed_no_ra, agreed_ra, no_reservation, reservation_agreed, reservation_signed, paid, declined.
+- Stage logic lives in `frontend/src/components/ui/admin-insights.jsx` (exported `orderStage`, `PIPELINE_STAGES`, `STAGE_LABELS`): paid > declined > pending(ordered) > reservation signed/agreed/none > interested (dropdown OR seller-expressed reservation_interest) > not_interested > agreed.
+- Reservation dropdown on each order replaced yes/no with the full journey: Not set / Not interested in RA / Interested in RA / Reservation agreed / Reservation signed / No reservation. Legacy stored values yes/no are mapped to agreed/none on read AND accepted on write (panel.py `_reservation_value`, RESERVATION_VALUES, LEGACY_RESERVATION). A seller who later changes their mind is moved with the same dropdown.
+- New `PATCH /api/panel/leads/{id}/payment` {"paid":bool} stores payment_received + payment_received_at. NO emails, Slack or downstream calls. Admin row shows an amber "Fee paid" badge, hides the fee-due countdown once paid, shows "Fee paid" date + "Pipeline stage" in the detail grid, and a toggle (data-testid order-payment-toggle-{ref}).
+- Excel export gained "Fee Paid" / "Fee Paid On" columns and the Reservation column now prints the journey label.
+- Testing: curl on both PATCH endpoints (incl. 422 on bad value), export header/row check, screenshots of the pipeline and of the toggle in both states; test record reset afterwards. Pre-existing unrelated test failures in tests/test_slack_email_status.py etc. confirmed present before this change (git stash check).
+- PENDING USER ACTION: redeploy to production.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

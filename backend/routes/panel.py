@@ -75,6 +75,29 @@ class ReservationBody(BaseModel):
     reservation: str = ""
 
 
+class PaymentBody(BaseModel):
+    paid: bool = False
+
+
+# Reservation journey values held on the lead. Legacy records used yes/no.
+RESERVATION_VALUES = ("", "not_interested", "interested", "agreed", "signed", "none")
+LEGACY_RESERVATION = {"yes": "agreed", "no": "none"}
+RESERVATION_LABELS = {
+    "": "",
+    "not_interested": "Not interested in RA",
+    "interested": "Interested in RA",
+    "agreed": "Reservation agreed",
+    "signed": "Reservation signed",
+    "none": "No reservation",
+}
+
+
+def _reservation_value(raw: str | None) -> str:
+    v = (raw or "").strip()
+    v = LEGACY_RESERVATION.get(v, v)
+    return v if v in RESERVATION_VALUES else ""
+
+
 def _fee_due_date(accepted_iso: str | None) -> datetime | None:
     """Fee falls due 6 calendar months after signing."""
     if not accepted_iso:
@@ -173,9 +196,11 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                         "asking_price": lead.get("asking_price") or "",
                         "listing_url": lead.get("listing_url") or "",
                         "agreement_url": (ag or {}).get("agreement_url") or "",
-                        "reservation": lead.get("reservation_status") or "",
+                        "reservation": _reservation_value(lead.get("reservation_status")),
                         "reservation_interest": bool((ag or {}).get("reservation_interest")),
                         "reservation_interest_at": (ag or {}).get("reservation_interest_at"),
+                        "payment_received": bool(lead.get("payment_received")),
+                        "payment_received_at": lead.get("payment_received_at"),
                         "stages": _stage_timestamps(lead, ag),
                     }
                 )
@@ -195,12 +220,25 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
     @router.patch("/leads/{lead_id}/reservation")
     async def set_reservation(lead_id: str, body: ReservationBody, response: Response, _: None = Depends(require_panel_auth)):
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
-        if body.reservation not in ("", "yes", "no"):
-            raise HTTPException(422, "reservation must be '', 'yes' or 'no'")
-        r = await db.leads.update_one({"id": lead_id}, {"$set": {"reservation_status": body.reservation}})
+        value = LEGACY_RESERVATION.get(body.reservation.strip(), body.reservation.strip())
+        if value not in RESERVATION_VALUES:
+            raise HTTPException(422, f"reservation must be one of {RESERVATION_VALUES}")
+        r = await db.leads.update_one({"id": lead_id}, {"$set": {"reservation_status": value}})
         if r.matched_count == 0:
             raise HTTPException(404, "Lead not found")
-        return {"id": lead_id, "reservation": body.reservation}
+        return {"id": lead_id, "reservation": value}
+
+    @router.patch("/leads/{lead_id}/payment")
+    async def set_payment(lead_id: str, body: PaymentBody, response: Response, _: None = Depends(require_panel_auth)):
+        """Accounts team marks the survey fee as paid. No notifications are sent."""
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        now = datetime.now(timezone.utc).isoformat()
+        update = {"payment_received": body.paid, "payment_received_at": now if body.paid else None}
+        r = await db.leads.update_one({"id": lead_id}, {"$set": update})
+        if r.matched_count == 0:
+            raise HTTPException(404, "Lead not found")
+        logger.info("PANEL PAYMENT lead=%s paid=%s", lead_id, body.paid)
+        return {"id": lead_id, "payment_received": body.paid, "payment_received_at": update["payment_received_at"]}
 
     @router.delete("/leads/{lead_id}")
     async def delete_lead(lead_id: str, response: Response, _: None = Depends(require_panel_auth)):
@@ -231,7 +269,8 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
         headers = ["Submitted", "Reference", "Brand", "Status", "Agent", "Agency", "Branch",
                    "Agent Email", "Seller", "Seller Email", "Seller Phone", "Address",
                    "Postcode", "Asking Price", "Agreement Emailed", "Accepted", "Declined",
-                   "RPSA Instructed", "Reservation", "Fee Due By", "Agreement Link"]
+                   "RPSA Instructed", "Reservation", "Fee Due By", "Fee Paid", "Fee Paid On",
+                   "Agreement Link"]
         ws.append(headers)
         def _d(iso):
             try:
@@ -248,8 +287,10 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 lead.get("seller_phone") or "", lead.get("address_line_1") or "", lead.get("postcode") or "",
                 lead.get("asking_price") or "", _d(ag.get("seller_invite_sent_at")),
                 _d(ag.get("accepted_at")), _d(ag.get("declined_at")), _d(ag.get("rpsa_instructed_at")),
-                (lead.get("reservation_status") or "").capitalize(),
+                RESERVATION_LABELS[_reservation_value(lead.get("reservation_status"))],
                 (lambda due: due.strftime("%d %b %Y") if due else "")(_fee_due_date(ag.get("accepted_at"))),
+                "Yes" if lead.get("payment_received") else "",
+                _d(lead.get("payment_received_at")),
                 ag.get("agreement_url") or "",
             ])
         ws2 = wb.create_sheet("Learn More Enquiries")
@@ -258,7 +299,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
             ws2.append([_d(lead.get("created_at")), lead.get("name") or lead.get("agent_name") or "",
                         lead.get("agency") or lead.get("agency_name") or "",
                         lead.get("email") or "", lead.get("brand") or "gazeal"])
-        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 18, 18, 18, 18, 12, 14, 40]),
+        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 18, 18, 18, 18, 20, 14, 10, 18, 40]),
                               (ws2, [18, 18, 24, 28, 10])):
             for i, w in enumerate(widths, 1):
                 sheet.column_dimensions[get_column_letter(i)].width = w

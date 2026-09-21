@@ -11,7 +11,7 @@ import {
   ExternalLink,
   RefreshCw,
 } from "lucide-react";
-import AdminInsights from "@/components/ui/admin-insights";
+import AdminInsights, { STAGE_LABELS, orderStage } from "@/components/ui/admin-insights";
 
 /*
  * Internal admin panel — /admin
@@ -97,21 +97,41 @@ const FeeDueBadge = ({ acceptedAt }) => {
   );
 };
 
+const RESERVATION_OPTIONS = [
+  { value: "", label: "Not set" },
+  { value: "not_interested", label: "Not interested in RA" },
+  { value: "interested", label: "Interested in RA" },
+  { value: "agreed", label: "Reservation agreed" },
+  { value: "signed", label: "Reservation signed" },
+  { value: "none", label: "No reservation" },
+];
+
 const ReservationBadge = ({ value }) => {
   if (!value) return null;
+  const opt = RESERVATION_OPTIONS.find((o) => o.value === value);
+  const highlight = value === "agreed" || value === "signed" || value === "interested";
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-outfit text-[11px] font-semibold tracking-wide whitespace-nowrap ${
-        value === "yes"
+        highlight
           ? "bg-[#4FB6FF]/12 text-[#4FB6FF] border-[#4FB6FF]/35"
           : "bg-white/[0.04] text-white/55 border-white/20"
       }`}
       data-testid={`reservation-badge-${value}`}
     >
-      {value === "yes" ? "Reservation: Yes" : "Reservation: No"}
+      {opt ? opt.label : value}
     </span>
   );
 };
+
+const PaidBadge = () => (
+  <span
+    className="inline-flex items-center rounded-full border border-amber-400/35 bg-amber-400/12 px-2.5 py-0.5 font-outfit text-[11px] font-semibold tracking-wide whitespace-nowrap text-amber-300"
+    data-testid="fee-paid-badge"
+  >
+    Fee paid
+  </span>
+);
 
 /* ---------- process timeline (simple visual) ---------- */
 const StageDot = ({ done, declined }) => (
@@ -387,6 +407,28 @@ export default function AdminPage() {
     }
   };
 
+  const updatePayment = async (id, paid) => {
+    setData((d) => ({
+      ...d,
+      orders: d.orders.map((o) =>
+        o.id === id ? { ...o, payment_received: paid, payment_received_at: paid ? new Date().toISOString() : null } : o
+      ),
+    }));
+    try {
+      const res = await authFetch(`/leads/${id}/payment`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paid }),
+      });
+      if (!res.ok) throw new Error();
+    } catch (e) {
+      if (e.message !== "Session expired") {
+        setLoadErr("Couldn't save the payment setting. Try again.");
+        load();
+      }
+    }
+  };
+
   const confirmDelete = async () => {
     setDeleteBusy(true);
     try {
@@ -511,7 +553,8 @@ export default function AdminPage() {
                   </span>
                   <span className={`font-outfit text-[11px] font-semibold uppercase tracking-wide ${o.brand === "balgores" ? "text-[#B8AB84]" : o.brand === "exp" ? "text-[#B9BFD6]" : o.brand === "davidastburys" ? "text-[#D9788F]" : o.brand === "harrisonshomes" ? "text-[#DEA39D]" : "text-[#4FB6FF]"}`}>{o.brand}</span>
                   <StatusBadge status={o.status} />
-                  {o.status === "accepted" && <FeeDueBadge acceptedAt={o.stages?.accepted_at} />}
+                  {o.status === "accepted" && !o.payment_received && <FeeDueBadge acceptedAt={o.stages?.accepted_at} />}
+                  {o.payment_received && <PaidBadge />}
                   <ReservationBadge value={o.reservation} />
                   {expanded === o.id ? <ChevronUp className="w-4 h-4 text-white/50" /> : <ChevronDown className="w-4 h-4 text-white/50" />}
                 </button>
@@ -527,22 +570,44 @@ export default function AdminPage() {
                       <p className="text-white/55">Asking price <span className="text-white block">{o.asking_price || "—"}</span></p>
                       <p className="text-white/55">Agent email <span className="text-white block">{o.agent_email || "—"}</span></p>
                       <p className="text-white/55">Listing <span className="text-white block break-all">{o.listing_url || "—"}</span></p>
-                      {o.status === "accepted" && o.stages?.accepted_at && (
+                      {o.status === "accepted" && o.stages?.accepted_at && !o.payment_received && (
                         <p className="text-white/55">Fee due by <span className="text-white block" data-testid={`fee-due-date-${o.reference}`}>{fmt(addMonths(new Date(o.stages.accepted_at), 6).toISOString(), false)}</span></p>
                       )}
+                      {o.payment_received && (
+                        <p className="text-white/55">Fee paid <span className="text-white block" data-testid={`fee-paid-date-${o.reference}`}>{o.payment_received_at ? fmt(o.payment_received_at) : "Marked paid"}</span></p>
+                      )}
+                      <p className="text-white/55">Pipeline stage <span className="text-white block" data-testid={`order-stage-${o.reference}`}>{STAGE_LABELS[orderStage(o)]}</span></p>
                     </div>
-                    <div className="mt-5 flex items-center gap-3">
-                      <span className="font-outfit text-[13px] text-white/55">Reservation Agreement on this order</span>
-                      <select
-                        value={o.reservation || ""}
-                        onChange={(e) => updateReservation(o.id, e.target.value)}
-                        className="rounded-full bg-white/5 border border-white/20 text-white font-outfit text-[12.5px] font-semibold px-3.5 py-2 focus:outline-none focus:border-[#4FB6FF]/60 transition-colors cursor-pointer [&>option]:bg-[#0b0b0d]"
-                        data-testid={`order-reservation-select-${o.reference}`}
+                    <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-outfit text-[13px] text-white/55">Reservation Agreement on this order</span>
+                        <select
+                          value={o.reservation || ""}
+                          onChange={(e) => updateReservation(o.id, e.target.value)}
+                          className="rounded-full bg-white/5 border border-white/20 text-white font-outfit text-[12.5px] font-semibold px-3.5 py-2 focus:outline-none focus:border-[#4FB6FF]/60 transition-colors cursor-pointer [&>option]:bg-[#0b0b0d]"
+                          data-testid={`order-reservation-select-${o.reference}`}
+                        >
+                          {RESERVATION_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={!!o.payment_received}
+                        onClick={() => updatePayment(o.id, !o.payment_received)}
+                        className="inline-flex items-center gap-3 group"
+                        data-testid={`order-payment-toggle-${o.reference}`}
                       >
-                        <option value="">Not set</option>
-                        <option value="yes">Reservation: Yes</option>
-                        <option value="no">Reservation: No</option>
-                      </select>
+                        <span className="font-outfit text-[13px] text-white/55 group-hover:text-white/75 transition-colors">Survey fee paid</span>
+                        <span className={`relative h-6 w-11 rounded-full border transition-colors ${o.payment_received ? "bg-amber-400/80 border-amber-300/60" : "bg-white/[0.06] border-white/20"}`}>
+                          <span className={`absolute top-[2px] h-[18px] w-[18px] rounded-full bg-white transition-all ${o.payment_received ? "left-[22px]" : "left-[2px]"}`} />
+                        </span>
+                        <span className={`font-outfit text-[12px] font-semibold ${o.payment_received ? "text-amber-300" : "text-white/40"}`}>
+                          {o.payment_received ? "Paid" : "Not paid"}
+                        </span>
+                      </button>
                     </div>
                     <div className="mt-5 flex flex-wrap gap-3">
                       {o.agreement_url && (
