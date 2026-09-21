@@ -15,10 +15,10 @@ import {
  * /harrisonshomes/order-survey — SELLER-DIRECT flow.
  *
  * The seller orders their own Home Insight Survey:
- *   1. About you (seller details)
+ *   1. Your seller (seller details)
  *   2. Your property
  *   3. Your Harrisons Homes agent
- *   4. Review & sign
+ *   4. Review & send
  *
  * On submit the backend mints the agreement and the seller is taken
  * STRAIGHT to /harrisonshomes/agreement/{token} to sign — no email loop.
@@ -28,10 +28,10 @@ const HH_LOGO =
   "/brand-assets/hh-logo-white.png";
 
 const STEPS = [
-  { number: 1, title: "About you", icon: User },
-  { number: 2, title: "Your property", icon: HomeIcon },
-  { number: 3, title: "Your agent", icon: Building2 },
-  { number: 4, title: "Review & sign", icon: ShieldCheck },
+  { number: 1, title: "Your seller", icon: User },
+  { number: 2, title: "The property", icon: HomeIcon },
+  { number: 3, title: "Your details", icon: Building2 },
+  { number: 4, title: "Review & send", icon: ShieldCheck },
 ];
 
 const inputCls =
@@ -50,6 +50,8 @@ const OrderSurveyPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [reference, setReference] = useState("");
   const [formData, setFormData] = useState({
     // About you (the seller)
     sellerName: "",
@@ -94,8 +96,8 @@ const OrderSurveyPage = () => {
         e.postcode = "Enter a valid UK postcode (e.g. CM2 6PJ)";
     }
     if (step === 3) {
-      if (!formData.agentName.trim())
-        e.agentName = "Please tell us which Harrisons Homes agent you're selling with";
+      if (!formData.agentName.trim()) e.agentName = "Your name is required";
+      if (!formData.agentEmail.trim()) e.agentEmail = "Your email is required";
       if (
         formData.agentEmail.trim() &&
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.agentEmail)
@@ -129,8 +131,8 @@ const OrderSurveyPage = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            flow: "seller_direct",
-            brand: "hh",
+            flow: "agent",
+            brand: "harrisonshomes",
             agent_name: formData.agentName.trim(),
             agency_name: "Harrisons Homes",
             branch: "",
@@ -154,8 +156,9 @@ const OrderSurveyPage = () => {
         throw new Error(detail || `Request failed (${res.status})`);
       }
       const data = await res.json();
-      if (!data.agreement_token) throw new Error("No agreement token returned");
-      navigate(`/harrisonshomes/agreement/${data.agreement_token}`);
+      setReference(data.reference_number || "");
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setSubmitError(
         "We couldn't submit your order just now. Please try again in a moment."
@@ -163,6 +166,82 @@ const OrderSurveyPage = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <div
+        className="min-h-screen bg-black flex items-center justify-center px-6 py-16"
+        data-testid="order-survey-success"
+      >
+        <div className="w-full max-w-xl">
+          <img
+            src={HH_LOGO}
+            alt="Harrisons Homes"
+            className="h-7 w-auto mb-10"
+          />
+          <p className="font-outfit text-[11px] font-semibold tracking-[0.24em] uppercase text-[#DEA39D]">
+            Order received
+          </p>
+          <h1 className="mt-4 font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
+            {formData.sellerName || "Your seller"} has been emailed their
+            agreement
+          </h1>
+          <p className="mt-4 font-outfit text-[15px] text-white/65 leading-relaxed">
+            We have sent {formData.sellerEmail} a link to the Home Insight Survey
+            terms for {formData.addressLine1}. As soon as they accept, RPSA is
+            instructed and you get a copy of the signed terms by email.
+          </p>
+
+          <ol className="mt-8 space-y-4">
+            {[
+              "Your seller reviews and accepts the terms online.",
+              "RPSA contacts them directly to book a convenient visit.",
+              "The report is issued to your seller and to you, ready to share with buyers.",
+            ].map((line, i) => (
+              <li key={line} className="flex items-start gap-3">
+                <span
+                  className="mt-0.5 w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-outfit font-bold text-[11px] text-[#0E1748]"
+                  style={{ background: "#DEA39D" }}
+                >
+                  {i + 1}
+                </span>
+                <span className="font-outfit text-[14px] text-white/70 leading-relaxed">
+                  {line}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          {reference && (
+            <p className="mt-8 font-outfit text-[12px] text-white/40">
+              Your reference: <span className="text-white/70">{reference}</span>
+            </p>
+          )}
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/harrisonshomes")}
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-outfit font-semibold text-[14px] text-[#0E1748] transition-all hover:opacity-90"
+              style={{ background: "#DEA39D" }}
+              data-testid="order-success-home"
+            >
+              Back to Harrisons Homes Surveys
+            </button>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white/40 px-6 py-3 font-outfit font-semibold text-[14px] text-white/80 hover:text-white transition-all"
+              data-testid="order-success-another"
+            >
+              Order another survey
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen bg-black" data-testid="order-survey-page">
@@ -215,14 +294,14 @@ const OrderSurveyPage = () => {
               Before you start
             </h2>
             <p className="font-outfit text-[14px] leading-relaxed text-white/65 mb-4">
-              You&apos;re ordering the survey for your own home. Here is how
-              it works:
+              You&apos;re ordering the survey on behalf of your seller. Here
+              is how it works:
             </p>
             <ul className="space-y-2.5">
               {[
-                "Tell us about you, your property and your Harrisons Homes agent below. It takes two minutes.",
-                "Review and sign your survey agreement online, straight away. No waiting for emails.",
-                "RPSA, the accredited surveyor body, contacts you directly to arrange a convenient visit. Harrisons Homes pays for the survey, so there is nothing for you to pay, now or later.",
+                "Tell us about your seller, the property and yourself below. It takes two minutes.",
+                "We email your seller a link to review and accept the survey terms online.",
+                "Once they accept, RPSA contacts them directly to arrange the visit. Harrisons Homes pays for the survey, so the seller has nothing to pay, now or later.",
               ].map((line) => (
                 <li
                   key={line}
@@ -321,20 +400,21 @@ const OrderSurveyPage = () => {
               <div className="space-y-5">
                 <div>
                   <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
-                    About you
+                    Your seller
                   </h3>
                   <p className="font-outfit text-[14px] text-white/55">
-                    So the surveyor knows who to contact to arrange the visit.
+                    Who is selling, so RPSA knows who to contact to arrange the
+                    visit and we know where to send the agreement.
                   </p>
                 </div>
                 <div>
-                  <label className={labelCls}>Your name *</label>
+                  <label className={labelCls}>Seller name *</label>
                   <input
                     type="text"
                     className={inputCls}
                     value={formData.sellerName}
                     onChange={setField("sellerName")}
-                    placeholder="Your full name"
+                    placeholder="Seller full name"
                     data-testid="order-input-seller-name"
                   />
                   {errors.sellerName && (
@@ -343,7 +423,7 @@ const OrderSurveyPage = () => {
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelCls}>Your email *</label>
+                    <label className={labelCls}>Seller email *</label>
                     <input
                       type="email"
                       className={inputCls}
@@ -353,14 +433,14 @@ const OrderSurveyPage = () => {
                       data-testid="order-input-seller-email"
                     />
                     <p className="font-outfit text-[12px] text-white/45 mt-1.5">
-                      Your confirmation and report updates arrive here.
+                      This is where we send the agreement to sign.
                     </p>
                     {errors.sellerEmail && (
                       <p className={errorCls}>{errors.sellerEmail}</p>
                     )}
                   </div>
                   <div>
-                    <label className={labelCls}>Your phone *</label>
+                    <label className={labelCls}>Seller phone *</label>
                     <input
                       type="tel"
                       className={inputCls}
@@ -370,7 +450,7 @@ const OrderSurveyPage = () => {
                       data-testid="order-input-seller-phone"
                     />
                     <p className="font-outfit text-[12px] text-white/45 mt-1.5">
-                      The surveyor calls this number to book the visit.
+                      RPSA calls this number to book the visit.
                     </p>
                     {errors.sellerPhone && (
                       <p className={errorCls}>{errors.sellerPhone}</p>
@@ -483,27 +563,26 @@ const OrderSurveyPage = () => {
               </div>
             )}
 
-            {/* Step 3 — Your Harrisons Homes agent */}
+            {/* Step 3 — The ordering agent */}
             {currentStep === 3 && (
               <div className="space-y-5">
                 <div>
                   <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
-                    Your Harrisons Homes agent
+                    Your details
                   </h3>
                   <p className="font-outfit text-[14px] text-white/55">
-                    Every Harrisons Homes agent runs their own business, so tell us who
-                    you&apos;re selling with and we&apos;ll keep them in the
-                    loop.
+                    You are ordering this survey for your seller. Harrisons Homes
+                    pays the fee, and we will keep you updated at every step.
                   </p>
                 </div>
                 <div>
-                  <label className={labelCls}>Harrisons Homes agent name *</label>
+                  <label className={labelCls}>Your name *</label>
                   <input
                     type="text"
                     className={inputCls}
                     value={formData.agentName}
                     onChange={setField("agentName")}
-                    placeholder="e.g. Rachel Bedford"
+                    placeholder="Your full name"
                     data-testid="order-input-agent-name"
                   />
                   {errors.agentName && (
@@ -512,13 +591,13 @@ const OrderSurveyPage = () => {
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelCls}>Agent email</label>
+                    <label className={labelCls}>Your email *</label>
                     <input
                       type="email"
                       className={inputCls}
                       value={formData.agentEmail}
                       onChange={setField("agentEmail")}
-                      placeholder="Agent email (optional)"
+                      placeholder="you@harrisonshomes.co.uk"
                       data-testid="order-input-agent-email"
                     />
                     {errors.agentEmail && (
@@ -526,13 +605,13 @@ const OrderSurveyPage = () => {
                     )}
                   </div>
                   <div>
-                    <label className={labelCls}>Agent phone</label>
+                    <label className={labelCls}>Your phone</label>
                     <input
                       type="tel"
                       className={inputCls}
                       value={formData.agentPhone}
                       onChange={setField("agentPhone")}
-                      placeholder="Agent phone (optional)"
+                      placeholder="Direct number (optional)"
                       data-testid="order-input-agent-phone"
                     />
                   </div>
@@ -545,10 +624,11 @@ const OrderSurveyPage = () => {
               <div className="space-y-5">
                 <div>
                   <h3 className="font-archivo font-bold tracking-[-0.025em] text-[26px] text-white mb-1">
-                    Review &amp; sign
+                    Review &amp; send
                   </h3>
                   <p className="font-outfit text-[14px] text-white/55">
-                    A quick check before you sign your agreement online.
+                    A quick check, then we email your seller their agreement to
+                    sign online.
                   </p>
                 </div>
 
@@ -558,7 +638,7 @@ const OrderSurveyPage = () => {
                   </p>
                   <dl className="space-y-2.5 font-outfit text-[14px]">
                     {[
-                      ["You", formData.sellerName || "Not provided"],
+                      ["Seller", formData.sellerName || "Not provided"],
                       [
                         "Contact",
                         `${formData.sellerEmail || "Not provided"} · ${formData.sellerPhone || "Not provided"}`,
@@ -629,8 +709,8 @@ const OrderSurveyPage = () => {
                     )}
                   </span>
                   <span className="text-white/80 text-sm font-outfit leading-relaxed">
-                    I confirm I&apos;m happy for RPSA to contact me about
-                    arranging my survey. *
+                    I confirm my seller has asked for this survey and is happy
+                    for RPSA to contact them about arranging the visit. *
                   </span>
                 </label>
                 {errors.confirmation && (
@@ -697,7 +777,7 @@ const OrderSurveyPage = () => {
                     </>
                   ) : (
                     <>
-                      Review &amp; Sign Agreement
+                      Send Agreement To Seller
                       <PenLine className="w-4 h-4" />
                     </>
                   )}

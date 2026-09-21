@@ -122,6 +122,8 @@ _DA_LOGO_WHITE_URL = f"{_SITE_BASE}/brand-assets/da-logo-white.png"
 # White Harrisons Homes wordmark, for the navy #0E1748 band.
 _HH_LOGO_WHITE_URL = f"{_SITE_BASE}/brand-assets/hh-logo-white.png"
 
+_AGENCY_PAID_BRANDS = {"harrisonshomes"}
+
 # Per-brand palette for HTML emails. Keep the shape identical so template
 # blocks can just `.format(**BRAND_TOKENS[brand])`.
 #
@@ -420,12 +422,27 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
             '    <td style="width:1px;background:rgba(255,255,255,0.35);height:24px;"></td>'
             '    <td style="padding-left:12px;" valign="middle">'
             f'      <img src="{tokens["partner_logo"]}" alt="Partner"'
-            '           width="30" height="30"'
-            '           style="display:block;border:0;outline:none;'
-            '                  text-decoration:none;border-radius:3px;">'
-            '    </td>'
+            + ('           width="88" style="display:block;border:0;outline:none;'
+               '                  text-decoration:none;height:auto;">'
+               if tokens.get("partner_logo_wide") else
+               '           width="30" height="30"'
+               '           style="display:block;border:0;outline:none;'
+               '                  text-decoration:none;border-radius:3px;">')
+            + '    </td>'
             '  </tr></table>'
             '</td>'
+        )
+
+    agency_paid_note = ""
+    if lead.brand in _AGENCY_PAID_BRANDS:
+        agency_paid_note = (
+            '<p style="margin:12px 0 0;padding:12px 14px;background:#F7F4EE;'
+            'border-left:3px solid ' + tokens["primary"] + ';border-radius:6px;'
+            'font-size:14px;color:#0B1220;line-height:1.6;">'
+            f'<strong>{lead.agency_name} is paying for this survey.</strong> '
+            'There is nothing for you to pay, now or at any point, and no fee '
+            'becomes due from you if the sale does not complete.'
+            '</p>'
         )
 
     return f"""\
@@ -498,6 +515,7 @@ def _render_seller_invite(lead: OrderSurveyLead, agreement_url: str) -> str:
               move things forward, please review and accept the terms of the
               agreement. Everything you need is on the page linked below.
             </p>
+            {agency_paid_note}
           </td>
         </tr>
 
@@ -1250,9 +1268,15 @@ def _render_hh_direct_order(lead: OrderSurveyLead, agreement_url: str) -> str:
         f'<div style="border:1px solid rgba(14,23,72,0.18);border-left:3px solid {acc};'
         'border-radius:8px;padding:14px 18px;margin:0 0 12px;background:#FFFFFF;">'
         '<p style="margin:0;font-size:14px;color:#0E1748;line-height:1.65;">'
-        '<strong>A seller has ordered their survey through the Harrisons Homes '
-        'funnel.</strong> They were taken straight to the agreement to sign online. '
-        '<strong>Harrisons Homes pays the survey fee</strong>, so the seller has '
+        + (
+            '<strong>A seller has ordered their survey through the Harrisons Homes '
+            'funnel.</strong> They were taken straight to the agreement to sign online. '
+            if lead.flow == "seller_direct" else
+            f'<strong>{lead.agent_name or "An agent"} at Harrisons Homes has ordered '
+            'a survey for their seller.</strong> The seller has been emailed the '
+            'agreement to review and sign online. '
+        )
+        + '<strong>Harrisons Homes pays the survey fee</strong>, so the seller has '
         'nothing to pay at any point. Details go to RPSA only after the seller '
         'accepts the terms.'
         '</p>'
@@ -1421,7 +1445,9 @@ async def _dispatch_order_emails(lead: OrderSurveyLead, agreement_url: str) -> t
     try:
         email_id = await _send_email(
             subject=f"New Seller Survey order — {lead.agency_name} ({lead.seller_name})",
-            html=_render_order_survey(lead, agreement_url),
+            html=(_render_hh_direct_order(lead, agreement_url)
+                  if lead.brand == "harrisonshomes"
+                  else _render_order_survey(lead, agreement_url)),
             cc=NOTIFY_CC,
         )
     except Exception as exc:
