@@ -168,6 +168,22 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Email/PDF previews for the user live in /app/frontend/public/email-previews/ (10-seller-confirmation-v11.html, 11-agent-signed-v11.html, 12-rpsa-instruction-v11.html, signed-terms-sample.pdf).
 - PENDING USER ACTION: redeploy. Legal sign-off on the new clause wording is still recommended.
 
+
+## Sep 2026: Agent next-steps email + Harrisons Homes agency-paid funnel
+### 1. Agent "seller has signed" email
+- _agent_signed_email in backend/routes/agreements.py now includes a _next_steps_block: 1) RPSA contacts your seller, 2) survey carried out and report issued, 3) share the report with buyers. Sent to the agent's email (agent_email), Gazeal cc'd, sealed terms PDF attached.
+### 2. /harrisonshomes funnel (AGENCY PAYS the survey fee)
+- Isolated duplicate of the eXp set: /app/frontend/src/components/ui/hh/*-hh.jsx (14) and pages/hh/*-hh.jsx (3). Routes: /harrisonshomes, /order-survey, /agreement/:token, /pricing (SurveysLandingHh, data-testid hh-landing).
+- Brand: navy #0E1748 base, #DEA39D accents and CTA fills with navy labels. White Harrisons wordmark pulled from their site -> /brand-assets/hh-logo-white.png. Icons from the supplied zip -> /brand-assets/hh-{lock,lens,shield,house}.png. Step 3 of the order form is a free-text "Harrisons Homes agent name" (no branch list was supplied).
+- FEE MODEL: Harrisons Homes pays. Prices stay VISIBLE (user's choice) but every fee statement says the agency covers it. All six-month / settled-at-completion / seller-payment wording removed from the landing, order form, FAQ, benefits, reservation comparison (reframed on certainty), agreement page and emails.
+- Backend: BRAND_TOKENS["harrisonshomes"], brand pattern extended, new _render_hh_direct_order() internal email (navy band + pink accents, simple like David Astburys).
+- terms.py: PAYMENT_SECTION_AGENCY_PAID + AGENCY_PAID_BRANDS = {"harrisonshomes"} + payment_section(brand); terms_plain_text(brand) and terms_sha256(text, brand) are brand-aware, so the sealed hash and PDF match what the seller saw.
+- Acceptance for agency-paid brands: payment_ack NOT required, fee_due_at empty, fee_paid_by_agency stored, no countdown card, no fee timeline step, "Survey fee: Paid by the estate agency" in the acceptance record.
+- Email/PDF previews: /email-previews/hh-1-order-internal.html, hh-2-seller-confirmation.html, hh-3-agent-signed.html, hh-4-rpsa-instruction.html, hh-signed-terms-sample.pdf, and the refreshed 11-agent-signed-v11.html.
+- Testing: screenshots of the landing, agreement and all emails; payment framework suite 11/11; production build compiles. NOTHING was sent: Resend key invalidated and Slack/RPSA/ProcessMaker blanked during the run, all RESTORED after.
+- NOT YET DONE: no testing-agent regression pass on /harrisonshomes (only self-tested), and the Harrisons brand has no /harrisonshomes learn-more modal wiring (removed with the other seller funnels).
+- PENDING USER ACTION: redeploy.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

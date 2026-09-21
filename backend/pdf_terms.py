@@ -100,7 +100,8 @@ def build_agreement_pdf(*, brand_label: str, seller_name: str, seller_email: str
             ("Accepted", accepted_label),
             ("IP address", ip or "unknown"),
             ("Device", device or "unknown"),
-            ("Fee payable by", fee_due_label),
+            ("Survey fee" if "agency" in fee_due_label.lower() else "Fee payable by",
+             fee_due_label),
         ], frame_w),
     ]
 

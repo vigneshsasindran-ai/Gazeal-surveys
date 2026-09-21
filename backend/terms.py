@@ -136,7 +136,27 @@ PAYMENT_SECTION = {
 }
 
 
-def terms_plain_text() -> str:
+# Harrisons Homes funnel: the agency pays the survey fee, so the seller-facing
+# payment wording is replaced entirely.
+PAYMENT_SECTION_AGENCY_PAID = {
+    "title": "Who pays for the survey",
+    "paragraphs": [
+        "The survey fee for this survey is paid by the estate agency that arranged it. Nothing is payable by you, now or at any point, and no fee becomes due from you if the sale does not complete.",
+        "Gazeal invoices the agency directly for the survey. You will not receive an invoice, and you are not asked for card or bank details at any stage of this process.",
+    ],
+}
+
+# Brands where the agency, not the seller, funds the survey.
+AGENCY_PAID_BRANDS = {"harrisonshomes"}
+
+
+def payment_section(brand: str | None = None) -> dict:
+    if (brand or "") in AGENCY_PAID_BRANDS:
+        return PAYMENT_SECTION_AGENCY_PAID
+    return PAYMENT_SECTION
+
+
+def terms_plain_text(brand: str | None = None) -> str:
     """Flatten the terms into the exact text that is sealed and hashed."""
     out = [
         "HOME INSIGHT SURVEY SERVICE TERMS",
@@ -147,10 +167,11 @@ def terms_plain_text() -> str:
         out.append(f"{c['no']} {c['title']}")
         out.extend(c["paragraphs"])
         out.append("")
-    out.append(PAYMENT_SECTION["title"].upper())
-    out.extend(PAYMENT_SECTION["paragraphs"])
+    ps = payment_section(brand)
+    out.append(ps["title"].upper())
+    out.extend(ps["paragraphs"])
     return "\n".join(out).strip() + "\n"
 
 
-def terms_sha256(text: str | None = None) -> str:
-    return hashlib.sha256((text or terms_plain_text()).encode("utf-8")).hexdigest()
+def terms_sha256(text: str | None = None, brand: str | None = None) -> str:
+    return hashlib.sha256((text or terms_plain_text(brand)).encode("utf-8")).hexdigest()

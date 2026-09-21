@@ -192,14 +192,17 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
     tokens = _tokens(brand)
     pd = tokens["primary_dark"]
     accepted_label = _fmt_dt(now)
-    fee_due_at = doc.get("fee_due_at") or _plus_six_months(now)
-    fee_due_label = _fmt_date(fee_due_at)
+    agency_paid = (doc.get("brand") or "gazeal") in terms_mod.AGENCY_PAID_BRANDS
+    fee_due_at = "" if agency_paid else (doc.get("fee_due_at") or _plus_six_months(now))
+    fee_due_label = _fmt_date(fee_due_at) if fee_due_at else ""
     acceptance_rows = (
         '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
         + _row("Accepted", accepted_label, primary_dark=pd)
         + _row("IP address", ip or "unknown", primary_dark=pd)
         + _row("Reference", token, primary_dark=pd)
-        + _row("Fee payable by", fee_due_label, primary_dark=pd)
+        + (_row("Survey fee", "Paid by the estate agency", primary_dark=pd)
+           if agency_paid else
+           _row("Fee payable by", fee_due_label, primary_dark=pd))
         + "</table>"
     )
     return {
@@ -223,6 +226,7 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
         "acceptance_rows": acceptance_rows,
         "fee_due_at": fee_due_at,
         "fee_due_label": fee_due_label,
+        "agency_paid": agency_paid,
         "terms_label": doc.get("terms_version") or terms_mod.TERMS_LABEL,
         "terms_sha256": doc.get("terms_sha256") or "",
         "previously_declined_at": doc.get("previously_declined_at"),
@@ -232,6 +236,21 @@ def _build_accept_ctx(doc: dict, lead_doc, token: str,
 def _payment_block(ctx: dict) -> str:
     """The payment term, restated in the emails with the exact due date."""
     pd = ctx["pd"]
+    if ctx.get("agency_paid"):
+        agency = ctx["doc"].get("agency_name") or "the estate agency"
+        return (
+            f'<div style="border:1px solid rgba(17,24,39,0.18);border-left:3px solid {pd};'
+            'border-radius:8px;padding:14px 16px;margin:14px 0 4px;background:#FAFAFA;">'
+            '<p style="margin:0 0 6px;font-size:11px;letter-spacing:1.6px;'
+            f'text-transform:uppercase;font-weight:700;color:{pd};">'
+            'Who pays for the survey</p>'
+            '<p style="margin:0;font-size:14px;color:#111827;line-height:1.65;">'
+            f'<strong>{agency} pays the survey fee.</strong> There is nothing for the '
+            'seller to pay, now or at any point, and no fee becomes due from the seller '
+            'if the sale does not complete. Gazeal invoices the agency directly.'
+            '</p>'
+            '</div>'
+        )
     return (
         f'<div style="border:1px solid rgba(17,24,39,0.18);border-left:3px solid {pd};'
         'border-radius:8px;padding:14px 16px;margin:14px 0 4px;background:#FAFAFA;">'
@@ -278,6 +297,43 @@ def _prev_declined_note(ctx: dict) -> str:
     )
 
 
+def _next_steps_block(ctx: dict) -> str:
+    """What the agent should expect now the seller has signed."""
+    pd = ctx["pd"]
+    steps = [
+        ("RPSA contacts your seller",
+         "An accredited RPSA surveyor calls the seller directly to book a "
+         "convenient visit. Nothing is needed from you."),
+        ("The survey is carried out and the report issued",
+         "The Home Insight Survey report goes to the seller, and to you, so it "
+         "can be shared with interested buyers."),
+        ("Share the report with buyers",
+         "Buyers see the condition before they offer, which means fewer late "
+         "surprises, less renegotiation and a stronger chance of completing."),
+    ]
+    rows = ""
+    for i, (title, text) in enumerate(steps, start=1):
+        rows += (
+            '<tr>'
+            '<td valign="top" width="34" style="padding:8px 0;">'
+            f'<div style="width:22px;height:22px;border-radius:999px;background:{pd};'
+            'color:#ffffff;font-size:11px;font-weight:700;line-height:22px;'
+            f'text-align:center;">{i}</div>'
+            '</td>'
+            '<td valign="top" style="padding:8px 0;">'
+            f'<div style="font-size:14px;font-weight:600;color:#0B1220;">{title}</div>'
+            f'<div style="margin-top:2px;font-size:13px;color:#4B5563;line-height:1.6;">{text}</div>'
+            '</td>'
+            '</tr>'
+        )
+    return (
+        _section_title("What happens next", pd)
+        + '<table cellpadding="0" cellspacing="0" border="0" width="100%">'
+        + rows
+        + '</table>'
+    )
+
+
 def _agent_signed_email(ctx: dict) -> tuple:
     """Notify the listing agent (or the internal team). Returns (subject, to, cc, html)."""
     doc, pd = ctx["doc"], ctx["pd"]
@@ -291,6 +347,7 @@ def _agent_signed_email(ctx: dict) -> tuple:
         '</p>'
         + _prev_declined_note(ctx)
         + _payment_block(ctx)
+        + _next_steps_block(ctx)
         + _section_title("Acceptance record", pd)
         + ctx["acceptance_rows"]
         + '<p style="margin:10px 0 0;font-size:13px;color:#4B5563;line-height:1.6;">'
@@ -739,13 +796,13 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
         if doc.get("status") != "accepted":
             raise HTTPException(409, "The terms have not been accepted yet")
         sealed = doc.get("terms_text")
-        if not sealed or doc.get("terms_sha256") != terms_mod.terms_sha256(sealed):
+        if not sealed or doc.get("terms_sha256") != terms_mod.terms_sha256(sealed):  # noqa: E501
             raise HTTPException(
                 409,
                 "No sealed copy is available for this agreement. The PDF issued at "
                 "the time of acceptance is attached to the confirmation email.",
             )
-        if doc.get("terms_sha256") != terms_mod.terms_sha256():
+        if doc.get("terms_sha256") != terms_mod.terms_sha256(brand=doc.get("brand")):
             raise HTTPException(
                 409,
                 "This agreement was signed against an earlier version of the terms. "
@@ -780,11 +837,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             accepted_label=ctx["accepted_label"],
             ip=doc.get("accepted_ip") or "",
             device=doc.get("accepted_ua") or "",
-            fee_due_label=ctx["fee_due_label"],
+            fee_due_label=ctx["fee_due_label"] or "Paid by the estate agency",
             fee_summary=fee_summary,
             terms_label=doc.get("terms_version") or terms_mod.TERMS_LABEL,
             clauses=terms_mod.CLAUSES,
-            payment_section=terms_mod.PAYMENT_SECTION,
+            payment_section=terms_mod.payment_section(doc.get("brand")),
             terms_sha256=doc.get("terms_sha256") or terms_mod.terms_sha256(),
         )
         return Response(
@@ -836,7 +893,9 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 "Please confirm you understand the risk of proceeding without a "
                 "Gazeal Reservation Agreement before agreeing to the terms.",
             )
-        if not payment_ack:
+        brand = doc.get("brand") or "gazeal"
+        agency_paid = brand in terms_mod.AGENCY_PAID_BRANDS
+        if not agency_paid and not payment_ack:
             raise HTTPException(
                 422,
                 "Please confirm you understand when the survey fee becomes payable "
@@ -844,8 +903,8 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             )
 
         now = datetime.now(timezone.utc).isoformat()
-        fee_due_at = _plus_six_months(now)
-        terms_text = terms_mod.terms_plain_text()
+        fee_due_at = "" if agency_paid else _plus_six_months(now)
+        terms_text = terms_mod.terms_plain_text(brand)
         terms_hash = terms_mod.terms_sha256(terms_text)
         ip = (
             request.headers.get("x-forwarded-for", "").split(",")[0].strip()
@@ -863,6 +922,7 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             "risk_acknowledged": risk_ack,
             "payment_acknowledged": payment_ack,
             "fee_due_at": fee_due_at,
+            "fee_paid_by_agency": agency_paid,
         }
         if pricing_snapshot is not None:
             update_set["pricing_snapshot"] = pricing_snapshot
@@ -898,11 +958,11 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 accepted_label=ctx["accepted_label"],
                 ip=ip,
                 device=ua,
-                fee_due_label=ctx["fee_due_label"],
+                fee_due_label=ctx["fee_due_label"] or "Paid by the estate agency",
                 fee_summary=fee_summary,
                 terms_label=terms_mod.TERMS_LABEL,
                 clauses=terms_mod.CLAUSES,
-                payment_section=terms_mod.PAYMENT_SECTION,
+                payment_section=terms_mod.payment_section(doc.get("brand")),
                 terms_sha256=terms_hash,
             )
         except Exception:

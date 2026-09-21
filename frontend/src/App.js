@@ -65,6 +65,21 @@ import DOrderSurveyPage from "@/pages/da/order-survey-da";
 import DAgreementPage from "@/pages/da/agreement-da";
 import DPricingPage from "@/pages/da/pricing-da";
 
+// ─── Harrisons Homes (co-brand, agency-funded survey) ───────────────────────
+import HSurveysHeader from "@/components/ui/hh/surveys-header-hh";
+import HSurveysHero from "@/components/ui/hh/surveys-hero-hh";
+import HSurveysBento from "@/components/ui/hh/surveys-bento-hh";
+import HSurveysSaleAgreed from "@/components/ui/hh/surveys-sale-agreed-hh";
+import HReservationExplainer from "@/components/ui/hh/reservation-explainer-hh";
+import HSurveysBenefits from "@/components/ui/hh/surveys-benefits-hh";
+import HSellerAdvantage from "@/components/ui/hh/seller-advantage-hh";
+import HSurveyPricingTable from "@/components/ui/hh/survey-pricing-table-hh";
+import HSurveysFAQ from "@/components/ui/hh/surveys-faq-hh";
+import HSurveysFooterReveal from "@/components/ui/hh/surveys-footer-reveal-hh";
+import HOrderSurveyPage from "@/pages/hh/order-survey-hh";
+import HAgreementPage from "@/pages/hh/agreement-hh";
+import HPricingPage from "@/pages/hh/pricing-hh";
+
 const SurveysLanding = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -269,6 +284,56 @@ const SurveysLandingDa = () => {
   );
 };
 
+/**
+ * Harrisons Homes landing — scoped to `/harrisonshomes/*`. Navy #0E1748 base
+ * with #DEA39D accents. In this funnel the AGENCY pays the survey fee, so all
+ * seller payment wording is removed.
+ */
+const SurveysLandingHh = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleOrderSurvey = () => navigate("/harrisonshomes/order-survey");
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const t = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [location.hash]);
+
+  return (
+    <div className="App min-h-screen bg-black" data-testid="hh-landing">
+      <HSurveysHeader onOrderSurvey={handleOrderSurvey} />
+      <main className="relative z-10 bg-black">
+        <HSurveysHero onOrderSurvey={handleOrderSurvey} />
+        <HSurveysBento />
+        <HSellerAdvantage onOrderSurvey={handleOrderSurvey} />
+        <HSurveysSaleAgreed onOrderSurvey={handleOrderSurvey} />
+        <section
+          className="relative bg-black pt-2 pb-20 md:pt-4 md:pb-28"
+          data-testid="hh-reservation-compare-section"
+        >
+          <div className="relative mx-auto max-w-3xl lg:max-w-6xl px-6">
+            <HReservationExplainer variant="agent" />
+          </div>
+        </section>
+        <HSurveysBenefits />
+        <HSurveyPricingTable />
+        <HSurveysFAQ onOrderSurvey={handleOrderSurvey} />
+      </main>
+      <HSurveysFooterReveal onOrderSurvey={handleOrderSurvey} />
+    </div>
+  );
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -300,6 +365,12 @@ function App() {
         <Route path="/davidastburys/order-survey" element={<DOrderSurveyPage />} />
         <Route path="/davidastburys/agreement/:token" element={<DAgreementPage />} />
         <Route path="/davidastburys/pricing" element={<DPricingPage />} />
+
+        {/* Harrisons Homes (separate funnel — agency pays the survey fee) */}
+        <Route path="/harrisonshomes" element={<SurveysLandingHh />} />
+        <Route path="/harrisonshomes/order-survey" element={<HOrderSurveyPage />} />
+        <Route path="/harrisonshomes/agreement/:token" element={<HAgreementPage />} />
+        <Route path="/harrisonshomes/pricing" element={<HPricingPage />} />
       </Routes>
     </BrowserRouter>
   );
