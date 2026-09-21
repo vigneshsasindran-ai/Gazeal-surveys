@@ -10,7 +10,10 @@ This includes, without exception:
 - the testing agent
 - curl / httpx / python requests against any endpoint
 - Playwright or screenshot tooling that submits a form or clicks an action
-- pytest runs that hit send-capable code paths
+- **`pytest` / the backend test suite — it calls the real accept and decline
+  handlers with the real .env. On 21 Sep 2026 a single `pytest tests` run
+  pushed 20 live entries into the RPSA panel (ids 44492-44511). It is NOT a
+  local, harmless check. Treat it as production traffic.**
 - "just one quick check"
 Reading files, reading logs, and static code review are allowed.
 Taking a screenshot of a page WITHOUT interacting with it requires permission too.

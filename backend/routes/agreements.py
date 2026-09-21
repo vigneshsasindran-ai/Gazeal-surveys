@@ -44,6 +44,9 @@ SENDER_EMAIL = os.environ["SENDER_EMAIL"]
 NOTIFY_EMAIL = os.environ["NOTIFY_EMAIL"]
 NOTIFY_CC = [e.strip() for e in os.environ.get("NOTIFY_CC", "").split(",") if e.strip()]
 RPSA_EMAIL = os.environ.get("RPSA_EMAIL", NOTIFY_EMAIL)
+# Gazeal's own cc on the seller confirmation and the RPSA instruction.
+# Env-driven (blank = no cc) so preview can be kept off the real inbox.
+GAZEAL_CC = [e.strip() for e in os.environ.get("GAZEAL_CC_EMAIL", "").split(",") if e.strip()]
 # Live endpoint: https://www.rpsapanel.co.uk/rpsagazealwebhook.php
 # Left unset in dev/test so we never commission real surveys by accident.
 RPSA_WEBHOOK_URL = os.environ.get("RPSA_WEBHOOK_URL", "")
@@ -412,7 +415,7 @@ def _seller_confirmed_email(ctx: dict) -> tuple:
     return (
         "Your Home Insight Survey agreement is confirmed",
         [doc.get("seller_email")],
-        ["survey@gazeal.co.uk"],
+        GAZEAL_CC,
         html,
     )
 
@@ -477,7 +480,7 @@ def _rpsa_instruction_email(ctx: dict) -> tuple:
     return (
         f"Survey instruction — {ctx['seller_name']}, {ctx['address']} (Ref {ctx['token']})",
         [RPSA_EMAIL],
-        ["survey@gazeal.co.uk", NOTIFY_EMAIL],
+        GAZEAL_CC + [NOTIFY_EMAIL],
         html,
     )
 

@@ -208,6 +208,15 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - Testing: curl on both PATCH endpoints (incl. 422 on bad value), export header/row check, screenshots of the pipeline and of the toggle in both states; test record reset afterwards. Pre-existing unrelated test failures in tests/test_slack_email_status.py etc. confirmed present before this change (git stash check).
 - PENDING USER ACTION: redeploy to production.
 
+## 21 Sep 2026: Gazeal cc moved out of the code into Secrets
+- `survey@gazeal.co.uk` was hard-coded as a cc in TWO places in backend/routes/agreements.py: the seller confirmation email (was line 415) and the RPSA instruction email (was line 480). No Secrets change could stop either, so preview always cc'd the live inbox.
+- Both now read `GAZEAL_CC_EMAIL` (comma-separated, blank = no cc) via the module-level `GAZEAL_CC` list. RPSA instruction cc is `GAZEAL_CC + [NOTIFY_EMAIL]`. Preview backend/.env has GAZEAL_CC_EMAIL="".
+- PRODUCTION ACTION REQUIRED before/at next re-publish: add secret `GAZEAL_CC_EMAIL` with Live = survey@gazeal.co.uk (Test blank) or that cc will stop. NOTIFY_EMAIL still receives the RPSA instruction either way.
+- Recipients of the seller confirmation and the agent "seller has signed" email are UNCHANGED. Only the cc is now configurable.
+- Owner declined the environment/production guard for RPSA + ProcessMaker; he cleared the Test values of RPSA_WEBHOOK_URL and PM_RPSA_SAVE_URL in Secrets instead, so preview cannot reach those systems.
+- NOT VERIFIED: no test of any kind was run on this change (owner instruction). Syntax checked and the backend restarted cleanly; behaviour will be seen on the owner's next real production order.
+- Historical damage found while investigating: 51 preview test agreements had been delivered to the live RPSA panel and returned real RPSA ids 44397-44511 (10/13/14/21 Sep). 20 of those (44492-44511) came from the agent running `pytest tests` at 16:06-16:08 on 21 Sep. The pytest suite is send-capable — treat it as such, it is covered by TESTING_RULES.md.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.
