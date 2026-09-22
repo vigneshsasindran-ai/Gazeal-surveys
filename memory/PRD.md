@@ -231,6 +231,11 @@ Objective: the Harrisons seller never sees a survey price; admin still records i
 - Admin: panel.py `_survey_fee(ag)` derives the fee from `pricing_snapshot` ("£1,234", "Bespoke quote" or blank). Added to the /leads payload as `survey_fee` (plus `property_value`) and to the Excel export as a new "Survey Fee" column after Asking Price. admin.jsx shows "Survey fee" in the order detail grid (data-testid survey-fee-{ref}).
 - NOT VERIFIED: no test of any kind was run (owner instruction). Python parses, ESLint parse clean, webpack compiled successfully. Nothing was sent.
 
+## 22 Sep 2026: Harrisons agent-signed email preview regenerated
+- `/app/scripts_render_hh_agent_email.py` renders `_agent_signed_email` with fake data straight to `frontend/public/email-previews/hh-3-agent-signed.html`. It imports the template function only — no Resend, no API, no network. Run it with dummy env vars (RESEND_API_KEY=render-only-not-a-real-key etc) so a send is impossible even by accident.
+- Screenshots confirmed: new Harrisons step 3 wording present, old wording gone, no £ figure anywhere in the email.
+- Open nit the owner was shown: the Acceptance record row reads "Survey fee — Paid by the estate agency" (generic wording from `_build_accept_ctx`). Could be brand-labelled ("Paid by Harrisons Homes") if he asks — not changed unprompted.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.
