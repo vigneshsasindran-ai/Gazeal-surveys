@@ -1,6 +1,6 @@
 import "@/App.css";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 // ─── Gazeal (default) ───────────────────────────────────────────────────────
 import SurveysHeader from "@/components/ui/surveys-header";
@@ -73,12 +73,10 @@ import HSurveysSaleAgreed from "@/components/ui/hh/surveys-sale-agreed-hh";
 import HReservationExplainer from "@/components/ui/hh/reservation-explainer-hh";
 import HSurveysBenefits from "@/components/ui/hh/surveys-benefits-hh";
 import HSellerAdvantage from "@/components/ui/hh/seller-advantage-hh";
-import HSurveyPricingTable from "@/components/ui/hh/survey-pricing-table-hh";
 import HSurveysFAQ from "@/components/ui/hh/surveys-faq-hh";
 import HSurveysFooterReveal from "@/components/ui/hh/surveys-footer-reveal-hh";
 import HOrderSurveyPage from "@/pages/hh/order-survey-hh";
 import HAgreementPage from "@/pages/hh/agreement-hh";
-import HPricingPage from "@/pages/hh/pricing-hh";
 
 const SurveysLanding = () => {
   const navigate = useNavigate();
@@ -326,7 +324,6 @@ const SurveysLandingHh = () => {
           </div>
         </section>
         <HSurveysBenefits />
-        <HSurveyPricingTable />
         <HSurveysFAQ onOrderSurvey={handleOrderSurvey} />
       </main>
       <HSurveysFooterReveal onOrderSurvey={handleOrderSurvey} />
@@ -370,7 +367,7 @@ function App() {
         <Route path="/harrisonshomes" element={<SurveysLandingHh />} />
         <Route path="/harrisonshomes/order-survey" element={<HOrderSurveyPage />} />
         <Route path="/harrisonshomes/agreement/:token" element={<HAgreementPage />} />
-        <Route path="/harrisonshomes/pricing" element={<HPricingPage />} />
+        <Route path="/harrisonshomes/pricing" element={<Navigate to="/harrisonshomes" replace />} />
       </Routes>
     </BrowserRouter>
   );

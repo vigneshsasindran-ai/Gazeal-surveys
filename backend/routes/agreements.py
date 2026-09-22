@@ -833,7 +833,10 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             fee_summary.append(("Bedrooms", str(snap["bedrooms"])))
         if snap.get("listed_status"):
             fee_summary.append(("Registered listed building", str(snap["listed_status"])))
-        if snap.get("quote"):
+        # Agency-paid funnels never show the seller a survey fee figure.
+        if ctx.get("agency_paid"):
+            fee_summary.append(("Survey fee", "Paid by the estate agency"))
+        elif snap.get("quote"):
             fee_summary.append(("Survey fee", "Bespoke quote"))
         elif snap.get("price"):
             fee_summary.append(("Survey fee", f"£{round(float(snap['price'])):,} including VAT"))
@@ -954,7 +957,10 @@ def build_agreements_router(db: AsyncIOMotorDatabase) -> APIRouter:
             fee_summary.append(("Bedrooms", str(snap["bedrooms"])))
         if snap.get("listed_status"):
             fee_summary.append(("Registered listed building", str(snap["listed_status"])))
-        if snap.get("quote"):
+        # Agency-paid funnels never show the seller a survey fee figure.
+        if ctx.get("agency_paid"):
+            fee_summary.append(("Survey fee", "Paid by the estate agency"))
+        elif snap.get("quote"):
             fee_summary.append(("Survey fee", "Bespoke quote"))
         elif snap.get("price"):
             fee_summary.append(("Survey fee", f"£{round(float(snap['price'])):,} including VAT"))

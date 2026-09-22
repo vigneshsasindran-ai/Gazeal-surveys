@@ -12,7 +12,6 @@ const NAV_LINKS = [
   { name: "Home", href: "#" },
   { name: "Seller Surveys", href: "#features" },
   { name: "How it works", href: "#benefits" },
-  { name: "Pricing", href: "/harrisonshomes/pricing" },
   { name: "FAQ", href: "#faq" },
 ];
 

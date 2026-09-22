@@ -233,11 +233,8 @@ const AgreementPage = () => {
                       <p className="text-white font-semibold">{data.pricing_snapshot.listed_status || "-"}</p>
                     </div>
                     <div>
-                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Estimated fee</p>
-                      <p className="text-white font-semibold">
-                        {data.pricing_snapshot.quote ? "Bespoke quote" :
-                          new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(data.pricing_snapshot.price || 0))}
-                      </p>
+                      <p className="text-white/50 uppercase tracking-[0.12em] text-[10px] font-semibold mb-0.5">Survey fee</p>
+                      <p className="text-white font-semibold">Paid by Harrisons Homes</p>
                     </div>
                   </div>
                 )}
@@ -373,11 +370,11 @@ const AgreementPage = () => {
           </p>
         </div>
 
-        {/* Pricing calculator (wider container so the £ figure never crops) */}
+        {/* Property details confirmation — no survey fee is shown to the seller */}
         <div ref={calcRef} className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20 scroll-mt-24">
           <div className="max-w-2xl mb-8">
             <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-              See what your survey costs.
+              Confirm your property details.
             </h2>
             {pending && (
               <p className="mt-4 font-outfit text-[14px] text-white/70" data-testid="agreement-pricing-note">
@@ -385,14 +382,15 @@ const AgreementPage = () => {
                   <>We've pre-filled your property value from your order.{" "}
                   <span className="text-white font-semibold">Please check the details below are correct.</span></>
                 ) : (
-                  <>Please <span className="text-white font-semibold">set your property value below</span>{" "}
-                  so your survey fee is estimated correctly.</>
+                  <>Please <span className="text-white font-semibold">confirm your property value below</span>{" "}
+                  so the right surveyor is allocated to your home.</>
                 )}
               </p>
             )}
           </div>
           <PricingCalculator
             testidPrefix="agreement-pricing"
+            hideFee
             initialValue={data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price) || undefined}
             initialBeds={data.pricing_snapshot?.bedrooms || data.property?.bedrooms || undefined}
             initialListed={data.pricing_snapshot?.listed_status || data.property?.listed_status || undefined}
@@ -421,7 +419,7 @@ const AgreementPage = () => {
                     pricingSnapshot ? (
                       <span className="text-[#DEA39D]">You're ready. Click Agree to confirm.</span>
                     ) : (
-                      <span className="text-white/70">Please set your property value in the calculator above to enable Agree.</span>
+                      <span className="text-white/70">Please confirm your property details above to enable Agree.</span>
                     )
                   ) : (
                     <>
@@ -482,7 +480,7 @@ const AgreementPage = () => {
                       <div className="flex justify-between"><span>Property value</span><span className="text-white font-semibold">{pricingSnapshot?.property_value ? money(pricingSnapshot.property_value) : "Not provided"}</span></div>
                       <div className="flex justify-between"><span>Bedrooms</span><span className="text-white font-semibold">{pricingSnapshot?.bedrooms || "Not provided"}</span></div>
                       <div className="flex justify-between"><span>Listed building</span><span className="text-white font-semibold">{pricingSnapshot?.listed_status || "Not provided"}</span></div>
-                      <div className="flex justify-between"><span>Estimated fee</span><span className="text-white font-semibold">{pricingSnapshot?.quote ? "Bespoke quote" : pricingSnapshot?.price ? money(pricingSnapshot.price) : "Not provided"}</span></div>
+                      <div className="flex justify-between"><span>Survey fee</span><span className="text-white font-semibold">Paid by Harrisons Homes</span></div>
                     </div>
                   </div>
                   <label

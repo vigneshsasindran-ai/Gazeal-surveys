@@ -129,6 +129,18 @@ def _stage_timestamps(lead: dict, ag: dict | None) -> dict:
     }
 
 
+def _survey_fee(ag: dict | None) -> str:
+    """The calculated survey fee, kept for accounting. Sellers never see this."""
+    snap = (ag or {}).get("pricing_snapshot") or {}
+    if snap.get("quote"):
+        return "Bespoke quote"
+    price = snap.get("price")
+    try:
+        return f"£{round(float(price)):,}" if price else ""
+    except (TypeError, ValueError):
+        return ""
+
+
 def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
     router = APIRouter(prefix="/panel", tags=["panel"])
 
@@ -194,6 +206,8 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                         "address": lead.get("address_line_1") or "",
                         "postcode": lead.get("postcode") or "",
                         "asking_price": lead.get("asking_price") or "",
+                        "survey_fee": _survey_fee(ag),
+                        "property_value": ((ag or {}).get("pricing_snapshot") or {}).get("property_value"),
                         "listing_url": lead.get("listing_url") or "",
                         "agreement_url": (ag or {}).get("agreement_url") or "",
                         "reservation": _reservation_value(lead.get("reservation_status")),
@@ -268,7 +282,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
         ws.title = "Survey Orders"
         headers = ["Submitted", "Reference", "Brand", "Status", "Agent", "Agency", "Branch",
                    "Agent Email", "Seller", "Seller Email", "Seller Phone", "Address",
-                   "Postcode", "Asking Price", "Agreement Emailed", "Accepted", "Declined",
+                   "Postcode", "Asking Price", "Survey Fee", "Agreement Emailed", "Accepted", "Declined",
                    "RPSA Instructed", "Reservation", "Fee Due By", "Fee Paid", "Fee Paid On",
                    "Agreement Link"]
         ws.append(headers)
@@ -285,7 +299,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
                 lead.get("agent_name") or "", lead.get("agency_name") or "", lead.get("branch") or "",
                 lead.get("email") or "", lead.get("seller_name") or "", lead.get("seller_email") or "",
                 lead.get("seller_phone") or "", lead.get("address_line_1") or "", lead.get("postcode") or "",
-                lead.get("asking_price") or "", _d(ag.get("seller_invite_sent_at")),
+                lead.get("asking_price") or "", _survey_fee(ag), _d(ag.get("seller_invite_sent_at")),
                 _d(ag.get("accepted_at")), _d(ag.get("declined_at")), _d(ag.get("rpsa_instructed_at")),
                 RESERVATION_LABELS[_reservation_value(lead.get("reservation_status"))],
                 (lambda due: due.strftime("%d %b %Y") if due else "")(_fee_due_date(ag.get("accepted_at"))),
@@ -299,7 +313,7 @@ def build_panel_router(db: AsyncIOMotorDatabase) -> APIRouter:
             ws2.append([_d(lead.get("created_at")), lead.get("name") or lead.get("agent_name") or "",
                         lead.get("agency") or lead.get("agency_name") or "",
                         lead.get("email") or "", lead.get("brand") or "gazeal"])
-        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 18, 18, 18, 18, 20, 14, 10, 18, 40]),
+        for sheet, widths in ((ws, [18, 14, 10, 10, 16, 20, 14, 26, 16, 26, 14, 28, 10, 12, 14, 18, 18, 18, 18, 20, 14, 10, 18, 40]),
                               (ws2, [18, 18, 24, 28, 10])):
             for i, w in enumerate(widths, 1):
                 sheet.column_dimensions[get_column_letter(i)].width = w

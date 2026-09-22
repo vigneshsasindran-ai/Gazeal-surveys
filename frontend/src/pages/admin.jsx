@@ -568,6 +568,7 @@ export default function AdminPage() {
                       <p className="text-white/55">Seller contact <span className="text-white block">{o.seller_email || "—"}{o.seller_phone ? ` · ${o.seller_phone}` : ""}</span></p>
                       <p className="text-white/55">{o.flow === "seller_direct" ? "Branch" : "Agent"} <span className="text-white block">{o.flow === "seller_direct" ? o.branch || "—" : `${o.agent_name || "—"}${o.agency_name ? ` · ${o.agency_name}` : ""}`}</span></p>
                       <p className="text-white/55">Asking price <span className="text-white block">{o.asking_price || "—"}</span></p>
+                      <p className="text-white/55">Survey fee <span className="text-white block" data-testid={`survey-fee-${o.reference}`}>{o.survey_fee || "—"}</span></p>
                       <p className="text-white/55">Agent email <span className="text-white block">{o.agent_email || "—"}</span></p>
                       <p className="text-white/55">Listing <span className="text-white block break-all">{o.listing_url || "—"}</span></p>
                       {o.status === "accepted" && o.stages?.accepted_at && !o.payment_received && (

@@ -106,6 +106,7 @@ const PricingCalculator = ({
   variant = "default",
   testidPrefix = "pricing",
   requireTouch = false,
+  hideFee = false,
   onChange,
 }) => {
   const [value, setValue] = useState(initialValue ?? 600_000);
@@ -213,6 +214,53 @@ const PricingCalculator = ({
     </div>
   );
 
+  // Fee-free mode: the seller confirms their details, the fee stays internal.
+  const coveredCard = (
+    <div
+      className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
+      style={{ background: "#0E1748" }}
+      data-testid={`${testidPrefix}-covered`}
+    >
+      <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#DEA39D]/25 blur-3xl" />
+      <p className="relative font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase text-white/70">
+        Your details
+      </p>
+      {!touched ? (
+        <>
+          <p className="relative mt-4 font-archivo font-bold text-white text-4xl sm:text-5xl leading-[1.05] tracking-[-0.025em]"
+             data-testid={`${testidPrefix}-unset-label`}>
+            Confirm your<br/>property value
+          </p>
+          <p className="relative mt-4 font-outfit text-[14px] text-white/80 leading-relaxed">
+            Use the slider or type your property value, then choose bedrooms and listed status. This tells the surveyor what to expect.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="relative mt-4 font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.08] tracking-[-0.025em]"
+             data-testid={`${testidPrefix}-covered-label`}>
+            Covered by<br/>Harrisons Homes
+          </p>
+          <p className="relative mt-4 font-outfit text-[14px] text-white/80 leading-relaxed">
+            The survey is arranged and paid for by Harrisons Homes. There is nothing for you to pay, now or at any point.
+          </p>
+        </>
+      )}
+      <div className="relative mt-6 pt-5 border-t border-white/15 space-y-2 font-outfit text-[13px] text-white/85">
+        <div className="flex justify-between"><span>Property value</span><span className="font-semibold">{touched ? formatMoney(value) : "-"}</span></div>
+        <div className="flex justify-between"><span>Bedrooms</span><span className="font-semibold">{beds}</span></div>
+        <div className="flex justify-between"><span>Registered Listed Building</span><span className="font-semibold">{listed}</span></div>
+      </div>
+      <div
+        className="relative mt-5 pt-4 border-t border-white/10 space-y-1.5 font-outfit text-[11.5px] leading-[1.55] text-white/60"
+        data-testid={`${testidPrefix}-disclaimers`}
+      >
+        <p>These details are based on the information you have provided.</p>
+        <p>The Estate Agent sets the valuation price, not the surveyor.</p>
+      </div>
+    </div>
+  );
+
   const summaryCard = (
     <div
       className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
@@ -278,7 +326,7 @@ const PricingCalculator = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start" data-testid={`${testidPrefix}-calculator`}>
       <div className="lg:col-span-3">{controlsCard}</div>
-      <div className="lg:col-span-2">{summaryCard}</div>
+      <div className="lg:col-span-2">{hideFee ? coveredCard : summaryCard}</div>
     </div>
   );
 };
