@@ -217,6 +217,10 @@ Matrix bands × beds: ≤£999,999: 776/1006/1374 · £1M–1.5M: 1006/1235/1604
 - NOT VERIFIED: no test of any kind was run on this change (owner instruction). Syntax checked and the backend restarted cleanly; behaviour will be seen on the owner's next real production order.
 - Historical damage found while investigating: 51 preview test agreements had been delivered to the live RPSA panel and returned real RPSA ids 44397-44511 (10/13/14/21 Sep). 20 of those (44492-44511) came from the agent running `pytest tests` at 16:06-16:08 on 21 Sep. The pytest suite is send-capable — treat it as such, it is covered by TESTING_RULES.md.
 
+## 21 Sep 2026: Harrisons agent-signed email, step 3 wording
+- `_next_steps_block` in backend/routes/agreements.py now takes step 3's text from the brand: Harrisons Homes only gets "Because of Gazeal's exclusive relationship with RPSA, the full condition of the property is disclosed to the Buyer, who can rely on the Surveyors Professional Indemnity Insurance, which means fewer late surprises, less renegotiation and a stronger chance of completing." All other brands keep the original "Buyers see the condition before they offer..." line. Step title ("Share the report with buyers"), steps 1 and 2, and every other brand are untouched.
+- NOT VERIFIED: no test run (owner instruction). Syntax checked only. The static preview at frontend/public/email-previews/hh-3-agent-signed.html still shows the OLD step 3 — regenerate it only if the owner asks.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

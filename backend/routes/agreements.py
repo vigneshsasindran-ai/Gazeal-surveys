@@ -303,6 +303,16 @@ def _prev_declined_note(ctx: dict) -> str:
 def _next_steps_block(ctx: dict) -> str:
     """What the agent should expect now the seller has signed."""
     pd = ctx["pd"]
+    # Harrisons Homes has its own wording for step 3.
+    step_three = (
+        "Because of Gazeal's exclusive relationship with RPSA, the full "
+        "condition of the property is disclosed to the Buyer, who can rely on "
+        "the Surveyors Professional Indemnity Insurance, which means fewer "
+        "late surprises, less renegotiation and a stronger chance of completing."
+        if ctx.get("brand") == "harrisonshomes"
+        else "Buyers see the condition before they offer, which means fewer late "
+             "surprises, less renegotiation and a stronger chance of completing."
+    )
     steps = [
         ("RPSA contacts your seller",
          "An accredited RPSA surveyor calls the seller directly to book a "
@@ -310,9 +320,7 @@ def _next_steps_block(ctx: dict) -> str:
         ("The survey is carried out and the report issued",
          "The Home Insight Survey report goes to the seller, and to you, so it "
          "can be shared with interested buyers."),
-        ("Share the report with buyers",
-         "Buyers see the condition before they offer, which means fewer late "
-         "surprises, less renegotiation and a stronger chance of completing."),
+        ("Share the report with buyers", step_three),
     ]
     rows = ""
     for i, (title, text) in enumerate(steps, start=1):
