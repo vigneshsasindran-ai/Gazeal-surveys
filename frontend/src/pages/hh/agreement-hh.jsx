@@ -373,14 +373,18 @@ const AgreementPage = () => {
         {/* Property details confirmation — no survey fee is shown to the seller */}
         <div ref={calcRef} className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20 scroll-mt-24">
           <div className="max-w-2xl mb-8">
-            <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-              Confirm your property details.
+            <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]"
+                data-testid="agreement-pricing-heading">
+              {pending && (data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price))
+                ? "Please check the details below are correct."
+                : "Confirm your property details."}
             </h2>
             {pending && (
               <p className="mt-4 font-outfit text-[14px] text-white/70" data-testid="agreement-pricing-note">
                 {(data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price)) ? (
-                  <>We've pre-filled your property value from your order.{" "}
-                  <span className="text-white font-semibold">Please check the details below are correct.</span></>
+                  <>Your agent gave us these details when ordering.{" "}
+                  <span className="text-white font-semibold">Change anything that is not right</span>{" "}
+                  so the right surveyor is allocated to your home.</>
                 ) : (
                   <>Please <span className="text-white font-semibold">confirm your property value below</span>{" "}
                   so the right surveyor is allocated to your home.</>

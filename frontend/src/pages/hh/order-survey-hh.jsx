@@ -94,6 +94,10 @@ const OrderSurveyPage = () => {
       if (!formData.postcode.trim()) e.postcode = "Required";
       else if (!/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(formData.postcode.trim()))
         e.postcode = "Enter a valid UK postcode (e.g. CM2 6PJ)";
+      if (!formData.askingPrice.trim()) e.askingPrice = "Required";
+      else if (!/\d/.test(formData.askingPrice)) e.askingPrice = "Enter the asking price";
+      if (!formData.bedrooms) e.bedrooms = "Required";
+      if (!formData.listedStatus) e.listedStatus = "Required";
     }
     if (step === 3) {
       if (!formData.agentName.trim()) e.agentName = "Your name is required";
@@ -507,9 +511,12 @@ const OrderSurveyPage = () => {
                       className={inputCls}
                       value={formData.askingPrice}
                       onChange={setField("askingPrice")}
-                      placeholder="Asking price (optional)"
+                      placeholder="Asking price"
                       data-testid="order-input-asking-price"
                     />
+                    {errors.askingPrice && (
+                      <p className={errorCls}>{errors.askingPrice}</p>
+                    )}
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -521,11 +528,14 @@ const OrderSurveyPage = () => {
                       onChange={setField("bedrooms")}
                       data-testid="order-input-bedrooms"
                     >
-                      <option value="">Not sure (optional)</option>
+                      <option value="">Select bedrooms</option>
                       <option value="1 to 3">1 to 3</option>
                       <option value="4 to 5">4 to 5</option>
                       <option value="6+">6+</option>
                     </select>
+                    {errors.bedrooms && (
+                      <p className={errorCls}>{errors.bedrooms}</p>
+                    )}
                   </div>
                   <div>
                     <label className={labelCls}>Registered Listed Building</label>
@@ -535,11 +545,14 @@ const OrderSurveyPage = () => {
                       onChange={setField("listedStatus")}
                       data-testid="order-input-listed"
                     >
-                      <option value="">Not sure (optional)</option>
+                      <option value="">Select status</option>
                       <option value="N/A">N/A</option>
                       <option value="Grade 2 or 2*">Grade 2 or 2*</option>
                       <option value="Grade 1">Grade 1</option>
                     </select>
+                    {errors.listedStatus && (
+                      <p className={errorCls}>{errors.listedStatus}</p>
+                    )}
                   </div>
                 </div>
                 <div>

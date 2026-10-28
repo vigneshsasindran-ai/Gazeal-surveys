@@ -236,6 +236,16 @@ Objective: the Harrisons seller never sees a survey price; admin still records i
 - Screenshots confirmed: new Harrisons step 3 wording present, old wording gone, no £ figure anywhere in the email.
 - Open nit the owner was shown: the Acceptance record row reads "Survey fee — Paid by the estate agency" (generic wording from `_build_accept_ctx`). Could be brand-labelled ("Paid by Harrisons Homes") if he asks — not changed unprompted.
 
+## 22 Sep 2026: Bedrooms/listed defaulting on the agreement page — ROOT CAUSE + FIX
+- BUG (reported by the team): agent selects "4 to 5" or "6+" bedrooms when ordering, but the seller agreement page shows "1 to 3" and listed "N/A".
+- ROOT CAUSE: `frontend/src/pages/order-survey.jsx` (main Gazeal form only) built its POST body without `bedrooms` or `listed_status` — the keys had been deleted, leaving a stray blank line after `confirmation`. The review step showed them from local React state, so it looked right to the agent, but the lead was saved with empty values. The agreement page passes `initialBeds`/`initialListed` correctly and the backend returns them correctly; `PricingCalculator` then fell back to its defaults BED_OPTS[0] ("1 to 3") and LISTED_OPTS[0] ("N/A"). Confirmed in the DB: distinct bedrooms values contain no "6+" at all.
+- Balgores, eXp, David Astburys and Harrisons forms already sent both fields. Main Gazeal was the only broken one.
+- FIX 1: added `bedrooms` and `listed_status` back to the payload in order-survey.jsx.
+- FIX 2 (owner request): asking price, bedrooms and listed status are now REQUIRED on step 3 of the main Gazeal form and the Harrisons form. Placeholders changed from "Asking price (optional)" to "Asking price", and the empty select option from "Not sure (optional)" to "Select bedrooms" / "Select status". Inline "Required" errors added (errors.askingPrice / errors.bedrooms / errors.listedStatus).
+- FIX 3 (owner request): on all five agreement pages the seller-facing heading becomes "Please check the details below are correct." when details were pre-filled from the order (falls back to "See what your survey costs." / Harrisons "Confirm your property details." when nothing was pre-filled). Supporting line now reads "Your agent gave us these details when ordering. Change anything that is not right...". New testid agreement-pricing-heading.
+- NOT VERIFIED: no test run (owner instruction). ESLint parse + webpack "Compiled successfully".
+- NOTE for later: legacy leads created by old API tests hold non-matching values ("1to3", "3", "not_listed") which still fall back to the calculator defaults. Real orders from the form use the exact labels, so this only affects old test records.
+
 ## Backlog / Upcoming
 - **P0**: Evidence block + signed PDF in `sale_room_package` on acceptance (agreement_version now exists: v1.0 14 Jul 2026; clickwrap_hash, accepted_ip, user_agent; weasyprint/reportlab PDF + SHA256 + object storage). Pairs with emailing seller a durable copy of accepted docs (internal launch requirement).
 - **P1**: Outbound webhook delivery of sale_room_package JSON (RPSA) on acceptance.

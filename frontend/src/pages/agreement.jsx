@@ -463,14 +463,18 @@ const AgreementPage = () => {
         {/* Pricing calculator (wider container so the £ figure never crops) */}
         <div ref={calcRef} className="print-hide relative max-w-3xl lg:max-w-6xl mx-auto px-6 mt-16 lg:mt-20 scroll-mt-24">
           <div className="max-w-2xl mb-8">
-            <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]">
-              See what your survey costs.
+            <h2 className="font-archivo font-bold text-white text-3xl sm:text-4xl leading-[1.1] tracking-[-0.025em]"
+                data-testid="agreement-pricing-heading">
+              {pending && (data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price))
+                ? "Please check the details below are correct."
+                : "See what your survey costs."}
             </h2>
             {pending && (
               <p className="mt-4 font-outfit text-[14px] text-white/70" data-testid="agreement-pricing-note">
                 {(data.pricing_snapshot?.property_value || parseAskingPrice(data.property?.asking_price)) ? (
-                  <>We've pre-filled your property value from your order.{" "}
-                  <span className="text-white font-semibold">Please check the details below are correct.</span></>
+                  <>Your agent gave us these details when ordering.{" "}
+                  <span className="text-white font-semibold">Change anything that is not right</span>{" "}
+                  and your fee updates as you go.</>
                 ) : (
                   <>Please <span className="text-white font-semibold">set your property value below</span>{" "}
                   so your survey fee is estimated correctly.</>
