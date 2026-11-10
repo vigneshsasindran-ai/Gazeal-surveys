@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, AlertTriangle, FileSearch, Share2, PenLine, ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 
 // Legal-approved wording: keep verbatim.
 export const TIMING_PARAGRAPHS = [
@@ -22,9 +22,9 @@ export const TIMING_THEMES = {
 const ink = (t, a) => `rgba(${t.ink},${a})`;
 
 const STEPS = [
-  { icon: FileSearch, label: "Order your Gazeal Survey", sub: "before an offer is received" },
-  { icon: Share2, label: "Share it with your buyer", sub: "so they offer with full knowledge" },
-  { icon: PenLine, label: "Reservation Agreement signed", sub: "with your buyer fully informed" },
+  { label: "Order your Gazeal Survey" },
+  { label: "Share it with your buyer" },
+  { label: "Reservation Agreement signed" },
 ];
 
 const StepStrip = ({ t }) => (
@@ -33,13 +33,9 @@ const StepStrip = ({ t }) => (
       <li key={s.label} className="relative rounded-xl p-4 border"
           style={{ borderColor: ink(t, 0.12), background: ink(t, 0.03) }}
           data-testid={`timing-notice-step-${i + 1}`}>
-        <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full flex items-center justify-center font-outfit font-bold text-[12px]"
-                style={{ background: t.fill, color: t.tick }}>{i + 1}</span>
-          <s.icon className="w-4 h-4" style={{ color: t.accent }} />
-        </div>
+        <span className="w-6 h-6 rounded-full flex items-center justify-center font-outfit font-bold text-[12px]"
+              style={{ background: t.fill, color: t.tick }}>{i + 1}</span>
         <p className="mt-3 font-outfit font-semibold text-[14px]" style={{ color: ink(t, 0.95) }}>{s.label}</p>
-        <p className="mt-0.5 font-outfit text-[12px]" style={{ color: ink(t, 0.55) }}>{s.sub}</p>
         {i < 2 && <ChevronRight className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: t.accent }} />}
       </li>
     ))}
@@ -52,11 +48,7 @@ export const SurveyTimingCard = ({ theme = "gazeal" }) => {
     <section className="mt-8 rounded-2xl border-2 p-6 sm:p-7"
              style={{ borderColor: `${t.accent}66`, background: `${t.accent}0F` }}
              data-testid="timing-notice-card">
-      <p className="flex items-center gap-2 font-outfit font-semibold text-[11px] tracking-[0.22em] uppercase"
-         style={{ color: t.accent }}>
-        <AlertTriangle className="w-4 h-4" /> Please read before you agree
-      </p>
-      <h2 className="mt-3 font-archivo font-bold text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.02em]"
+      <h2 className="font-archivo font-bold text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.02em]"
           style={{ color: ink(t, 1) }} data-testid="timing-notice-heading">
         When your survey is shared with the buyer matters.
       </h2>
@@ -68,21 +60,6 @@ export const SurveyTimingCard = ({ theme = "gazeal" }) => {
         ))}
       </div>
     </section>
-  );
-};
-
-export const SurveyTimingReminder = ({ theme = "gazeal" }) => {
-  const t = TIMING_THEMES[theme];
-  return (
-    <div className="mb-6 flex items-start gap-3 rounded-xl border-l-4 px-4 py-3.5"
-         style={{ borderColor: t.accent, background: ink(t, 0.04) }}
-         data-testid="timing-notice-reminder">
-      <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: t.accent }} />
-      <p className="font-outfit text-[14px] leading-relaxed" style={{ color: ink(t, 0.85) }}>
-        <span className="font-semibold" style={{ color: ink(t, 1) }}>Remember:</span> to get the maximum value
-        from a Gazeal Survey, ensure it is made available to the buyer before the Reservation Agreement is signed.
-      </p>
-    </div>
   );
 };
 

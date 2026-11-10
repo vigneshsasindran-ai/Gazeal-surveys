@@ -265,3 +265,4 @@ Y_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
 - Not added to PDF or emails (user choice).
 - Fixed HH "send me more info about Reservation Agreements" tick calling a broken URL (`/harrisonshomesress-interest` -> `/express-interest`).
 - Status: compiled only. NOT tested (per TESTING_RULES). User validates live.
+- Follow-up (user request): removed "Please read before you agree" eyebrow + icon, removed step icons and sub-lines (number + heading only), removed the "Remember:" reminder line entirely. Card + Agree pop-up tick box remain.

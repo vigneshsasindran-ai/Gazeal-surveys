@@ -6,7 +6,7 @@ import ReservationExplainer from "@/components/ui/balgores/reservation-explainer
 import PricingCalculator from "@/components/ui/balgores/pricing-calculator-balgores";
 import SellerAdvantage from "@/components/ui/balgores/seller-advantage-balgores";
 import AgreementTimeline from "@/components/ui/balgores/agreement-timeline-balgores";
-import { SurveyTimingCard, SurveyTimingReminder, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
+import { SurveyTimingCard, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -503,7 +503,6 @@ const AgreementPage = () => {
 
         {/* Reservation Agreement explainer + interest checkbox */}
         <div className={`print-hide relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
-          <SurveyTimingReminder theme="balgores" />
           <ReservationExplainer
             variant="seller"
             token={data.token}

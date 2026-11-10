@@ -6,7 +6,7 @@ import ReservationExplainer from "@/components/ui/da/reservation-explainer-da";
 import PricingCalculator from "@/components/ui/da/pricing-calculator-da";
 import SellerAdvantage from "@/components/ui/da/seller-advantage-da";
 import AgreementTimeline from "@/components/ui/da/agreement-timeline-da";
-import { SurveyTimingCard, SurveyTimingReminder, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
+import { SurveyTimingCard, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -503,7 +503,6 @@ const AgreementPage = () => {
 
         {/* Reservation Agreement explainer + interest checkbox */}
         <div className={`print-hide relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
-          <SurveyTimingReminder theme="da" />
           <ReservationExplainer
             variant="seller"
             token={data.token}
