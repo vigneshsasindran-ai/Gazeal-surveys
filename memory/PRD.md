@@ -258,3 +258,10 @@ Objective: the Harrisons seller never sees a survey price; admin still records i
 - Slack incoming webhook (SLACK_WEBHOOK_URL) — verified working from preview; if prod Slack silent, check prod env vars
 Y_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
 - Slack incoming webhook (SLACK_WEBHOOK_URL) — verified working from preview; if prod Slack silent, check prod env vars
+
+## 2026-06 — Survey timing notice (legal wording) on all seller agreements
+- New `frontend/src/components/ui/survey-timing-notice.jsx` (legal-approved text, verbatim; do not edit wording without user/legal approval).
+- Placed on Gazeal, Balgores, eXp, David Astburys, Harrisons agreement pages: full card after the timeline (before terms), one-line reminder above Reservation Agreement section, required tick box in the Agree pop-up (Agree disabled until ticked).
+- Not added to PDF or emails (user choice).
+- Fixed HH "send me more info about Reservation Agreements" tick calling a broken URL (`/harrisonshomesress-interest` -> `/express-interest`).
+- Status: compiled only. NOT tested (per TESTING_RULES). User validates live.

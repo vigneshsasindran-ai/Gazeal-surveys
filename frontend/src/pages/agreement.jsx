@@ -6,6 +6,7 @@ import ReservationExplainer from "@/components/ui/reservation-explainer";
 import PricingCalculator from "@/components/ui/pricing-calculator";
 import SellerAdvantage from "@/components/ui/seller-advantage";
 import AgreementTimeline from "@/components/ui/agreement-timeline";
+import { SurveyTimingCard, SurveyTimingReminder, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
 import SurveyGuide from "@/components/ui/survey-guide";
 
 /*
@@ -144,6 +145,7 @@ const AgreementPage = () => {
   const [confirmStep, setConfirmStep] = useState(null);
   const [moreInfo, setMoreInfo] = useState(false);
   const [detailsOk, setDetailsOk] = useState(false);
+  const [timingOk, setTimingOk] = useState(false);
   const [paymentOk, setPaymentOk] = useState(false);
   const calcRef = useRef(null);
 
@@ -382,6 +384,9 @@ const AgreementPage = () => {
           </div>
 
           <AgreementTimeline data={data} />
+
+          {/* Survey timing notice (legal wording) — read before the terms */}
+          <SurveyTimingCard theme="gazeal" />
         </div>
 
         {/* Why order your survey before you sell? — read before the terms */}
@@ -494,6 +499,7 @@ const AgreementPage = () => {
 
         {/* Reservation Agreement explainer + interest checkbox */}
         <div className={`print-hide relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
+          <SurveyTimingReminder theme="gazeal" />
           <ReservationExplainer
             variant="seller"
             token={data.token}
@@ -527,7 +533,7 @@ const AgreementPage = () => {
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => { setDetailsOk(false); setPaymentOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
+                  <button type="button" onClick={() => { setDetailsOk(false); setTimingOk(false); setPaymentOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
                           data-testid="agreement-accept">
@@ -629,6 +635,7 @@ const AgreementPage = () => {
                       first.
                     </span>
                   </label>
+                  <SurveyTimingAck theme="gazeal" checked={timingOk} onChange={setTimingOk} />
                   {!data.reservation_interest && (
                     <label
                       className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
@@ -667,7 +674,7 @@ const AgreementPage = () => {
                               }
                               post("accept");
                             }}
-                            disabled={busy || !detailsOk || !paymentOk}
+                            disabled={busy || !detailsOk || !timingOk || !paymentOk}
                             className="inline-flex items-center justify-center gap-2 rounded-full text-white px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                             style={{ background: "linear-gradient(135deg,#4FB6FF,#025eba)", boxShadow: "0 6px 22px rgba(2,94,186,0.4)" }}
                             data-testid="agreement-confirm-accept">

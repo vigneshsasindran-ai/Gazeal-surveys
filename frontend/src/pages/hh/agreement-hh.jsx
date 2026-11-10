@@ -6,6 +6,7 @@ import ReservationExplainer from "@/components/ui/hh/reservation-explainer-hh";
 import PricingCalculator from "@/components/ui/hh/pricing-calculator-hh";
 import SellerAdvantage from "@/components/ui/hh/seller-advantage-hh";
 import AgreementTimeline from "@/components/ui/hh/agreement-timeline-hh";
+import { SurveyTimingCard, SurveyTimingReminder, SurveyTimingAck } from "@/components/ui/survey-timing-notice";
 
 /*
  * Hosted seller agreement page — branded with the same Archivo + Outfit
@@ -125,6 +126,7 @@ const AgreementPage = () => {
   const [confirmStep, setConfirmStep] = useState(null);
   const [moreInfo, setMoreInfo] = useState(false);
   const [detailsOk, setDetailsOk] = useState(false);
+  const [timingOk, setTimingOk] = useState(false);
   const calcRef = useRef(null);
 
   const post = async (action) => {
@@ -313,6 +315,9 @@ const AgreementPage = () => {
           </div>
 
           <AgreementTimeline data={data} />
+
+          {/* Survey timing notice (legal wording) — read before the terms */}
+          <SurveyTimingCard theme="hh" />
         </div>
 
         {/* Why order your survey before you sell? — read before the terms */}
@@ -405,6 +410,7 @@ const AgreementPage = () => {
 
         {/* Reservation Agreement explainer + interest checkbox */}
         <div className={`print-hide relative max-w-3xl mx-auto px-6 mt-16 lg:mt-20 ${pending ? "pb-44" : "pb-24"}`}>
+          <SurveyTimingReminder theme="hh" />
           <ReservationExplainer
             variant="seller"
             token={data.token}
@@ -438,7 +444,7 @@ const AgreementPage = () => {
                           data-testid="agreement-decline">
                     <X className="w-4 h-4" /> Disagree
                   </button>
-                  <button type="button" onClick={() => { setDetailsOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
+                  <button type="button" onClick={() => { setDetailsOk(false); setTimingOk(false); setConfirmStep("accept"); }} disabled={busy || !unlocked || !pricingSnapshot}
                           className="inline-flex items-center justify-center gap-2 rounded-full text-[#0E1748] px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ background: "#DEA39D", boxShadow: "0 6px 22px rgba(14,23,72,0.4)" }}
                           data-testid="agreement-accept">
@@ -512,6 +518,7 @@ const AgreementPage = () => {
                       I confirm these property details are correct.
                     </span>
                   </label>
+                  <SurveyTimingAck theme="hh" checked={timingOk} onChange={setTimingOk} />
                   {!data.reservation_interest && (
                     <label
                       className={`mt-4 flex items-start gap-3 cursor-pointer rounded-xl border p-3.5 transition-colors ${
@@ -545,12 +552,12 @@ const AgreementPage = () => {
                               setConfirmStep(null);
                               if (moreInfo && !data.reservation_interest) {
                                 try {
-                                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/harrisonshomesress-interest`, { method: "POST" });
+                                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/agreements/${token}/express-interest`, { method: "POST" });
                                 } catch {}
                               }
                               post("accept");
                             }}
-                            disabled={busy || !detailsOk}
+                            disabled={busy || !detailsOk || !timingOk}
                             className="inline-flex items-center justify-center gap-2 rounded-full text-[#0E1748] px-6 py-3 font-outfit font-semibold text-[14px] disabled:opacity-50"
                             style={{ background: "#DEA39D", boxShadow: "0 6px 22px rgba(14,23,72,0.4)" }}
                             data-testid="agreement-confirm-accept">
