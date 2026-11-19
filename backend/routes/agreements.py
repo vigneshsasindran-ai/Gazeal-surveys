@@ -23,6 +23,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 
+import pm_survey
 import terms as terms_mod
 from pdf_terms import build_agreement_pdf
 
@@ -715,6 +716,12 @@ async def _deliver_rpsa_webhook(
                 await _save_rpsa_entry_in_pm(
                     db, token, _pm_rpsa_entry(payload, response_json, rpsa_id)
                 )
+            # Survey is commissioned: open the case in ProcessMaker. Never
+            # lets a PM problem undo the RPSA delivery above.
+            try:
+                await pm_survey.create_survey_case(db, token, payload, rpsa_id)
+            except Exception:  # noqa: BLE001
+                logger.exception("PM survey case creation crashed for %s", token)
             return
         last_error = attempt["error"] or f"HTTP {attempt['status_code']}"
         await db.agreements.update_one(
