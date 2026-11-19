@@ -66,27 +66,39 @@ class TestVariables:
         assert v["vendorPrimaryClientFirstName"] == ""
 
 
-class TestRpsaMapping:
-    def test_raw_fallback_without_map(self, monkeypatch):
-        monkeypatch.setattr(pm_survey, "PM_RPSA_FIELD_MAP", "")
-        out = pm_survey.map_rpsa_update({"status": "booked"})
-        assert list(out) == [pm_survey.PM_RPSA_RAW_VARIABLE]
-        assert '"booked"' in out[pm_survey.PM_RPSA_RAW_VARIABLE]
+INSTRUCTION = {
+    "rpsaref": 44249, "reference": "QoXJAX-4L2Q", "booked": "Y",
+    "surveydate": "2026-12-01", "reportreceived": "N",
+    "reportreceiveddate": "0000-00-00", "reporturl": "",
+    "completed": "N", "completeddate": "0000-00-00",
+}
 
-    def test_field_map_with_dotted_path(self, monkeypatch):
+
+class TestRpsaMapping:
+    def test_default_map_and_zero_dates(self, monkeypatch):
+        monkeypatch.setattr(pm_survey, "PM_RPSA_FIELD_MAP", "")
+        out = pm_survey.map_rpsa_update(INSTRUCTION)
+        assert out["rpsaBooked"] == "Y"
+        assert out["rpsaSurveyDate"] == "2026-12-01"
+        assert out["rpsaReportReceivedDate"] == ""  # 0000-00-00 becomes empty
+        assert out["rpsaCompleted"] == "N"
+
+    def test_env_map_overrides_default(self, monkeypatch):
         monkeypatch.setattr(
             pm_survey, "PM_RPSA_FIELD_MAP",
-            '{"rpsaStatus": "status", "rpsaDate": "booking.date", "rpsaGone": "nope"}',
+            '{"surveyStatus": "completed", "gone": "nope"}',
         )
-        out = pm_survey.map_rpsa_update({"status": "booked", "booking": {"date": "2026-12-01"}})
-        assert out == {"rpsaStatus": "booked", "rpsaDate": "2026-12-01"}
+        assert pm_survey.map_rpsa_update(INSTRUCTION) == {"surveyStatus": "N"}
 
-    def test_complete_status(self, monkeypatch):
-        monkeypatch.setattr(pm_survey, "RPSA_COMPLETE_STATUSES", ["report sent"])
-        assert pm_survey.is_complete({"status": "Report Sent"})
-        assert not pm_survey.is_complete({"status": "booked"})
-        monkeypatch.setattr(pm_survey, "RPSA_COMPLETE_STATUSES", [])
-        assert not pm_survey.is_complete({"status": "Report Sent"})
+    def test_raw_fallback_when_nothing_maps(self, monkeypatch):
+        monkeypatch.setattr(pm_survey, "PM_RPSA_FIELD_MAP", '{"x": "nope"}')
+        out = pm_survey.map_rpsa_update(INSTRUCTION)
+        assert list(out) == [pm_survey.PM_RPSA_RAW_VARIABLE]
+
+    def test_complete_when_completed_is_y(self):
+        assert pm_survey.is_complete({**INSTRUCTION, "completed": "Y"})
+        assert pm_survey.is_complete({**INSTRUCTION, "completed": "y"})
+        assert not pm_survey.is_complete(INSTRUCTION)
 
 
 class TestCreateCase:
@@ -149,59 +161,79 @@ class TestSync:
         monkeypatch.setattr(pm_survey, "RPSA_STATUS_URL", "")
         assert "skipped" in await pm_survey.run_rpsa_sync(db)
 
-    async def test_updates_pm_then_skips_unchanged(self, db, pm_on, monkeypatch):
-        pushed = []
+    async def test_one_fetch_updates_pm_then_skips_unchanged(self, db, pm_on, monkeypatch):
+        pushed, fetches = [], []
 
-        async def fake_fetch(rpsa_id):
-            assert rpsa_id == "44249"
-            return {"status": "booked"}
+        async def fake_fetch():
+            fetches.append(1)
+            return {"44249": INSTRUCTION, "1": {"rpsaref": 1}}
 
         async def fake_update(app_uid, variables):
             pushed.append((app_uid, variables))
 
-        monkeypatch.setattr(pm_survey, "_fetch_rpsa_update", fake_fetch)
+        monkeypatch.setattr(pm_survey, "_fetch_rpsa_instructions", fake_fetch)
         monkeypatch.setattr(pm_survey, "_update_case_variables", fake_update)
         await _agreement(db, **_created_doc())
+        await db.agreements.insert_one({"token": "t2", **_created_doc(rpsa_webhook={"rpsa_id": "1"})})
 
         first = await pm_survey.run_rpsa_sync(db)
         second = await pm_survey.run_rpsa_sync(db)
-        assert first["updated"] == 1 and second["unchanged"] == 1
-        assert len(pushed) == 1
+        assert first["updated"] == 2 and second["unchanged"] == 2
+        assert len(fetches) == 2          # one fetch per run, not one per case
+        assert len(pushed) == 2
         doc = await db.agreements.find_one({"token": "tok1"})
         assert doc["rpsa_sync"]["runs"] == 2
-        assert doc["rpsa_sync"]["last_response"] == {"status": "booked"}
+        assert pushed[0][1]["rpsaSurveyDate"] == "2026-12-01"
 
-    async def test_stops_polling_when_complete(self, db, pm_on, monkeypatch):
-        async def fake_fetch(_):
-            return {"status": "Report Sent"}
+    async def test_stops_polling_when_completed(self, db, pm_on, monkeypatch):
+        async def fake_fetch():
+            return {"44249": {**INSTRUCTION, "completed": "Y"}}
 
         async def fake_update(*_):
             return None
 
-        monkeypatch.setattr(pm_survey, "_fetch_rpsa_update", fake_fetch)
+        monkeypatch.setattr(pm_survey, "_fetch_rpsa_instructions", fake_fetch)
         monkeypatch.setattr(pm_survey, "_update_case_variables", fake_update)
-        monkeypatch.setattr(pm_survey, "RPSA_COMPLETE_STATUSES", ["report sent"])
         await _agreement(db, **_created_doc())
         assert (await pm_survey.run_rpsa_sync(db))["completed"] == 1
         assert (await pm_survey.run_rpsa_sync(db))["checked"] == 0
 
-    async def test_one_failure_does_not_stop_the_rest(self, db, pm_on, monkeypatch):
-        async def fake_fetch(rpsa_id):
-            if rpsa_id == "bad":
-                raise RuntimeError("RPSA 500")
-            return {"status": "ok"}
+    async def test_case_missing_from_rpsa_list(self, db, pm_on, monkeypatch):
+        async def fake_fetch():
+            return {"999": {"rpsaref": 999}}
 
-        async def fake_update(*_):
-            return None
+        monkeypatch.setattr(pm_survey, "_fetch_rpsa_instructions", fake_fetch)
+        await _agreement(db, **_created_doc())
+        assert (await pm_survey.run_rpsa_sync(db))["not_found"] == 1
+        doc = await db.agreements.find_one({"token": "tok1"})
+        assert "Not in RPSA" in doc["rpsa_sync"]["last_error"]
 
-        monkeypatch.setattr(pm_survey, "_fetch_rpsa_update", fake_fetch)
+    async def test_rpsa_down_is_reported_and_nothing_written(self, db, pm_on, monkeypatch):
+        async def boom():
+            raise RuntimeError("RPSA 500")
+
+        monkeypatch.setattr(pm_survey, "_fetch_rpsa_instructions", boom)
+        await _agreement(db, **_created_doc())
+        summary = await pm_survey.run_rpsa_sync(db)
+        assert summary["errors"] == 1 and "RPSA 500" in summary["error"]
+
+    async def test_one_pm_failure_does_not_stop_the_rest(self, db, pm_on, monkeypatch):
+        async def fake_fetch():
+            return {"44249": INSTRUCTION, "7": {"rpsaref": 7}}
+
+        async def fake_update(app_uid, variables):
+            if app_uid == "b" * 32:
+                raise RuntimeError("PM 500")
+
+        monkeypatch.setattr(pm_survey, "_fetch_rpsa_instructions", fake_fetch)
         monkeypatch.setattr(pm_survey, "_update_case_variables", fake_update)
-        await db.agreements.insert_one({"token": "t_bad", **_created_doc(rpsa_webhook={"rpsa_id": "bad"})})
+        bad = _created_doc(rpsa_webhook={"rpsa_id": "7"})
+        bad["pm_case"]["app_uid"] = "b" * 32
+        await db.agreements.insert_one({"token": "t_bad", **bad})
         await db.agreements.insert_one({"token": "t_ok", **_created_doc()})
         summary = await pm_survey.run_rpsa_sync(db)
         assert summary["errors"] == 1 and summary["updated"] == 1
-        bad = await db.agreements.find_one({"token": "t_bad"})
-        assert "RPSA 500" in bad["rpsa_sync"]["last_error"]
+        assert "PM 500" in (await db.agreements.find_one({"token": "t_bad"}))["rpsa_sync"]["last_error"]
 
 
 class TestCronEndpoint:

@@ -52,23 +52,35 @@ PM_SURVEY_TAS_UID = os.environ.get("PM_SURVEY_TAS_UID", "")
 PM_SURVEY_FLAG_VARIABLE = os.environ.get("PM_SURVEY_FLAG_VARIABLE", "surveyCase")
 PM_SURVEY_FLAG_VALUE = os.environ.get("PM_SURVEY_FLAG_VALUE", "Yes")
 
-# RPSA update endpoint (ticket #537).
-# TODO(#537): confirm URL, auth and response shape.
+# RPSA status endpoint (ticket #537): one GET with an X-API-Key header that
+# returns every instruction RPSA holds, e.g.
+#   {"success": true, "count": 55, "instructions": [{"rpsaref": ..,
+#    "reference": .., "booked": .., "surveydate": .., "reportreceived": ..,
+#    "reporturl": .., "completed": "Y"/"N", ...}]}
 RPSA_STATUS_URL = os.environ.get("RPSA_STATUS_URL", "")
+# The key RPSA issued; sent as the X-API-Key header.
 RPSA_STATUS_TOKEN = os.environ.get("RPSA_STATUS_TOKEN", "")
-RPSA_STATUS_PARAM = os.environ.get("RPSA_STATUS_PARAM", "rpsaref")
-# Map of PM case variable -> key in RPSA's response (dotted path allowed), as
-# JSON, e.g. {"rpsaSurveyStatus": "status", "rpsaSurveyDate": "booking.date"}.
-# TODO(PM): the real field names. When empty, the whole response is stored as
-# JSON in PM_RPSA_RAW_VARIABLE so nothing is lost.
+# Default map of PM case variable -> key in RPSA's instruction.
+# TODO(PM): replace the variable names with the fields Vipin creates, or set
+# PM_RPSA_FIELD_MAP (JSON) to override this without a code change.
+DEFAULT_RPSA_FIELD_MAP = {
+    "rpsaBooked": "booked",
+    "rpsaSurveyDate": "surveydate",
+    "rpsaReportReceived": "reportreceived",
+    "rpsaReportReceivedDate": "reportreceiveddate",
+    "rpsaReportUrl": "reporturl",
+    "rpsaCompleted": "completed",
+    "rpsaCompletedDate": "completeddate",
+}
 PM_RPSA_FIELD_MAP = os.environ.get("PM_RPSA_FIELD_MAP", "")
 PM_RPSA_RAW_VARIABLE = os.environ.get("PM_RPSA_RAW_VARIABLE", "rpsaLatestResponse")
-# Stop polling a case once RPSA's status key holds one of these values.
-RPSA_STATUS_KEY = os.environ.get("RPSA_STATUS_KEY", "status")
-RPSA_COMPLETE_STATUSES = [
-    s.strip().lower()
-    for s in os.environ.get("RPSA_COMPLETE_STATUSES", "").split(",")
-    if s.strip()
+# A case stops being polled once this RPSA key holds one of these values
+# (RPSA sends completed = "Y" when the survey is finished).
+RPSA_COMPLETE_KEY = os.environ.get("RPSA_COMPLETE_KEY", "completed")
+RPSA_COMPLETE_VALUES = [
+    v.strip().lower()
+    for v in os.environ.get("RPSA_COMPLETE_VALUES", "y").split(",")
+    if v.strip()
 ]
 RPSA_SYNC_MAX_AGE_DAYS = int(os.environ.get("RPSA_SYNC_MAX_AGE_DAYS", "120"))
 
@@ -147,33 +159,35 @@ def _dig(data: Any, path: str) -> Any:
     return cur
 
 
-def map_rpsa_update(response: Any) -> dict:
-    """Turn RPSA's response into PM case variables.
+def _clean(value: Any) -> str:
+    """RPSA sends 0000-00-00 for "no date yet"; keep PM fields empty then."""
+    text = value if isinstance(value, str) else json.dumps(value)
+    return "" if text.strip() == "0000-00-00" else text
 
-    With a field map: each mapped value that RPSA returned becomes a variable.
-    Without one: the whole response goes into one JSON variable.
-    """
+
+def map_rpsa_update(instruction: Any) -> dict:
+    """Turn one RPSA instruction into PM case variables."""
+    mapping = DEFAULT_RPSA_FIELD_MAP
     if PM_RPSA_FIELD_MAP:
         try:
             mapping = json.loads(PM_RPSA_FIELD_MAP)
         except ValueError:
-            logger.error("PM_RPSA_FIELD_MAP is not valid JSON; ignoring it")
-            mapping = {}
-        out = {}
-        for pm_var, key in mapping.items():
-            value = _dig(response, key)
-            if value is not None:
-                out[pm_var] = value if isinstance(value, str) else json.dumps(value)
-        if out:
-            return out
-    return {PM_RPSA_RAW_VARIABLE: json.dumps(response, default=str)}
+            logger.error("PM_RPSA_FIELD_MAP is not valid JSON; using the default")
+    out = {}
+    for pm_var, key in mapping.items():
+        value = _dig(instruction, key)
+        if value is not None:
+            out[pm_var] = _clean(value)
+    if out:
+        return out
+    return {PM_RPSA_RAW_VARIABLE: json.dumps(instruction, default=str)}
 
 
-def is_complete(response: Any) -> bool:
-    if not RPSA_COMPLETE_STATUSES or not isinstance(response, dict):
+def is_complete(instruction: Any) -> bool:
+    if not RPSA_COMPLETE_VALUES or not isinstance(instruction, dict):
         return False
-    status = _dig(response, RPSA_STATUS_KEY)
-    return str(status or "").strip().lower() in RPSA_COMPLETE_STATUSES
+    value = _dig(instruction, RPSA_COMPLETE_KEY)
+    return str(value or "").strip().lower() in RPSA_COMPLETE_VALUES
 
 
 def _digest(value: Any) -> str:
@@ -315,30 +329,37 @@ async def create_survey_case(
 
 
 # --------------------------- 2. RPSA sync ---------------------------
-async def _fetch_rpsa_update(rpsa_id: str) -> Any:
-    headers = {"Authorization": f"Bearer {RPSA_STATUS_TOKEN}"} if RPSA_STATUS_TOKEN else {}
+async def _fetch_rpsa_instructions() -> dict:
+    """One call to RPSA; returns {rpsaref: instruction} for everything they hold."""
+    headers = {"Accept": "application/json"}
+    if RPSA_STATUS_TOKEN:
+        headers["X-API-Key"] = RPSA_STATUS_TOKEN
     async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.get(
-            RPSA_STATUS_URL, params={RPSA_STATUS_PARAM: rpsa_id}, headers=headers
-        )
+        resp = await client.get(RPSA_STATUS_URL, headers=headers)
     resp.raise_for_status()
-    try:
-        return resp.json()
-    except ValueError:
-        # RPSA wraps JSON in debug text on some endpoints; dig it out.
-        text = resp.text
-        return json.loads(text[text.find("{"): text.rfind("}") + 1])
+    data = resp.json()
+    if isinstance(data, dict) and data.get("success") is False:
+        raise RuntimeError(f"RPSA reported failure: {str(data)[:200]}")
+    items = data.get("instructions", []) if isinstance(data, dict) else data
+    return {
+        str(item["rpsaref"]): item
+        for item in items
+        if isinstance(item, dict) and item.get("rpsaref") not in (None, "")
+    }
 
 
 async def run_rpsa_sync(db: AsyncIOMotorDatabase) -> dict:
-    """Ask RPSA for an update on every open survey case and push it to PM."""
-    summary = {"checked": 0, "updated": 0, "unchanged": 0, "completed": 0, "errors": 0}
+    """Fetch RPSA's list once and push each open survey case's update to PM."""
+    summary = {
+        "checked": 0, "updated": 0, "unchanged": 0,
+        "completed": 0, "not_found": 0, "errors": 0,
+    }
     if not sync_enabled():
         summary["skipped"] = "RPSA/PM sync settings not complete"
         return summary
 
     cutoff = (datetime.now(timezone.utc) - timedelta(days=RPSA_SYNC_MAX_AGE_DAYS)).isoformat()
-    cursor = db.agreements.find(
+    cases = await db.agreements.find(
         {
             "pm_case.status": "created",
             "rpsa_sync.complete": {"$ne": True},
@@ -346,15 +367,34 @@ async def run_rpsa_sync(db: AsyncIOMotorDatabase) -> dict:
             "rpsa_webhook.rpsa_id": {"$exists": True, "$ne": ""},
         },
         {"token": 1, "pm_case": 1, "rpsa_sync": 1, "rpsa_webhook.rpsa_id": 1},
-    )
-    async for doc in cursor:
+    ).to_list(length=None)
+    if not cases:
+        return summary
+
+    try:
+        instructions = await _fetch_rpsa_instructions()
+    except Exception as exc:  # noqa: BLE001
+        logger.error("RPSA status fetch failed: %s", exc)
+        summary["errors"] = len(cases)
+        summary["error"] = str(exc)[:300]
+        return summary
+
+    for doc in cases:
         summary["checked"] += 1
         token = doc["token"]
         now = datetime.now(timezone.utc).isoformat()
+        instruction = instructions.get(str(doc["rpsa_webhook"]["rpsa_id"]))
+        if instruction is None:
+            summary["not_found"] += 1
+            await db.agreements.update_one(
+                {"token": token},
+                {"$set": {"rpsa_sync.last_run_at": now,
+                          "rpsa_sync.last_error": "Not in RPSA's list"}},
+            )
+            continue
         try:
-            response = await _fetch_rpsa_update(doc["rpsa_webhook"]["rpsa_id"])
-            digest = _digest(response)
-            done = is_complete(response)
+            digest = _digest(instruction)
+            done = is_complete(instruction)
             sync_set = {
                 "rpsa_sync.last_run_at": now,
                 "rpsa_sync.last_error": None,
@@ -364,10 +404,10 @@ async def run_rpsa_sync(db: AsyncIOMotorDatabase) -> dict:
                 summary["unchanged"] += 1
             else:
                 await _update_case_variables(
-                    doc["pm_case"]["app_uid"], map_rpsa_update(response)
+                    doc["pm_case"]["app_uid"], map_rpsa_update(instruction)
                 )
                 sync_set["rpsa_sync.last_digest"] = digest
-                sync_set["rpsa_sync.last_response"] = response
+                sync_set["rpsa_sync.last_response"] = instruction
                 sync_set["rpsa_sync.last_updated_at"] = now
                 summary["updated"] += 1
             if done:
@@ -381,11 +421,7 @@ async def run_rpsa_sync(db: AsyncIOMotorDatabase) -> dict:
             logger.error("RPSA sync failed for %s: %s", token, exc)
             await db.agreements.update_one(
                 {"token": token},
-                {
-                    "$set": {
-                        "rpsa_sync.last_run_at": now,
-                        "rpsa_sync.last_error": str(exc)[:500],
-                    }
-                },
+                {"$set": {"rpsa_sync.last_run_at": now,
+                          "rpsa_sync.last_error": str(exc)[:500]}},
             )
     return summary
