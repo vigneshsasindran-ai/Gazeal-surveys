@@ -26,6 +26,7 @@ from routes.admin import build_admin_router  # noqa: E402
 from routes.consumer_api import build_consumer_api_router  # noqa: E402
 from routes.agreements import build_agreements_router  # noqa: E402
 from routes.panel import build_panel_router  # noqa: E402
+from routes.internal import build_internal_router  # noqa: E402
 
 # Create the main app without a prefix
 app = FastAPI(
@@ -97,6 +98,7 @@ api_router.include_router(build_leads_router(db))
 api_router.include_router(build_admin_router(db))
 api_router.include_router(build_agreements_router(db))
 api_router.include_router(build_panel_router(db))
+api_router.include_router(build_internal_router(db))
 api_router.include_router(
     build_consumer_api_router(db, ROOT_DIR.parent / "docs" / "API_GUIDE.md")
 )
