@@ -266,3 +266,9 @@ Y_EMAIL, NOTIFY_CC, RPSA_EMAIL=gazeal@rpsa.org.uk in backend/.env)
 - Fixed HH "send me more info about Reservation Agreements" tick calling a broken URL (`/harrisonshomesress-interest` -> `/express-interest`).
 - Status: compiled only. NOT tested (per TESTING_RULES). User validates live.
 - Follow-up (user request): removed "Please read before you agree" eyebrow + icon, removed step icons and sub-lines (number + heading only), removed the "Remember:" reminder line entirely. Card + Agree pop-up tick box remain.
+
+## 2026-11-24 — Tech team (Sneha) PM survey case changes merged from GitHub `teamrepo/main` (commit 189be79)
+- Files taken from team repo: backend/pm_survey.py, backend/routes/internal.py (POST /api/internal/rpsa-sync, needs X-Cron-Secret), backend/routes/agreements.py (+create_survey_case after RPSA delivery), backend/server.py, backend/tests/test_pm_survey.py.
+- Frontend untouched. RPSA_STATUS_TOKEN added via Secrets (shared test+live).
+- Still missing (feature dormant until set): PM_BASE_URL, PM_CLIENT_ID, PM_CLIENT_SECRET, PM_SERVICE_USERNAME, PM_SERVICE_PASSWORD, PM_SURVEY_PRO_UID, PM_SURVEY_TAS_UID, RPSA_STATUS_URL, CRON_SECRET; plus a scheduler for /api/internal/rpsa-sync.
+- DO NOT run backend/tests/test_pm_survey.py without explicit user permission.
